@@ -406,13 +406,13 @@
         </div>
     </div>
     <div id="topNav"
-        style="background: #212529; padding: 10px 20px 0 20px; display: none; justify-content: space-between; align-items: flex-end; color: white; gap: 10px; overflow: hidden;">
+        style="background: #212529; padding: 10px 20px 0 20px; display: none; justify-content: space-between; align-items: center; color: white; gap: 10px; overflow: hidden;">
 
         <div style="font-weight: bold; font-size: 16px; color: #ff9800; padding-bottom: 8px; white-space: nowrap;">🏭
             PPL ERP</div>
 
         <div id="navButtons"
-            style="display: flex; gap: 2px; flex: 1; margin-bottom: -1px; justify-content: center; overflow: hidden;">
+            style="display: flex; gap: 2px; flex: 1; align-items: flex-end; justify-content: center; height: 100%; padding-top: 10px;">
             <button class="tab-btn active" id="nav-prod"
                 onclick="switchMainTab('productionCard', 'nav-prod')">Production</button>
             <button class="tab-btn" id="nav-qc" onclick="switchMainTab('qcCard', 'nav-qc')"
@@ -437,6 +437,13 @@
             <a href="#" onclick="logout()"
                 style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 10px;">Logout</a>
         </div>
+    </div>
+
+    <div style="font-size: 13px; display: flex; align-items: center; padding-bottom: 8px; white-space: nowrap;">
+        <span id="roleDisplay" class="role-badge" style="padding: 4px 8px; font-size: 12px;"></span>
+        <a href="#" onclick="logout()"
+            style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 10px;">Logout</a>
+    </div>
     </div>
 
     <div id="mainDashboard">
