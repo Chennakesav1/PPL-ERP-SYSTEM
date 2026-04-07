@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Inventory | PPL ERP</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .dashboard-container { display: flex; gap: 20px; max-width: 1500px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .inventory-section { flex: 2; min-width: 0; }
+        .transaction-section { flex: 1.2; min-width: 0; }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; color: #444; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .search-container { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .search-box { padding: 8px 12px; font-size: 14px; border: 2px solid #007bff; border-radius: 6px; outline: none; }
+        .export-btn, .logout-btn, .add-btn, .back-btn { color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .export-btn { background-color: #28a745; }
+        .logout-btn { background-color: #dc3545; position: absolute; top: 20px; right: 20px; }
+        .back-btn { background-color: #34495e; position: absolute; top: 20px; left: 20px; text-decoration: none; }
+        .add-btn { background-color: #007bff; }
+        .table-wrapper { max-height: 700px; overflow-y: auto; overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 600px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+        th { background-color: #007bff; color: white; position: sticky; top: 0; z-index: 1; }
+        .stock-val { font-weight: bold; font-size: 1.1em; }
+        .type-inward { color: #28a745; font-weight: bold; }
+        .type-dispatch { color: #dc3545; font-weight: bold; }
+        .status-dot { height: 12px; width: 12px; background-color: #28a745; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .date-text { font-weight: bold; display: block; }
+        .time-text { color: #666; font-size: 0.85em; }
+        .user-tag { color: #555; font-size: 0.85em; margin-top: 4px; display: block; }
+        .low-stock { background-color: #ffebee !important; }
+        .low-stock-text { color: #d32f2f !important; }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; }
+        .modal-content { background-color: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 400px; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); max-height: 90vh; overflow-y: auto; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888; font-weight: bold; }
+        .close-btn:hover { color: #dc3545; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .form-grid input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
+        .full-width { grid-column: 1 / -1; }
+        .save-btn { background-color: #007bff; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 20px; width: 100%; font-size: 16px; }
+        .save-btn:hover { background-color: #0056b3; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .dashboard-container { flex-direction: column; }
+            .logout-btn, .back-btn { position: static; display: block; width: 100%; margin-bottom: 10px; text-align: center; }
+            .search-container { flex-direction: column; width: 100%; align-items: stretch; }
+            .search-box { width: 100% !important; }
+            .add-btn, .export-btn { width: 100%; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">×</span>
+            <h2 style="border-bottom: none; justify-content: center; color: #007bff; margin-bottom: 0; font-size: 1.2rem;">Add New Product</h2>
+            <div class="form-grid">
+                <input type="text" id="newProdCode" class="full-width" placeholder="* Product Code (e.g., L0100)" required>
+                <input type="text" id="newSector" placeholder="Sector (e.g., Auto)">
+                <input type="text" id="newType" placeholder="Type (e.g., Hex Bolt)">
+                <input type="text" id="newGrade" placeholder="Grade (e.g., 8.8)">
+                <input type="number" id="newLength" placeholder="Length (mm)">
+                <input type="number" id="newAF" placeholder="A/F (Size)">
+                <input type="number" id="newWeight" placeholder="Wt/Piece (g)">
+                <input type="number" id="newStock" class="full-width" placeholder="Initial Stock Quantity">
+            </div>
+            <button class="save-btn" onclick="submitNewProduct()">💾 Save to Database</button>
+        </div>
+    </div>
+
+    <script>
+        if (localStorage.getItem("erp_auth") !== "true" || localStorage.getItem("erp_role") !== "admin") {
+            alert("SECURITY ALERT: Admin access required.");
+            window.location.href = "index.html";
+        }
+    </script>
+
+    <div id="mainDashboard" style="display: block;">
+        <a href="admin-dashboard.html" class="back-btn">⬅️ Back to Admin</a>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
+        
+        <h1 style="margin-top: 50px;"><span class="status-dot"></span>Master Live Inventory</h1>
+
+        <div class="dashboard-container">
+            <div class="card inventory-section">
+                <h2>
+                    Live Stock
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-box" style="width: 220px;" onkeyup="filterInventory()" placeholder="🔍 Search anything (Grade, Type...)">
+                        <button class="add-btn" onclick="openModal()">➕ Add Product</button>
+                        <button class="export-btn" onclick="exportTableToCSV('productsTable', 'Live_Stock_Inventory.csv')">⬇️ Excel</button>
+                    </div>
+                </h2>
+                <div class="table-wrapper">
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>Product Code</th><th>Sector</th><th>Type</th><th>Grade</th><th>Length</th><th>A/F</th><th>Wt/Pc</th><th>Current Stock</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody><tr><td colspan="9">Loading data...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card transaction-section">
+                <h2>
+                    Recent Movements
+                    <div class="search-container">
+                        <input type="date" id="dateSearchInput" class="search-box" style="width: 130px;" onchange="applyTxFilters()">
+                        <input type="text" id="searchTxInput" class="search-box" style="width: 90px;" onkeyup="applyTxFilters()" placeholder="🔍 Item...">
+                        <button class="export-btn" onclick="exportTableToCSV('transactionsTable', 'Warehouse_Movements.csv')">⬇️ Excel</button>
+                    </div>
+                </h2>
+                <div class="table-wrapper">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr><th>Date & Time</th><th>Item Code</th><th>Type & User</th><th>Qty</th><th>Balance</th></tr>
+                        </thead>
+                        <tbody><tr><td colspan="5">Loading data...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://ppl-warehouse-wkdp.onrender.com/api';
+        let refreshInterval;
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+        function openModal() { document.getElementById('addProductModal').style.display = 'flex'; }
+        
+        function closeModal() {
+            document.getElementById('addProductModal').style.display = 'none';
+            ['newProdCode', 'newSector', 'newType', 'newGrade', 'newLength', 'newAF', 'newWeight', 'newStock'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        async function submitNewProduct() {
+            const productCode = document.getElementById('newProdCode').value;
+            if (!productCode) return alert("Product Code is required!");
+            const newProductData = {
+                productCode: productCode, sector: document.getElementById('newSector').value, type: document.getElementById('newType').value, grade: document.getElementById('newGrade').value, length: parseFloat(document.getElementById('newLength').value) || null, af: parseFloat(document.getElementById('newAF').value) || null, weightPerPc: parseFloat(document.getElementById('newWeight').value) || 0, currentStock: parseInt(document.getElementById('newStock').value) || 0
+            };
+            try {
+                const response = await fetch(`${API_URL}/products`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newProductData) });
+                const data = await response.json();
+                if (data.success) { alert("✅ Product Added Successfully!"); closeModal(); refreshDashboard(); } else { alert("❌ Error: " + data.message); }
+            } catch (error) { alert("Failed to connect to server."); }
+        }
+
+        function filterInventory() {
+            const filter = document.getElementById('searchInput').value.toUpperCase();
+            const tr = document.getElementById('productsTable').getElementsByTagName("tr");
+            for (let i = 1; i < tr.length; i++) {
+                if (tr[i].cells.length === 1 && tr[i].cells[0].innerText.includes("Loading")) continue;
+                let rowText = tr[i].textContent || tr[i].innerText;
+                tr[i].style.display = rowText.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+
+        function applyTxFilters() {
+            const textFilter = document.getElementById("searchTxInput").value.toUpperCase();
+            const dateFilter = document.getElementById("dateSearchInput").value;
+            const tr = document.getElementById("transactionsTable").getElementsByTagName("tr");
+            for (let i = 1; i < tr.length; i++) {
+                if (tr[i].cells.length === 1 && tr[i].cells[0].innerText.includes("Loading")) continue;
+                let itemCodeTd = tr[i].getElementsByTagName("td")[1];
+                let rowDate = tr[i].getAttribute("data-date");
+                let matchesText = textFilter && itemCodeTd ? (itemCodeTd.textContent || itemCodeTd.innerText).toUpperCase().indexOf(textFilter) > -1 : true;
+                let matchesDate = dateFilter ? (rowDate === dateFilter) : true;
+                tr[i].style.display = (matchesText && matchesDate) ? "" : "none";
+            }
+        }
+
+        function exportTableToCSV(tableId, filename) {
+            let csv = [];
+            let rows = document.querySelectorAll(`#${tableId} tr`);
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                if (cols.length === 1 && cols[0].innerText.includes("Loading")) continue;
+                if (rows[i].style.display === "none") continue;
+                for (let j = 0; j < cols.length; j++) row.push('"' + cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").trim() + '"');
+                csv.push(row.join(","));
+            }
+            let downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(new Blob([csv.join("\n")], { type: "text/csv" }));
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
+
+        async function loadInventory() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const products = await response.json();
+                const tbody = document.querySelector('#productsTable tbody');
+                tbody.innerHTML = '';
+                products.forEach(p => {
+                    const tr = document.createElement('tr');
+                    const currentStock = p.currentStock || 0;
+                    const isLowStock = currentStock <= 10;
+                    if (isLowStock) tr.className = "low-stock";
+                    tr.innerHTML = `
+                        <td><strong>${p.productCode || 'N/A'}</strong></td><td>${p.sector || '-'}</td><td>${p.type || '-'}</td><td>${p.grade || '-'}</td><td>${p.length ? p.length + ' mm' : '-'}</td><td>${p.af !== undefined && p.af !== null && p.af !== 0 ? p.af : '-'}</td><td>${p.weightPerPc || '0'}g</td>
+                        <td class="stock-val ${isLowStock ? 'low-stock-text' : ''}"><input type="number" id="stock-${p._id}" value="${currentStock}" style="width: 70px; text-align: center; border: 1px solid #ccc; border-radius: 4px; padding: 4px; font-weight: bold;"></td>
+                        <td style="display:flex; flex-direction:column; gap:5px;">
+                            <button onclick="updateStock('${p._id}')" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Update</button>
+                            <button onclick="deleteProduct('${p._id}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                filterInventory();
+            } catch (error) { console.error("Error loading inventory:", error); }
+        }
+
+        async function updateStock(productId) {
+            const newStock = document.getElementById(`stock-${productId}`).value;
+            try {
+                const response = await fetch(`${API_URL}/inventory/${productId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stock: Number(newStock) }) });
+                if (response.ok) { alert('Stock updated successfully!'); loadInventory(); } else { alert('Failed to update stock.'); }
+            } catch (error) { console.error('Error updating stock:', error); alert('Server connection error.'); }
+        }
+
+        async function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to completely remove this product?')) return;
+            try {
+                const response = await fetch(`${API_URL}/inventory/${productId}`, { method: 'DELETE' });
+                if (response.ok) { alert('Product removed!'); loadInventory(); } else { alert('Failed to delete product.'); }
+            } catch (error) { console.error('Error deleting product:', error); }
+        }
+
+        async function loadTransactions() {
+            try {
+                const response = await fetch(`${API_URL}/transactions`);
+                const transactions = await response.json();
+                const tbody = document.querySelector('#transactionsTable tbody');
+                tbody.innerHTML = '';
+                transactions.forEach(tx => {
+                    const txDate = new Date(tx.date);
+                    const isoDate = txDate.toISOString().split('T')[0];
+                    const typeClass = tx.type === 'INWARD' ? 'type-inward' : 'type-dispatch';
+                    const sign = tx.type === 'INWARD' ? '+' : '-';
+                    const user = tx.user || "Unknown";
+                    const tr = document.createElement('tr');
+                    tr.setAttribute("data-date", isoDate);
+                    tr.innerHTML = `
+                        <td><span class="date-text">${txDate.toLocaleDateString()}</span><span class="time-text">${txDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></td>
+                        <td><strong>${tx.barcode}</strong></td><td class="${typeClass}">${tx.type}<span class="user-tag">👤 ${user}</span></td><td><strong>${sign}${tx.quantity}</strong></td>
+                        <td style="color: #007bff; font-weight: bold;">${tx.resultingStock !== undefined ? tx.resultingStock : '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                applyTxFilters();
+            } catch (error) { console.error("Error loading transactions:", error); }
+        }
+
+        function refreshDashboard() { loadInventory(); loadTransactions(); }
+        
+        // Start the engine
+        refreshDashboard();
+        refreshInterval = setInterval(refreshDashboard, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+node_modules/
+inventory-app/node_modules/
+.env
+.expo/
+*.log

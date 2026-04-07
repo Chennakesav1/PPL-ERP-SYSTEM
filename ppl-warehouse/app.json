@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "PPL Warehouse",
+    "slug": "ppl-warehouse",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ppl.warehouse.app"
+    },
+    "android": {
+      "package": "com.ppl.warehouse.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow PPL Warehouse to scan barcodes."
+        }
+      ]
+    ]
+  }
+}
