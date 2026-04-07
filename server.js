@@ -13,10 +13,10 @@ const app = express();
 // ==========================================
 // CORS Configuration
 // ==========================================
-app.use(cors({ 
-    origin: '*', 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
-    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'] 
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept']
 }));
 // Allow large file uploads via Base64 (up to 50MB)
 app.use(express.json({ limit: '50mb' }));
@@ -43,7 +43,7 @@ async function sendWhatsAppMessage(phoneNumber, messageText) {
     }
 
     // Clean phone number (remove spaces, +, etc. e.g., '919999999999')
-    const cleanPhone = phoneNumber.replace(/\D/g, ''); 
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
 
     try {
         const response = await axios.post(
@@ -77,7 +77,7 @@ function drawInvoiceDesign(doc, order, customer) {
     doc.fontSize(24).fillColor('#6f42c1').text('PPL ENTERPRISES', 115, 45);
     doc.fontSize(10).fillColor('#555555').text('123 Industrial Estate, Hyderabad, Telangana, India', 115, 75);
     doc.text('GSTIN: 36AAAAA1234A1Z5 | Phone: +91 99999 99999 | Email: sales@ppl.com', 115, 90);
-    
+
     doc.moveTo(50, 115).lineTo(550, 115).strokeColor('#dddddd').stroke();
 
     // 2. Invoice Title & Order Details
@@ -87,7 +87,7 @@ function drawInvoiceDesign(doc, order, customer) {
 
     doc.fontSize(11).text(`Invoice / Order No: `, 50, 170).font('Helvetica-Bold').text(order.orderNo, 155, 170);
     doc.font('Helvetica').text(`Date: `, 400, 170).font('Helvetica-Bold').text(new Date(order.orderDate).toLocaleDateString(), 435, 170);
-    
+
     // 3. Customer Details
     doc.font('Helvetica-Bold').text(`Billed To:`, 50, 200);
     doc.font('Helvetica').text(customer.name, 50, 215);
@@ -110,14 +110,14 @@ function drawInvoiceDesign(doc, order, customer) {
     order.items.forEach(item => {
         doc.font('Helvetica-Bold').text(item.productCode, 60, currentY, { width: 130 });
         doc.font('Helvetica').fontSize(9).fillColor('#555555');
-        doc.text(`Gr: ${item.grade||'-'} | L: ${item.length||'-'}mm | AF: ${item.af||'-'}`, 200, currentY);
-        doc.text(`Sec: ${item.sector||'-'} | Wt: ${item.weightPerPc||'-'}g`, 200, currentY + 12);
-        
+        doc.text(`Gr: ${item.grade || '-'} | L: ${item.length || '-'}mm | AF: ${item.af || '-'}`, 200, currentY);
+        doc.text(`Sec: ${item.sector || '-'} | Wt: ${item.weightPerPc || '-'}g`, 200, currentY + 12);
+
         doc.fontSize(10).fillColor('#000000');
         doc.text(item.quantity.toString(), 370, currentY);
         doc.text(`Rs ${item.unitPrice}`, 430, currentY);
         doc.text(`Rs ${item.total}`, 490, currentY);
-        
+
         currentY += 35;
         doc.moveTo(50, currentY - 5).lineTo(550, currentY - 5).strokeColor('#eeeeee').stroke();
     });
@@ -126,7 +126,7 @@ function drawInvoiceDesign(doc, order, customer) {
     currentY += 10;
     doc.fontSize(11).text(`Subtotal:`, 380, currentY).text(`Rs ${order.subtotal}`, 460, currentY, { align: 'right' });
     doc.text(`GST (18%):`, 380, currentY + 15).text(`Rs ${order.gstAmount.toFixed(2)}`, 460, currentY + 15, { align: 'right' });
-    
+
     doc.font('Helvetica-Bold').fontSize(14).fillColor('#28a745');
     doc.text(`Grand Total:`, 350, currentY + 40).text(`Rs ${order.grandTotal.toLocaleString()}`, 430, currentY + 40, { align: 'right' });
 
@@ -178,7 +178,7 @@ app.post('/api/marketing/send-bulk-email', async (req, res) => {
         // 2. Prepare the Attachment (if uploaded)
         let attachmentPayload = undefined;
         if (mediaBase64) {
-            const base64Data = mediaBase64.split(';base64,').pop(); 
+            const base64Data = mediaBase64.split(';base64,').pop();
             attachmentPayload = [{
                 name: filename || `Attachment_${Date.now()}`,
                 content: base64Data
@@ -188,7 +188,7 @@ app.post('/api/marketing/send-bulk-email', async (req, res) => {
         // 3. Loop through and Email them using Brevo API
         let messagesSent = 0;
         for (let customer of targetCustomers) {
-            
+
             const formattedBody = bodyText.replace(/\n/g, '<br>');
             const htmlContent = `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
@@ -225,10 +225,10 @@ app.post('/api/marketing/send-bulk-email', async (req, res) => {
         }
 
         res.json({ success: true, message: `Successfully sent ${messagesSent} emails!` });
-    } catch (err) { 
+    } catch (err) {
         // This will print the EXACT reason Brevo failed if something goes wrong
         console.error("Bulk Email API Error:", err.response ? JSON.stringify(err.response.data) : err.message);
-        res.status(500).json({ error: "Failed to send emails. Check server logs." }); 
+        res.status(500).json({ error: "Failed to send emails. Check server logs." });
     }
 });
 // NEW: Download PDF Invoice Endpoint
@@ -242,7 +242,7 @@ app.get('/api/sales-orders/:id/invoice', async (req, res) => {
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=Invoice_${order.orderNo}.pdf`);
         doc.pipe(res);
-        
+
         drawInvoiceDesign(doc, order, customer);
         doc.end();
     } catch (err) { res.status(500).send("Error generating invoice."); }
@@ -295,9 +295,9 @@ app.post('/api/marketing/generate-ai-banner', async (req, res) => {
             "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
             { inputs: enhancedPrompt },
             {
-                headers: { 
+                headers: {
                     Authorization: `Bearer ${process.env.HUGGINGFACE_TOKEN}`,
-                    "Content-Type": "application/json" 
+                    "Content-Type": "application/json"
                 },
                 responseType: 'arraybuffer' // CRITICAL: Tells Axios we are downloading a binary image
             }
@@ -341,9 +341,9 @@ app.post('/api/marketing/send-offers', async (req, res) => {
             messagesSent++;
         }
         res.json({ success: true, message: `WhatsApp messages sent to ${messagesSent} customers.` });
-    } catch (err) { 
+    } catch (err) {
         console.error("Marketing Error:", err);
-        res.status(500).json({ error: err.message }); 
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -352,9 +352,13 @@ app.post('/api/marketing/send-offers', async (req, res) => {
 // INDIVIDUAL PROMOTIONS (BANNER, OFFER, DISCOUNT)
 // ==========================================
 app.post('/api/marketing/send-single', async (req, res) => {
+
+    
     try {
         const { customerId, promoType, messageText, mediaBase64, filename } = req.body;
-        
+
+        await transporter.sendMail(mailOptions);
+
         const customer = await Customer.findById(customerId);
         if (!customer || !customer.email) {
             return res.status(400).json({ error: "Customer not found or has no email address." });
@@ -376,7 +380,7 @@ app.post('/api/marketing/send-single', async (req, res) => {
                 <p>${messageText}</p>
                 <p>Please see the attached promotion.</p>
             `;
-            
+
             // Attach the Canvas Image
             if (mediaBase64) {
                 const base64Data = mediaBase64.replace(/^data:image\/png;base64,/, "");
@@ -386,11 +390,11 @@ app.post('/api/marketing/send-single', async (req, res) => {
                     encoding: 'base64'
                 }];
             }
-        } 
+        }
         else if (promoType === 'discount') {
             mailOptions.subject = `Your Custom Discount Document - PPL Enterprises`;
             mailOptions.html = `<p>Hello ${customer.name},</p><p>Please find your requested discount/pricing document attached to this email.</p>`;
-            
+
             // Attach the Uploaded PDF/Image
             if (mediaBase64) {
                 const base64Data = mediaBase64.split(';base64,').pop(); // Strip the mime type header
@@ -447,7 +451,7 @@ app.post('/api/login', (req, res) => {
     if (password === 'Admin12345' && !username) return res.json({ success: true, role: "ADMIN", username: "Admin" });
     if (DASHBOARD_USERS[username] && DASHBOARD_USERS[username].pass === password) return res.json({ success: true, role: DASHBOARD_USERS[username].role, username: username });
     if (WORKER_USERS[username] && WORKER_USERS[username].pass === password) return res.json({ success: true, role: WORKER_USERS[username].role, username: username });
-    
+
     res.status(401).json({ success: false, message: "Access Denied: Incorrect credentials." });
 });
 
@@ -468,33 +472,33 @@ app.get('/api/unsubscribe/:id', async (req, res) => {
 // SALES & CRM MANAGEMENT
 // ==========================================
 app.get('/api/customers', async (req, res) => {
-    try { res.json(await Customer.find().sort({ createdAt: -1 })); } 
+    try { res.json(await Customer.find().sort({ createdAt: -1 })); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/customers', async (req, res) => {
-    try { await new Customer(req.body).save(); res.json({ success: true, message: "Customer Added!" }); } 
+    try { await new Customer(req.body).save(); res.json({ success: true, message: "Customer Added!" }); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.get('/api/sales-orders', async (req, res) => {
-    try { res.json(await SalesOrder.find().sort({ orderDate: -1 })); } 
+    try { res.json(await SalesOrder.find().sort({ orderDate: -1 })); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/sales-orders', async (req, res) => {
     try {
         const { customerId, customerName, items, status, createdBy } = req.body;
-        let subtotal = 0; const enrichedItems = []; 
+        let subtotal = 0; const enrichedItems = [];
 
         for (let item of items) {
             subtotal += (item.quantity * item.unitPrice);
             let product = await Product.findOne({ barcode: item.productCode });
-            
+
             if (product) {
                 if (status === 'CONFIRMED') {
                     if (product.currentStock < item.quantity) return res.status(400).json({ error: `Not enough stock for ${item.productCode}` });
-                    product.reservedStock = (product.reservedStock || 0) + item.quantity; 
+                    product.reservedStock = (product.reservedStock || 0) + item.quantity;
                     await product.save();
                 }
                 enrichedItems.push({
@@ -508,14 +512,14 @@ app.post('/api/sales-orders', async (req, res) => {
             }
         }
 
-        const gstAmount = subtotal * 0.18; 
+        const gstAmount = subtotal * 0.18;
         const grandTotal = subtotal + gstAmount;
 
         await new SalesOrder({
-            orderNo: `SO-${Date.now()}`, customerId, customerName, items: enrichedItems, 
+            orderNo: `SO-${Date.now()}`, customerId, customerName, items: enrichedItems,
             subtotal, gstAmount, grandTotal, status, createdBy
         }).save();
-        
+
         res.json({ success: true, message: `Order saved as ${status}` });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -535,10 +539,10 @@ app.put('/api/sales-orders/:id/status', async (req, res) => {
                     product.currentStock -= item.quantity;
                     product.reservedStock = Math.max((product.reservedStock || 0) - item.quantity, 0);
                     await product.save();
-                    await new Transaction({ 
-                        barcode: product.barcode, type: 'DISPATCH', 
-                        quantity: item.quantity, resultingStock: product.currentStock, 
-                        user: username || 'System' 
+                    await new Transaction({
+                        barcode: product.barcode, type: 'DISPATCH',
+                        quantity: item.quantity, resultingStock: product.currentStock,
+                        user: username || 'System'
                     }).save();
                 }
             }
@@ -570,10 +574,10 @@ app.put('/api/sales-orders/:id/status', async (req, res) => {
         }
 
         res.json({ success: true, message: "Order updated successfully" });
-        
-    } catch (err) { 
+
+    } catch (err) {
         console.error("❌ CRITICAL ROUTE CRASH:", err);
-        res.status(500).json({ error: err.message }); 
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -590,7 +594,7 @@ app.put('/api/ppc/verify/:id', async (req, res) => {
 
         batch.ppcStatus = status; batch.ppcRemarks = remarks; batch.ppcBy = username; batch.ppcDate = new Date();
         if (status === 'APPROVED') { batch.nextProcessRoute = nextRoute; batch.isReadyForNextStage = true; }
-        
+
         await batch.save();
         res.json({ success: true, message: `Batch ${status} and routed to ${nextRoute || 'Hold'}` });
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -600,12 +604,12 @@ app.put('/api/ppc/verify/:id', async (req, res) => {
 // QC GATEKEEPER & INVENTORY MOVEMENT
 // ==========================================
 app.get('/api/qc/pending', async (req, res) => {
-    try { res.json(await ProductionBatch.find({ qcStatus: 'PENDING', ppcStatus: 'APPROVED' }).sort({ date: -1 })); } 
+    try { res.json(await ProductionBatch.find({ qcStatus: 'PENDING', ppcStatus: 'APPROVED' }).sort({ date: -1 })); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.get('/api/qc/history', async (req, res) => {
-    try { res.json(await ProductionBatch.find({ qcStatus: { $in: ['APPROVED', 'REJECTED'] } }).sort({ qcDate: -1 }).limit(100)); } 
+    try { res.json(await ProductionBatch.find({ qcStatus: { $in: ['APPROVED', 'REJECTED'] } }).sort({ qcDate: -1 }).limit(100)); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -616,10 +620,10 @@ app.put('/api/qc/approve/:id', async (req, res) => {
         if (batch.ppcStatus !== 'APPROVED') return res.status(400).json({ error: "PPC Approval required before QC." });
         if (batch.qcStatus === 'APPROVED' || batch.qcStatus === 'REJECTED') return res.status(400).json({ error: "Batch already processed by QC!" });
 
-        const incomingStatus = req.body.status || 'APPROVED'; 
+        const incomingStatus = req.body.status || 'APPROVED';
         const finalAccQty = req.body.accQty !== undefined ? req.body.accQty : batch.acceptedQty;
         const finalRejQty = req.body.rejQty !== undefined ? req.body.rejQty : batch.rejectedQty;
-        const finalRejKg  = req.body.rejKg !== undefined ? req.body.rejKg : batch.rejectionKg;
+        const finalRejKg = req.body.rejKg !== undefined ? req.body.rejKg : batch.rejectionKg;
 
         if (incomingStatus === 'APPROVED') {
             let lookupCode = batch.partNo || batch.productBarcode;
@@ -636,16 +640,16 @@ app.put('/api/qc/approve/:id', async (req, res) => {
                 } else {
                     product.wipStock = Math.max((product.wipStock || 0) - finalRejQty, 0);
                 }
-                
+
                 product.lastUpdated = new Date();
                 await product.save();
             }
         }
-        
+
         batch.acceptedQty = finalAccQty; batch.rejectedQty = finalRejQty; batch.rejectionKg = finalRejKg;
         batch.measuredLength = req.body.measuredLength; batch.measuredAF = req.body.measuredAF; batch.threadGauge = req.body.threadGauge;
         batch.qcStatus = incomingStatus; batch.qcBy = req.body.qcBy || 'QC Inspector'; batch.qcDate = new Date(); batch.qcRemarks = req.body.qcRemarks || '';
-        
+
         await batch.save();
         res.json({ success: true, message: `QC ${incomingStatus} Successfully!` });
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -655,13 +659,13 @@ app.put('/api/qc/approve/:id', async (req, res) => {
 // PRODUCTION DEPT
 // ==========================================
 app.get('/api/production/batches', async (req, res) => {
-    try { res.json(await ProductionBatch.find().sort({ date: -1, _id: -1 }).limit(200)); } 
+    try { res.json(await ProductionBatch.find().sort({ date: -1, _id: -1 }).limit(200)); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/production/batch', async (req, res) => {
     try {
-        let lookupCode = req.body.partNo || req.body.productBarcode; 
+        let lookupCode = req.body.partNo || req.body.productBarcode;
         if (lookupCode) {
             let product = await Product.findOne({ barcode: lookupCode.trim() });
             if (!product) product = new Product({ barcode: lookupCode.trim(), productCode: lookupCode.trim(), currentStock: 0, wipStock: 0 });
@@ -673,8 +677,8 @@ app.post('/api/production/batch', async (req, res) => {
                     material.lastUpdate = new Date();
                     await material.save();
                 }
-            } 
-            product.lastUpdated = new Date(); 
+            }
+            product.lastUpdated = new Date();
             await product.save();
         }
 
@@ -707,7 +711,7 @@ app.get('/api/product/:barcode', async (req, res) => {
 });
 
 app.get('/api/products', async (req, res) => {
-    try { res.json(await Product.find().sort({ lastUpdated: -1, _id: -1 })); } 
+    try { res.json(await Product.find().sort({ lastUpdated: -1, _id: -1 })); }
     catch (error) { res.status(500).json({ error: error.message }); }
 });
 
@@ -727,17 +731,17 @@ app.post('/api/products', async (req, res) => {
 });
 
 app.put('/api/inventory/:id', async (req, res) => {
-    try { res.status(200).json(await Product.findByIdAndUpdate(req.params.id, { currentStock: req.body.stock }, { new: true })); } 
+    try { res.status(200).json(await Product.findByIdAndUpdate(req.params.id, { currentStock: req.body.stock }, { new: true })); }
     catch (error) { res.status(500).json({ message: error.message }); }
 });
 
 app.delete('/api/inventory/:id', async (req, res) => {
-    try { await Product.findByIdAndDelete(req.params.id); res.status(200).json({ message: "Deleted" }); } 
+    try { await Product.findByIdAndDelete(req.params.id); res.status(200).json({ message: "Deleted" }); }
     catch (error) { res.status(500).json({ message: error.message }); }
 });
 
 app.get('/api/transactions', async (req, res) => {
-    try { res.json(await Transaction.find().sort({ date: -1, _id: -1 }).limit(100)); } 
+    try { res.json(await Transaction.find().sort({ date: -1, _id: -1 }).limit(100)); }
     catch (error) { res.status(500).json({ error: error.message }); }
 });
 
@@ -770,7 +774,7 @@ app.post('/api/stock', async (req, res) => {
 // PURCHASE & RAW MATERIALS
 // ==========================================
 app.get('/api/raw-materials', async (req, res) => {
-    try { res.json(await RawMaterial.find().sort({ lastUpdate: -1 })); } 
+    try { res.json(await RawMaterial.find().sort({ lastUpdate: -1 })); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -778,14 +782,14 @@ app.post('/api/raw-materials/receive', async (req, res) => {
     try {
         const { materialCode, materialName, grade, supplier, scope, addedKg, username } = req.body;
         let material = await RawMaterial.findOne({ materialCode });
-        
+
         if (!material) {
             material = new RawMaterial({ materialCode, materialName: materialName || "Carbon Steel", grade, lastSupplier: supplier, scope, currentStockKg: addedKg, lastUpdatedBy: username || 'Purchase Dept', lastUpdate: new Date() });
         } else {
             material.currentStockKg += Number(addedKg);
-            if (grade) material.grade = grade;               
-            if (supplier) material.lastSupplier = supplier;  
-            if (scope) material.scope = scope;               
+            if (grade) material.grade = grade;
+            if (supplier) material.lastSupplier = supplier;
+            if (scope) material.scope = scope;
             material.lastUpdatedBy = username || 'Purchase Dept';
             material.lastUpdate = new Date();
             if (materialName && materialName.trim() !== "") material.materialName = materialName.trim();
@@ -797,17 +801,17 @@ app.post('/api/raw-materials/receive', async (req, res) => {
 });
 
 app.get('/api/purchase-orders', async (req, res) => {
-    try { res.json(await PurchaseOrder.find().sort({ orderDate: -1, _id: -1 })); } 
+    try { res.json(await PurchaseOrder.find().sort({ orderDate: -1, _id: -1 })); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/purchase-orders', async (req, res) => {
     try {
         const { supplierName, materialCode, grade, scope, expectedKg, costPerKg, username } = req.body;
-        await new PurchaseOrder({ 
-            poNumber: `PO-${Date.now()}`, supplierName, materialCode: materialCode.toUpperCase(), 
-            grade: grade || "Standard", scope: scope || "General Inventory", 
-            expectedKg: Number(expectedKg), costPerKg: Number(costPerKg), 
+        await new PurchaseOrder({
+            poNumber: `PO-${Date.now()}`, supplierName, materialCode: materialCode.toUpperCase(),
+            grade: grade || "Standard", scope: scope || "General Inventory",
+            expectedKg: Number(expectedKg), costPerKg: Number(costPerKg),
             totalCost: Number(expectedKg) * Number(costPerKg), orderedBy: username || "Purchase Dept",
             status: 'PENDING', orderDate: new Date()
         }).save();
@@ -840,12 +844,12 @@ app.put('/api/purchase-orders/:id/receive', async (req, res) => {
 // WORK ORDERS (WO) MANAGEMENT
 // ==========================================
 app.get('/api/work-orders/active', async (req, res) => {
-    try { res.json(await WorkOrder.find({ status: 'ACTIVE' }).sort({ createdAt: -1 })); } 
+    try { res.json(await WorkOrder.find({ status: 'ACTIVE' }).sort({ createdAt: -1 })); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/work-orders', async (req, res) => {
-    try { await new WorkOrder(req.body).save(); res.json({ success: true, message: "Work Order Created!" }); } 
+    try { await new WorkOrder(req.body).save(); res.json({ success: true, message: "Work Order Created!" }); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -855,11 +859,11 @@ app.post('/api/work-orders', async (req, res) => {
 app.get('/api/sync', async (req, res) => {
     try {
         let doc = await ErpState.findOne({ identifier: "production_state" });
-        if(!doc) {
+        if (!doc) {
             doc = await ErpState.create({ identifier: "production_state", state: {} });
         }
         res.json(doc);
-    } catch(e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/sync', async (req, res) => {
@@ -867,10 +871,10 @@ app.post('/api/sync', async (req, res) => {
         const updatedDoc = await ErpState.findOneAndUpdate(
             { identifier: "production_state" },
             { state: req.body },
-            { upsert: true, returnDocument: 'after' } 
+            { upsert: true, returnDocument: 'after' }
         );
         res.json({ success: true, message: "Successfully synced to MongoDB" });
-    } catch(e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ==========================================
