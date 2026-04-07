@@ -1765,25 +1765,50 @@
 
         <div id="pre-qualification" class="tab-section">
             <h1>🔬 Pre/Post Qualification</h1>
-            <div class="card" style="border-top: 4px solid var(--success);">
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Select Product for QA Inspection:</label>
-                        <select id="qaSelect" onchange="renderQAForm()">
-                            <option value="">-- Choose Part Number --</option>
-                            <option value="G110027981">G110027981 (DH-Bolt Flange)</option>
-                            <option value="W008025981">W008025981 (LAC0059 M8 SHCS)</option>
-                            <option value="P005028401">P005028401 (M5x0.8x28 PAN HEAD SCREW)</option>
-                        </select>
+            
+            <div class="sub-nav">
+                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('qa-inspect-area', this)">📝 Conduct Inspection</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('qa-template-area', this)">⚙️ Build QA Template</button>
+            </div>
+
+            <div id="qa-inspect-area" class="sub-tab-content active">
+                <div class="card" style="border-top: 4px solid var(--success);">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Select Product for QA Inspection:</label>
+                            <select id="qaSelect" onchange="renderQAForm()">
+                                <option value="">-- Choose Part Number --</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Inspector Name / ID:</label><input type="text" id="qaInspectorInput"
+                                placeholder="Enter Inspector Name"></div>
                     </div>
-                    <div class="form-group"><label>Inspector Name / ID:</label><input type="text" id="qaInspectorInput"
-                            placeholder="Enter Inspector Name"></div>
+                </div>
+                <div id="qaFormArea" style="display: none;">
+                    <div id="qaStationsContainer"></div>
+                    <div style="text-align: right; margin-top: 20px;"><button class="btn btn-success" onclick="submitQA()"
+                            style="font-size: 16px; padding: 15px 30px;">✅ Sign Off QA Report</button></div>
                 </div>
             </div>
-            <div id="qaFormArea" style="display: none;">
-                <div id="qaStationsContainer"></div>
-                <div style="text-align: right; margin-top: 20px;"><button class="btn btn-success" onclick="submitQA()"
-                        style="font-size: 16px; padding: 15px 30px;">✅ Sign Off QA Report</button></div>
+
+            <div id="qa-template-area" class="sub-tab-content">
+                <div class="card" style="border-top: 4px solid var(--primary);">
+                    <h3 class="section-header">➕ Create / Edit QA Inspection Template</h3>
+                    <p style="color:#666; font-size:14px; margin-top: 0;">Use this form to dynamically add new Part Numbers and their required inspection parameters to the database.</p>
+                    
+                    <div class="form-group" style="max-width: 400px; margin-bottom: 20px;">
+                        <label>Part Number / Code *</label>
+                        <input type="text" id="templatePartNo" placeholder="e.g. M8x1.25x36.5" style="border-color: var(--accent); font-weight: bold;">
+                    </div>
+                    
+                    <h4 style="color: var(--primary); border-bottom: 1px solid #ddd; padding-bottom: 5px;">Stations & Parameters</h4>
+                    <div id="templateStationsContainer"></div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-warning" onclick="addTemplateStation()">➕ Add Station</button>
+                        <button type="button" class="btn btn-primary" onclick="saveQATemplate()" style="margin-left:10px;">💾 Save Template to DB</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2542,7 +2567,6 @@
 
         function downloadPDF() { window.print(); }
 
-        // --- MONGODB FETCH LOGIC ---
         async function loadDataFromMongo() {
             const statusEl = document.getElementById('mongoStatus');
             try {
@@ -2565,6 +2589,11 @@
                         ecnList = data.state.ecnList || [];
                         issueHistory = data.state.issueHistory || [];
                         revisedStockHistory = data.state.revisedStockHistory || [];
+                        
+                        // NEW: Pull QA Specs from DB, fallback to hardcoded if empty
+                        if(data.state.qaSpecs && Object.keys(data.state.qaSpecs).length > 0) {
+                            qaSpecs = data.state.qaSpecs;
+                        }
                     }
                     statusEl.innerText = "🟢 Connected to MongoDB";
                     statusEl.className = "connected";
@@ -2591,7 +2620,8 @@
                     body: JSON.stringify({
                         masterInventory, returnHistory, conversionHistory, qaHistory,
                         consumablesHistory, indentHistory, analyticsHistory,
-                        invAdjustmentHistory, documentRepo, lastIssueMemory, toolSchedules, dwmHistory, ecnList, issueHistory, revisedStockHistory
+                        invAdjustmentHistory, documentRepo, lastIssueMemory, toolSchedules, dwmHistory, ecnList, issueHistory, revisedStockHistory,
+                        qaSpecs // <-- NEW: Saves templates to DB
                     })
                 });
                 populateBomDropdown();
@@ -3680,6 +3710,86 @@
                 record.remarks = newRemark;
                 saveAllData();
             }
+        }
+
+
+
+        // ==========================================
+        // QA TEMPLATE BUILDER LOGIC
+        // ==========================================
+        function addTemplateStation() {
+            const container = document.getElementById('templateStationsContainer');
+            const stnDiv = document.createElement('div');
+            stnDiv.className = 'card';
+            stnDiv.style.background = '#f8fafc';
+            stnDiv.style.border = '1px dashed #cbd5e1';
+            stnDiv.style.padding = '15px';
+            stnDiv.style.marginBottom = '15px';
+            stnDiv.innerHTML = `
+                <div class="form-group">
+                    <label>Station Name</label>
+                    <input type="text" class="tpl-stn-name" placeholder="e.g. I Station, Cut off station" style="border-color: #007bff; font-weight:bold;">
+                </div>
+                <div class="tpl-params-container"></div>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button type="button" class="btn btn-tiny btn-outline" style="padding: 6px 10px;" onclick="addTemplateParam(this)">➕ Add Parameter</button>
+                    <button type="button" class="btn btn-tiny btn-danger" style="padding: 6px 10px;" onclick="this.closest('.card').remove()">🗑️ Remove Station</button>
+                </div>
+            `;
+            container.appendChild(stnDiv);
+            addTemplateParam(stnDiv.querySelector('button')); // Add first param automatically
+        }
+
+        function addTemplateParam(btn) {
+            const container = btn.closest('.card').querySelector('.tpl-params-container');
+            const pDiv = document.createElement('div');
+            pDiv.style.display = 'flex';
+            pDiv.style.gap = '10px';
+            pDiv.style.marginBottom = '8px';
+            pDiv.innerHTML = `
+                <input type="text" class="tpl-param-name" placeholder="Parameter (e.g. 1st Bore)" style="flex:1; padding:8px;">
+                <input type="text" class="tpl-param-spec" placeholder="Spec (e.g. 7.80 - 7.81)" style="flex:1; padding:8px;">
+                <button type="button" class="btn btn-danger" style="padding: 8px 12px;" onclick="this.parentElement.remove()">✖</button>
+            `;
+            container.appendChild(pDiv);
+        }
+
+        function saveQATemplate() {
+            const partNo = document.getElementById('templatePartNo').value.trim();
+            if (!partNo) return customAlert("Part Number is required!");
+
+            let stations = {};
+            const stnDivs = document.getElementById('templateStationsContainer').querySelectorAll('.card');
+
+            if(stnDivs.length === 0) return customAlert("Add at least one station.");
+
+            stnDivs.forEach(stnDiv => {
+                let stnName = stnDiv.querySelector('.tpl-stn-name').value.trim() || 'Unnamed Station';
+                let params = [];
+                stnDiv.querySelectorAll('.tpl-params-container > div').forEach(pDiv => {
+                    let pName = pDiv.querySelector('.tpl-param-name').value.trim();
+                    let pSpec = pDiv.querySelector('.tpl-param-spec').value.trim();
+                    if(pName && pSpec) {
+                        params.push({ param: pName, spec: pSpec });
+                    }
+                });
+                if(params.length > 0) {
+                    stations[stnName] = params;
+                }
+            });
+
+            qaSpecs[partNo] = stations;
+            saveAllData(); // Push to DB
+            updateQADropdown(); // Refresh the list
+            
+            customAlert(`✅ QA Template for [${partNo}] saved successfully!`);
+            
+            // Clear form
+            document.getElementById('templatePartNo').value = '';
+            document.getElementById('templateStationsContainer').innerHTML = '';
+            
+            // Switch back to inspection view
+            switchSubTab('qa-inspect-area', document.querySelector('.sub-nav-btn[onclick*="qa-inspect-area"]'));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
