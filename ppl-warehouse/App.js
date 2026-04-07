@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 // ✅ SERVER SETTINGS
-const API_URL = "https://ppl-warehouse-1qn1.onrender.com/api";
+const API_URL = "https://ppl-erp-system.onrender.com/api";
 const LOW_STOCK_THRESHOLD = 50; 
 
 export default function App() {
