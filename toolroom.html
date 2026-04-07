@@ -1794,11 +1794,17 @@
             <div id="qa-template-area" class="sub-tab-content">
                 <div class="card" style="border-top: 4px solid var(--primary);">
                     <h3 class="section-header">➕ Create / Edit QA Inspection Template</h3>
-                    <p style="color:#666; font-size:14px; margin-top: 0;">Use this form to dynamically add new Part Numbers and their required inspection parameters to the database.</p>
+                    <p style="color:#666; font-size:14px; margin-top: 0;">Create a new template from scratch, or import an existing one to edit.</p>
                     
-                    <div class="form-group" style="max-width: 400px; margin-bottom: 20px;">
+                    <div class="form-group" style="margin-bottom: 20px;">
                         <label>Part Number / Code *</label>
-                        <input type="text" id="templatePartNo" placeholder="e.g. M8x1.25x36.5" style="border-color: var(--accent); font-weight: bold;">
+                        <div style="display: flex; gap: 10px; max-width: 600px;">
+                            <input type="text" id="templatePartNo" placeholder="e.g. M8x1.25x36.5" style="border-color: var(--accent); font-weight: bold; flex: 1;">
+                            <select id="importTemplateSelect" style="flex: 1;">
+                                <option value="">-- Import Existing Template --</option>
+                            </select>
+                            <button type="button" class="btn btn-outline" onclick="loadExistingTemplate()">📥 Load</button>
+                        </div>
                     </div>
                     
                     <h4 style="color: var(--primary); border-bottom: 1px solid #ddd; padding-bottom: 5px;">Stations & Parameters</h4>
@@ -3790,6 +3796,69 @@
             
             // Switch back to inspection view
             switchSubTab('qa-inspect-area', document.querySelector('.sub-nav-btn[onclick*="qa-inspect-area"]'));
+        }
+
+
+
+
+
+        // Populates the "Import Existing" dropdown
+        function updateTemplateDropdown() {
+            const select = document.getElementById('importTemplateSelect');
+            if (!select) return;
+            select.innerHTML = '<option value="">-- Import Existing Template --</option>';
+            for (let partNo in qaSpecs) {
+                select.innerHTML += `<option value="${partNo}">${partNo}</option>`;
+            }
+        }
+
+        // Loads the selected template into the visual builder
+        function loadExistingTemplate() {
+            const partNo = document.getElementById('importTemplateSelect').value;
+            if (!partNo) return customAlert("Please select a template from the dropdown to import.");
+            
+            document.getElementById('templatePartNo').value = partNo;
+            const container = document.getElementById('templateStationsContainer');
+            container.innerHTML = ''; // Clear existing builder
+            
+            const spec = qaSpecs[partNo];
+            for (const [station, params] of Object.entries(spec)) {
+                // Create station block
+                const stnDiv = document.createElement('div');
+                stnDiv.className = 'card';
+                stnDiv.style.background = '#f8fafc';
+                stnDiv.style.border = '1px dashed #cbd5e1';
+                stnDiv.style.padding = '15px';
+                stnDiv.style.marginBottom = '15px';
+                stnDiv.innerHTML = `
+                    <div class="form-group">
+                        <label>Station Name</label>
+                        <input type="text" class="tpl-stn-name" value="${station}" placeholder="e.g. I Station, Cut off station" style="border-color: #007bff; font-weight:bold;">
+                    </div>
+                    <div class="tpl-params-container"></div>
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button type="button" class="btn btn-tiny btn-outline" style="padding: 6px 10px;" onclick="addTemplateParam(this)">➕ Add Parameter</button>
+                        <button type="button" class="btn btn-tiny btn-danger" style="padding: 6px 10px;" onclick="this.closest('.card').remove()">🗑️ Remove Station</button>
+                    </div>
+                `;
+                container.appendChild(stnDiv);
+                
+                // Inject the parameters for this station
+                const paramsContainer = stnDiv.querySelector('.tpl-params-container');
+                params.forEach(p => {
+                    const pDiv = document.createElement('div');
+                    pDiv.style.display = 'flex';
+                    pDiv.style.gap = '10px';
+                    pDiv.style.marginBottom = '8px';
+                    pDiv.innerHTML = `
+                        <input type="text" class="tpl-param-name" value="${p.param}" placeholder="Parameter" style="flex:1; padding:8px;">
+                        <input type="text" class="tpl-param-spec" value="${p.spec}" placeholder="Spec" style="flex:1; padding:8px;">
+                        <button type="button" class="btn btn-danger" style="padding: 8px 12px;" onclick="this.parentElement.remove()">✖</button>
+                    `;
+                    paramsContainer.appendChild(pDiv);
+                });
+            }
+            customAlert(`✅ Loaded template for [${partNo}]. You can edit it below.`);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
