@@ -407,11 +407,13 @@
     </div>
 
 
-    <div id="topNav" style="background: #212529; padding: 20px 25px 0 30px; display: none; align-items: flex-end; color: white; gap: 10px;">
+    <div id="topNav" style="background: #212529; padding: 0 20px; display: none; justify-content: space-between; align-items: stretch; color: white; height: 55px; gap: 15px;">
         
-        <div style="font-weight: bold; font-size: 16px; color: #ff9800; padding-bottom: 8px; white-space: nowrap;">🏭 PPL ERP</div>
+        <div style="display: flex; align-items: center; font-weight: bold; font-size: 16px; color: #ff9800; white-space: nowrap;">
+            🏭 PPL ERP
+        </div>
         
-        <div id="navButtons" style="display: flex; gap: 3px; flex-wrap: nowrap; overflow-x: auto; flex: 1; padding-bottom: 1;">
+        <div id="navButtons" style="display: flex; gap: 2px; flex-wrap: nowrap; overflow-x: auto; flex: 1; align-items: flex-end; margin-bottom: 0;">
             <button class="tab-btn active" id="nav-prod" onclick="switchMainTab('productionCard', 'nav-prod')">Production</button>
             <button class="tab-btn" id="nav-qc" onclick="switchMainTab('qcCard', 'nav-qc')" style="display: none; background: #17a2b8; color: white;">QC</button>
             <button class="tab-btn" id="nav-inv" onclick="switchMainTab('invCard', 'nav-inv')" style="display: none;">Inventory</button>
@@ -422,8 +424,8 @@
             <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')" style="display: none; background: #343a40; color: white; border-left: 2px solid #555;">🛠️ Tool Room</button>
         </div>
 
-        <div style="font-size: 13px; display: flex; align-items: center; padding-bottom: 8px; white-space: nowrap; margin-left: auto;">
-            <span id="roleDisplay" class="role-badge" style="padding: 4px 8px; font-size: 12px;"></span>
+        <div style="display: flex; align-items: center; font-size: 13px; white-space: nowrap; margin-left: auto;">
+            <span id="roleDisplay" class="role-badge" style="padding: 4px 10px; font-size: 12px; min-width: 20px; text-align: center;"></span>
             <a href="#" onclick="logout()" style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 15px;">Logout</a>
         </div>
         
