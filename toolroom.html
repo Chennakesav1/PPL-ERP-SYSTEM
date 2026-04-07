@@ -2531,7 +2531,19 @@
         }
         function handleLogout() { currentUserRole = null; document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('loginUser').value = ''; document.getElementById('loginPwd').value = ''; document.getElementById('activeUserDisplay').innerText = 'Not Logged In'; }
         function applyRBAC() { document.querySelectorAll('.nav-btn, .nav-group-title').forEach(el => { if (el.hasAttribute('data-roles')) el.style.display = el.getAttribute('data-roles').split(',').includes(currentUserRole) ? '' : 'none'; }); }
-        function switchTab(t) { document.querySelectorAll('.tab-section').forEach(x => x.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active')); document.getElementById(t).classList.add('active'); if (event && event.currentTarget) event.currentTarget.classList.add('active'); }
+        function switchTab(t) {
+            // 1. Hide all tabs and remove button highlights
+            document.querySelectorAll('.tab-section').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+
+            // 2. Show the target tab
+            let tab = document.getElementById(t);
+            if (tab) tab.classList.add('active');
+
+            // 3. Safely highlight the correct sidebar button without relying on mouse click events
+            let activeBtn = document.querySelector(`.nav-btn[onclick*="switchTab('${t}')"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
         function switchSubTab(s, b) { const p = b.closest('.tab-section'); p.querySelectorAll('.sub-tab-content').forEach(x => x.classList.remove('active')); p.querySelectorAll('.sub-nav-btn').forEach(x => x.classList.remove('active')); document.getElementById(s).classList.add('active'); b.classList.add('active'); }
 
         function downloadPDF() { window.print(); }
@@ -2710,7 +2722,7 @@
             let pendingAdminCount = pendAdmin;
             let badge = document.getElementById('adminNotifBadge');
 
-            if (badge) { 
+            if (badge) {
                 if (pendingAdminCount > 0) {
                     badge.innerText = pendingAdminCount;
                     badge.style.display = 'inline-block';
@@ -3170,7 +3182,7 @@
 
                 let oldMasterItem = masterInventory.find(t => t.code === pendingRevision.oldCode);
                 if (oldMasterItem) {
-                    let newItem = JSON.parse(JSON.stringify(oldMasterItem)); 
+                    let newItem = JSON.parse(JSON.stringify(oldMasterItem));
                     newItem.code = newCode;
                     newItem.stock = 0;
                     newItem.rngStock = 0;
@@ -3196,7 +3208,7 @@
                 closeRevisionModal();
                 await customAlert("✅ Revision Approved! Document linked, and Master Stock updated with the new tool.");
                 renderAllTables();
-                renderToolSchedule(); 
+                renderToolSchedule();
             };
             reader.readAsDataURL(file);
         }
