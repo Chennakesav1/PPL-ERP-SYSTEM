@@ -1769,6 +1769,7 @@
             <div class="sub-nav">
                 <button type="button" class="sub-nav-btn active" onclick="switchSubTab('qa-inspect-area', this)">📝 Conduct Inspection</button>
                 <button type="button" class="sub-nav-btn" onclick="switchSubTab('qa-template-area', this)">⚙️ Build QA Template</button>
+                <button type="button" class="sub-nav-btn" style="color: #856404; background: #fffdf0; border: 1px solid #ffeba1;" onclick="switchSubTab('import-qa-area', this)">📥 Import QA CSV</button>
             </div>
 
             <div id="qa-inspect-area" class="sub-tab-content active">
@@ -1816,7 +1817,19 @@
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div id="import-qa-area" class="sub-tab-content">
+                <div class="card" style="border-top: 5px solid var(--warning);">
+                    <h3 class="section-header">Bulk Import QA Templates from CSV</h3>
+                    <p style="color:#666; font-size:14px;">Upload exported Pre/Post Qualification CSVs. You can select multiple files at once!</p>
+                    <div class="upload-zone">
+                        <input type="file" id="csvQAInput" accept=".csv" multiple style="font-size:16px; padding:10px;">
+                    </div>
+                    <button class="btn btn-warning" style="width:100%; font-size:16px; color: black;" onclick="processQACSVUpload()">🚀 Process & Sync QA Specs</button>
+                    <hr style="margin:30px 0;">
+                    <button class="btn btn-danger" style="width:100%;" onclick="wipeDatabase('qaSpecs')">⚠️ WIPE QA TEMPLATES DATABASE</button>
+                </div>
+            </div>
 
         <div id="drawings-repo" class="tab-section">
             <h1>📁 Drawings & Document Master</h1>
@@ -2960,6 +2973,110 @@
             reader.readAsText(file);
         }
 
+        async function processQACSVUpload() {
+            if (currentUserRole !== 'admin' && currentUserRole !== 'qa') return await customAlert("Access Denied. Only Admin and QA can upload templates.");
+            const fileInput = document.getElementById('csvQAInput');
+            if (!fileInput.files || fileInput.files.length === 0) return await customAlert("Please select at least one CSV file.");
+
+            let importCount = 0;
+
+            // Loop through all selected files for Bulk Upload
+            for (let f = 0; f < fileInput.files.length; f++) {
+                const file = fileInput.files[f];
+                const text = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsText(file);
+                });
+
+                let allRows = [];
+                let currentIndex = 0;
+                while (currentIndex < text.length) {
+                    let parsed = parseCSVLine(text.substring(currentIndex));
+                    if (parsed.row.length > 0 && !parsed.row.every(c => c === "")) allRows.push(parsed.row);
+                    if (parsed.nextIndex === 0) break;
+                    currentIndex += parsed.nextIndex;
+                }
+
+                let partNo = null;
+                for (let i = 0; i < Math.min(15, allRows.length); i++) {
+                    let rowStr = allRows[i].join(' ');
+                    let match = rowStr.match(/Part No\.?\s*([A-Za-z0-9\-\/]+)/i);
+                    if (match) { partNo = match[1].trim(); break; }
+                }
+                
+                if (!partNo) continue; // Skip if no part number found
+
+                let stations = {};
+                let currentStation = null;
+
+                for (let i = 0; i < allRows.length; i++) {
+                    let cols = allRows[i].map(c => c ? c.trim() : "");
+                    let rowStr = cols.join(' ').toLowerCase();
+
+                    // Detect Station Headers
+                    if ((rowStr.includes("station") && !rowStr.includes("parameters") && !rowStr.includes("visual:") && !rowStr.includes("tools pre")) || rowStr.includes("general (")) {
+                        for (let c of cols) {
+                            if (c.toLowerCase().includes("station") || c.toLowerCase().includes("general (")) {
+                                currentStation = c.trim();
+                                if (!stations[currentStation]) stations[currentStation] = [];
+                                break;
+                            }
+                        }
+                        continue;
+                    }
+
+                    if (currentStation) {
+                        // Skip empty or generic title rows
+                        if (rowStr.includes("parameters") || rowStr.includes("die side") || rowStr.includes("date:") || rowStr.includes("m/c:") || rowStr.includes("tools pre / post")) {
+                            continue;
+                        }
+
+                        // Left Side Parameters (Cols 1, 2 -> Spec Col 3)
+                        if (cols.length >= 4 && cols[3]) {
+                            let param1 = cols[2] ? `${cols[1]} ${cols[2]}`.trim() : cols[1].trim();
+                            let spec1 = cols[3].trim();
+                            if (param1 && spec1 && !['parameters', 'die side', 'punch side', 'punch  side'].includes(param1.toLowerCase())) {
+                                if (param1 === 'Quill' || param1 === 'Cutter') param1 += " Bore";
+                                if (!stations[currentStation].some(d => d.param === param1)) {
+                                    stations[currentStation].push({ param: param1, spec: spec1 });
+                                }
+                            }
+                        }
+
+                        // Right Side Parameters (Cols 5, 6 -> Spec Col 7)
+                        if (cols.length >= 8 && cols[7]) {
+                            let param2 = cols[6] ? `${cols[5]} ${cols[6]}`.trim() : cols[5].trim();
+                            let spec2 = cols[7].trim();
+                            if (param2 && spec2 && !['parameters', 'die side', 'punch side', 'punch  side'].includes(param2.toLowerCase())) {
+                                if (param2 === 'Quill' || param2 === 'Cutter') param2 += " Bore";
+                                if (!stations[currentStation].some(d => d.param === param2)) {
+                                    stations[currentStation].push({ param: param2, spec: spec2 });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (Object.keys(stations).length > 0) {
+                    qaSpecs[partNo] = stations; // Add to global object
+                    importCount++;
+                }
+            }
+
+            if (importCount > 0) {
+                saveAllData();
+                if (typeof updateQADropdown === 'function') updateQADropdown();
+                if (typeof updateTemplateDropdown === 'function') updateTemplateDropdown();
+                await customAlert(`✅ Successfully imported ${importCount} QA Templates to the database!`);
+                fileInput.value = '';
+            } else {
+                await customAlert("⚠️ Could not find valid QA data in the uploaded file(s). Check format.");
+            }
+        }
+
+
+
         async function wipeDatabase(type) {
             if (currentUserRole !== 'admin') return await customAlert("Only Admins can wipe.");
             let conf = await customPrompt(`Type 'WIPE' to confirm deleting all ${type}:`, "Wipe DB", false);
@@ -2969,7 +3086,12 @@
                     toolSchedules = {};
                     document.getElementById('bomDisplayCard').style.display = 'none';
                 }
-                saveAllData(); renderAllTables(); await customAlert("Wiped.");
+                if (type === 'qaSpecs') {
+                    qaSpecs = {};
+                    if (typeof updateQADropdown === 'function') updateQADropdown();
+                    if (typeof updateTemplateDropdown === 'function') updateTemplateDropdown();
+                }
+                saveAllData(); renderAllTables(); await customAlert("Database Wiped Successfully.");
             }
         }
 
