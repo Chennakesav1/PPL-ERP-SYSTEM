@@ -2252,7 +2252,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://ppl-erp-system.onrender.com/api';
+        const API_URL = '/api';
 
         // Data Arrays
         let masterInventory = [];
@@ -2275,324 +2275,6 @@
 
 
         let qaSpecs = {
-            "102W315106": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "7.85" },
-                    { "param": "Cutter Bore", "spec": "7.95" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "Mouth Dia", "spec": "9.75 - 9.76" },
-                    { "param": "Cone profile", "spec": "Including 16°" },
-                    { "param": "Ext. land Dia", "spec": "7.00 - 7.01" },
-                    { "param": "Cone ID", "spec": "7.85 - 7.87" },
-                    { "param": "Mouth Angle", "spec": "15 Deg Per Side" },
-                    { "param": "Mouth Dia", "spec": "9.75 - 9.77" },
-                    { "param": "Relief Dia", "spec": "7.05 - 7.06" },
-                    { "param": "Pin dia", "spec": "7.80 - 7.82" },
-                    { "param": "Pin length", "spec": "40.00 - 40.10" }
-                ],
-                "II Station": [
-                    { "param": "1st Bore", "spec": "7.04 - 7.05" },
-                    { "param": "Punch Pin Dia", "spec": "10.38 - 10.40" },
-                    { "param": "Punch Pin Flat", "spec": "7.76 - 7.78" },
-                    { "param": "Punch Mouth Dia", "spec": "10.50 - 10.60" },
-                    { "param": "Punch ID", "spec": "7.85 - 7.87" }
-                ],
-                "III Station": [
-                    { "param": "1st Bore", "spec": "7.08 - 7.09" },
-                    { "param": "Punch Pin Dia", "spec": "19.50 - 19.52" },
-                    { "param": "2nd Bore", "spec": "7.02 - 7.03" },
-                    { "param": "Punch Pin Flat", "spec": "11.83 - 11.85" },
-                    { "param": "3rd Bore", "spec": "7.52 - 7.53" },
-                    { "param": "Punch OD", "spec": "19.50 - 19.60" }
-                ],
-                "IV Station": [
-                    { "param": "Washer Dia", "spec": "15.50 - 15.52" },
-                    { "param": "Trim Die A/F", "spec": "8.42 - 8.48" },
-                    { "param": "Washer Angle", "spec": "15° Per Side" },
-                    { "param": "Nut Bore", "spec": "12.00 - 12.01" },
-                    { "param": "Ext. land Dia", "spec": "7.15 - 7.16" },
-                    { "param": "Depth", "spec": "1.30 Ref." }
-                ]
-            },
-            "G116033981": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "17.70 - 17.72" },
-                    { "param": "Cutter Bore", "spec": "17.80 - 17.82" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "1st Die Bore", "spec": "17.85 - 17.86" },
-                    { "param": "Cone Inner Dia", "spec": "7.53 - 7.55" },
-                    { "param": "2nd Pre Pointing Die", "spec": "17.84 - 17.85" },
-                    { "param": "Pin dia", "spec": "17.48 - 17.50" },
-                    { "param": "Pin Length", "spec": "95.00 - 95.10" }
-                ],
-                "II Station": [
-                    { "param": "1st Bore", "spec": "18.05 - 18.06" },
-                    { "param": "Cone Inner Dia", "spec": "17.73 - 17.75" },
-                    { "param": "2nd Trap Ext. Die ID", "spec": "18.04 - 18.05" },
-                    { "param": "Pin dia", "spec": "17.68 - 17.70" },
-                    { "param": "Trap Ext. Die Land Dia", "spec": "14.82 - 14.83" },
-                    { "param": "Pin Length", "spec": "100.00 - 100.10" },
-                    { "param": "Trap Ext. Die Relief Dia", "spec": "14.87 - 14.88" }
-                ],
-                "III Station": [
-                    { "param": "1st Bore", "spec": "14.89 - 14.90" },
-                    { "param": "Heading Insert Profile Front Dia", "spec": "15.00 Ref." },
-                    { "param": "Mouth Dia", "spec": "35.00 Ref." },
-                    { "param": "Profile Angle", "spec": "110°" },
-                    { "param": "Mouth Angle", "spec": "17° Ref." },
-                    { "param": "Profile Back Dia", "spec": "18.90 - 19.10" },
-                    { "param": "1st Angle", "spec": "110°" },
-                    { "param": "1st Dia", "spec": "24.00 Ref." },
-                    { "param": "2nd Angle", "spec": "130°" },
-                    { "param": "2nd Dia", "spec": "31.90 - 32.10" }
-                ]
-            },
-            "W008025981": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "7.14 - 7.16" },
-                    { "param": "Cutter Bore", "spec": "7.24 - 7.26" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "1st Bore", "spec": "7.03 - 7.04" },
-                    { "param": "Cone profile", "spec": "10° (Per Side)" },
-                    { "param": "2nd Bore", "spec": "7.03 - 7.05" },
-                    { "param": "Cone Front ID", "spec": "9.98 - 10.02" },
-                    { "param": "Cone Back ID", "spec": "6.78 - 6.80" },
-                    { "param": "Pin dia", "spec": "6.78 - 6.80" },
-                    { "param": "Pin length", "spec": "40.00 - 40.10" }
-                ],
-                "II Station": [
-                    { "param": "Top Nib Front ID", "spec": "12.70 - 12.72" },
-                    { "param": "Punch Profile Dia", "spec": "12.70 - 12.75" },
-                    { "param": "Top Nib Back ID", "spec": "11.62 Ref." },
-                    { "param": "Depth", "spec": "0.65 Ref." },
-                    { "param": "Top Nib Length", "spec": "6.25 - 6.35" },
-                    { "param": "1st Die ID", "spec": "7.06 - 7.07" },
-                    { "param": "2nd Die ID", "spec": "7.06 - 7.07" }
-                ],
-                "III Station": [
-                    { "param": "Top Nib Front ID", "spec": "12.8 - 12.85" },
-                    { "param": "Pin Insert ID", "spec": "10.12 - 10.14" },
-                    { "param": "Top Nib ID Angle", "spec": "1°" },
-                    { "param": "Pin Dia", "spec": "9.96 - 9.98" },
-                    { "param": "Top Nib OD", "spec": "20.00" },
-                    { "param": "Pin Total Length", "spec": "39.90 - 40.10" },
-                    { "param": "Semi Form Die ID", "spec": "12.94 - 12.95" },
-                    { "param": "Hex Pin A/F", "spec": "6.05 - 6.07" },
-                    { "param": "Semi Form Die Angle", "spec": "2.5°" },
-                    { "param": "Hex Pin Back Dia", "spec": "7.15 - 7.20" },
-                    { "param": "1st Die ID", "spec": "7.09 - 7.10" },
-                    { "param": "2nd Die ID", "spec": "7.08 - 7.09" }
-                ]
-            },
-            "W006009582": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "5.80 - 5.85" },
-                    { "param": "Cutter Bore", "spec": "5.90-5.92" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "1st Bore", "spec": "6.15-6.16" },
-                    { "param": "Punch Insert ID", "spec": "5.75-5.77" },
-                    { "param": "Extrusion Bore", "spec": "5.16-5.17" },
-                    { "param": "Pin dia", "spec": "5.70-5.72" },
-                    { "param": "Ext. Die Relief Dia", "spec": "5.21-5.22" },
-                    { "param": "Pin Total length", "spec": "54.90-55.10" }
-                ],
-                "II Station": [
-                    { "param": "1st Bore", "spec": "8.50-8.57" },
-                    { "param": "Punch Insert ID", "spec": "6.28-6.30" },
-                    { "param": "1st Bore Depth", "spec": "1.00-1.10" },
-                    { "param": "Pin dia", "spec": "6.23-6.25" },
-                    { "param": "2ND Bore", "spec": "5.20-5.21" },
-                    { "param": "Pin Total length", "spec": "50.00-50.10" },
-                    { "param": "2ND Bore Angle", "spec": "100 DEG" }
-                ],
-                "III Station": [
-                    { "param": "1st Step Bore", "spec": "9.94-9.95" },
-                    { "param": "Sliding Punch mouth Dia", "spec": "10.00 Ref." },
-                    { "param": "1st Step Bore Depth", "spec": "2.84-2.85" },
-                    { "param": "Inner Dia", "spec": "6.25-6.30" },
-                    { "param": "1st Bore Dia", "spec": "5.24-5.26" },
-                    { "param": "Depth", "spec": "2.30" },
-                    { "param": "Profile Radius", "spec": "R4.0" },
-                    { "param": "Hex Pin A/F", "spec": "4.05-4.06" }
-                ]
-            },
-            "DF181098": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "4.50 - 4.52" },
-                    { "param": "Cutter Bore", "spec": "4.55-4.57" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "1st Bore", "spec": "4.40-4.41" },
-                    { "param": "Punch Id", "spec": "4.50-4.51" },
-                    { "param": "Punch Pin Dia", "spec": "4.45-4.56" },
-                    { "param": "Punch Pin Length", "spec": "32.90-33.10" },
-                    { "param": "Mouth Dia", "spec": "9.00.9.10" },
-                    { "param": "Step Bore", "spec": "5.70-5.80" }
-                ],
-                "II Station": [
-                    { "param": "1st Bore", "spec": "4.40-4.41" },
-                    { "param": "Punch Mouth Dia", "spec": "11.20-11.80" },
-                    { "param": "Punch Depth", "spec": "2.95-3.25" },
-                    { "param": "Punch Profile Radius", "spec": "R7.7 Ref" }
-                ],
-                "General ( Common for all stations)": [
-                    { "param": "Visual:", "spec": "No damage" },
-                    { "param": "Heading Insert Fit", "spec": "0.13-0.15" },
-                    { "param": "T C / Spacer Face", "spec": "Clean & Ok" },
-                    { "param": "Punch / Punch Pin Profile", "spec": "No damage" },
-                    { "param": "K O Pin Working Face", "spec": "Clean & Flat" },
-                    { "param": "T C Taper", "spec": "OK" }
-                ]
-            },
-            "93500-05012-1H": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "4.50 - 4.52" },
-                    { "param": "Cutter Bore", "spec": "4.55-4.57" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "1st Bore", "spec": "4.40-4.41" },
-                    { "param": "Punch Id", "spec": "4.50-4.51" },
-                    { "param": "Punch Pin Dia", "spec": "4.45-4.56" },
-                    { "param": "Punch Pin Length", "spec": "32.90-33.10" },
-                    { "param": "Mouth Dia", "spec": "8.00-8.20" },
-                    { "param": "Step Bore", "spec": "5.70-5.80" }
-                ],
-                "II Station": [
-                    { "param": "1st Bore", "spec": "4.40-4.41" },
-                    { "param": "Punch Mouth Dia", "spec": "8.45-8.95" },
-                    { "param": "Punch Depth", "spec": "3.15-3.45" }
-                ]
-            },
-            "T005009581/T005017581": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "5.80 - 5.82" },
-                    { "param": "Cutter Bore", "spec": "5.90 - 5.92" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "1st Bore", "spec": "5.98 - 6.00" },
-                    { "param": "Punch Insert ID", "spec": "5.75 - 5.77" },
-                    { "param": "Pin dia", "spec": "5.70 - 5.72" },
-                    { "param": "Pin Total length", "spec": "54.90 - 55.10" }
-                ],
-                "II Station": [
-                    { "param": "1st Bore", "spec": "6.18 - 6.19" },
-                    { "param": "Punch Insert ID", "spec": "6.05 - 6.07" },
-                    { "param": "Extrusion Bore", "spec": "4.30 - 4.31" },
-                    { "param": "Pin dia", "spec": "6.00 - 6.02" },
-                    { "param": "Ext. Die Relief Dia", "spec": "4.35 - 4.36" },
-                    { "param": "Pin Total length", "spec": "52.50 - 52.60" }
-                ],
-                "III Station": [
-                    { "param": "1st Step Bore", "spec": "7.74 - 7.75" },
-                    { "param": "Sliding Punch mouth Dia", "spec": "12.00 Ref." },
-                    { "param": "Inner Dia", "spec": "6.30 - 6.35" },
-                    { "param": "1st Bore Dia", "spec": "4.34 - 4.36" },
-                    { "param": "Depth", "spec": "4.00 Ref." },
-                    { "param": "Profile Radius", "spec": "R6" },
-                    { "param": "Punch Pin Dia", "spec": "6.30 - 6.32" }
-                ]
-            },
-            "P005026401/P005028401": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "5.80 - 5.85" },
-                    { "param": "Cutter Bore", "spec": "5.90-5.92" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "1st Bore", "spec": "5.98-6.00" },
-                    { "param": "Punch Insert ID", "spec": "5.75-5.77" },
-                    { "param": "Pin dia", "spec": "5.70-5.72" },
-                    { "param": "Pin Total length", "spec": "54.90-55.10" }
-                ],
-                "II Station": [
-                    { "param": "1st Bore", "spec": "6.15-6.17" },
-                    { "param": "Punch Insert ID", "spec": "6.10-6.12" },
-                    { "param": "Extrusion Bore", "spec": "4.35-4.37" },
-                    { "param": "Pin dia", "spec": "6.05-6.07" },
-                    { "param": "Ext. Die Relief Dia", "spec": "4.40-4.42" },
-                    { "param": "Pin Total length", "spec": "50.00-50.10" }
-                ]
-            },
-            "G006L401": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "5.80 - 5.82" },
-                    { "param": "Cutter Bore", "spec": "5.90 - 5.92" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "Punch Profile ID", "spec": "6.50 - 6.52" },
-                    { "param": "Punch Inner ID", "spec": "5.75 - 5.77" },
-                    { "param": "Punch Profile", "spec": "5 deg Per Side" },
-                    { "param": "Punch Depth", "spec": "4.20 Ref." }
-                ],
-                "II Station": [
-                    { "param": "1st Bore", "spec": "5.21 - 5.22" },
-                    { "param": "Sliding Punch Insert ID", "spec": "5.89 - 5.90" },
-                    { "param": "Mouth Dia", "spec": "10.40 - 10.41" },
-                    { "param": "Sliding Punch Mouth Dia", "spec": "10.40 - 10.42" },
-                    { "param": "Mouth Angle", "spec": "80 Deg" },
-                    { "param": "Mouth Angle", "spec": "14 Deg" },
-                    { "param": "Sliding Punch Profile Depth", "spec": "4.50 Ref." },
-                    { "param": "Sliding Punch Pin OD", "spec": "5.85 - 5.86" }
-                ],
-                "III Station": [
-                    { "param": "1st Bore", "spec": "5.24 - 5.25" },
-                    { "param": "Segmental Punch A/F", "spec": "9.83 - 9.85" },
-                    { "param": "2nd Bore", "spec": "5.23 - 5.24" },
-                    { "param": "Hex Punch Pin A/F", "spec": "9.78 - 9.80" },
-                    { "param": "Hex punch Pin Profile Dia", "spec": "8.80 Ref." },
-                    { "param": "Nut Bore", "spec": "15.00 - 15.01" }
-                ]
-            },
-            "P006014981": {
-                "Cut off station": [
-                    { "param": "Quill Bore", "spec": "5.30 - 5.32" },
-                    { "param": "Cutter Bore", "spec": "5.40 - 5.42" },
-                    { "param": "Quill Cutting edge", "spec": "No damage" },
-                    { "param": "Cutter Cutting edge", "spec": "No damage" }
-                ],
-                "I Station": [
-                    { "param": "1st Bore", "spec": "5.24 - 5.26" },
-                    { "param": "Sliding Punch ID", "spec": "5.30 - 5.32" },
-                    { "param": "Rubbing Dia", "spec": "19.90 - 20.00" },
-                    { "param": "Sliding Punch Mouth Dia", "spec": "11.50 - 11.70" },
-                    { "param": "Rubbing Depth", "spec": "0.2 Ref" },
-                    { "param": "Sliding Punch Mouth Radius", "spec": "R5.50 - R6.50" },
-                    { "param": "Gap Between Two Rubs", "spec": "1.0 Ref" },
-                    { "param": "Pin dia", "spec": "5.25 - 5.27" },
-                    { "param": "Pin Total length", "spec": "44.90 - 45.10" }
-                ],
-                "II Station": [
-                    { "param": "1st Bore", "spec": "5.24 - 5.26" },
-                    { "param": "Punch Mouth Dia", "spec": "13.30 - 14.00" },
-                    { "param": "Rubbing Dia", "spec": "19.90 - 20.00" },
-                    { "param": "Punch Depth", "spec": "3.20 - 3.40" },
-                    { "param": "Rubbing Depth", "spec": "1.50 Ref" },
-                    { "param": "Punch Profile Radius", "spec": "R9.6 Ref" },
-                    { "param": "Gap Between Two Rubs", "spec": "1.0 Ref" },
-                    { "param": "Punch Pin Profile Length", "spec": "2.90" }
-                ]
-            },
             "E008036202": {
                 "Cut off station": [
                     { "param": "Quill Bore", "spec": "7.85 - 7.87" },
@@ -2626,6 +2308,186 @@
                     { "param": "1st Bore", "spec": "7.18 - 7.19" },
                     { "param": "Ext. Die A/F", "spec": "12.72 - 12.75" },
                     { "param": "Mouth Angle", "spec": "15 deg" }
+                ]
+            },
+            "P006014981": {
+                "Cut off station": [
+                    { "param": "Quill Bore", "spec": "5.30 - 5.32" },
+                    { "param": "Cutter Bore", "spec": "5.40 - 5.42" },
+                    { "param": "Quill Cutting edge", "spec": "No damage" },
+                    { "param": "Cutter Cutting edge", "spec": "No damage" }
+                ],
+                "I Station": [
+                    { "param": "1st Bore", "spec": "5.24 - 5.26" },
+                    { "param": "Sliding Punch ID", "spec": "5.30 - 5.32" },
+                    { "param": "Rubbing Dia", "spec": "19.90 - 20.00" },
+                    { "param": "Sliding Punch Mouth Dia", "spec": "11.50 - 11.70" },
+                    { "param": "Rubbing Depth", "spec": "0.2 Ref" },
+                    { "param": "Sliding Punch Mouth Radius", "spec": "R5.50 - R6.50" },
+                    { "param": "Gap Between Two Rubs", "spec": "1.0 Ref" },
+                    { "param": "Pin dia", "spec": "5.25 - 5.27" },
+                    { "param": "Pin Total length", "spec": "44.90 - 45.10" }
+                ],
+                "II Station": [
+                    { "param": "1st Bore", "spec": "5.24 - 5.26" },
+                    { "param": "Punch Mouth Dia", "spec": "13.30 - 14.00" },
+                    { "param": "Rubbing Dia", "spec": "19.90 - 20.00" },
+                    { "param": "Punch Depth", "spec": "3.20 - 3.40" },
+                    { "param": "Rubbing Depth", "spec": "1.50 Ref" },
+                    { "param": "Punch Profile Radius", "spec": "R9.6 Ref" },
+                    { "param": "Gap Between Two Rubs", "spec": "1.0 Ref" },
+                    { "param": "Punch Pin Profile Length", "spec": "2.90" }
+                ]
+            },
+            "G006L401": {
+                "Cut off station": [
+                    { "param": "Quill Bore", "spec": "5.80 - 5.82" },
+                    { "param": "Cutter Bore", "spec": "5.90 - 5.92" },
+                    { "param": "Quill Cutting edge", "spec": "No damage" },
+                    { "param": "Cutter Cutting edge", "spec": "No damage" }
+                ],
+                "I Station": [
+                    { "param": "1st Bore", "spec": "5.75 - 5.78" },
+                    { "param": "Punch Profile ID", "spec": "6.50 - 6.52" },
+                    { "param": "Ext dia", "spec": "5.18 - 5.19" },
+                    { "param": "Punch Inner ID", "spec": "5.75 - 5.77" },
+                    { "param": "Ext Angle", "spec": "15 deg" },
+                    { "param": "Punch Profile", "spec": "5 deg Per Side" },
+                    { "param": "Ext Relief Dia", "spec": "5.23 - 5.24" },
+                    { "param": "Punch Depth", "spec": "4.20 Ref." }
+                ],
+                "II Station": [
+                    { "param": "1st Bore", "spec": "5.21 - 5.22" },
+                    { "param": "Sliding Punch Insert ID", "spec": "5.89 - 5.90" },
+                    { "param": "Mouth Dia", "spec": "10.40 - 10.41" },
+                    { "param": "Sliding Punch Mouth Dia", "spec": "10.40 - 10.42" },
+                    { "param": "Mouth Angle", "spec": "80 Deg" },
+                    { "param": "Mouth Angle", "spec": "14 Deg" },
+                    { "param": "Sliding Punch Profile Depth", "spec": "4.50 Ref." },
+                    { "param": "Sliding Punch Pin OD", "spec": "5.85 - 5.86" }
+                ],
+                "III Station": [
+                    { "param": "1st Bore", "spec": "5.24 - 5.25" },
+                    { "param": "Segmental Punch A/F", "spec": "9.83 - 9.85" },
+                    { "param": "2nd Bore", "spec": "5.23 - 5.24" },
+                    { "param": "Hex Punch Pin A/F", "spec": "9.78 - 9.80" },
+                    { "param": "Hex punch Pin Profile Dia", "spec": "8.80 Ref." },
+                    { "param": "Nut Bore", "spec": "15.00 - 15.01" }
+                ]
+            },
+            "T005009581/T005017581": {
+                "Cut off station": [
+                    { "param": "Quill Bore", "spec": "5.80 - 5.82" },
+                    { "param": "Cutter Bore", "spec": "5.90 - 5.92" },
+                    { "param": "Quill Cutting edge", "spec": "No damage" },
+                    { "param": "Cutter Cutting edge", "spec": "No damage" }
+                ],
+                "I Station": [
+                    { "param": "1st Bore", "spec": "5.98 - 6.00" },
+                    { "param": "Punch Insert ID", "spec": "5.75 - 5.77" },
+                    { "param": "Length upto pointing", "spec": "31.30-31.50" },
+                    { "param": "Pin dia", "spec": "5.70 - 5.72" },
+                    { "param": "Pin Total length", "spec": "54.90 - 55.10" }
+                ],
+                "II Station": [
+                    { "param": "1st Bore", "spec": "6.18 - 6.19" },
+                    { "param": "Punch Insert ID", "spec": "6.05 - 6.07" },
+                    { "param": "Extrusion Bore", "spec": "4.30 - 4.31" },
+                    { "param": "Pin dia", "spec": "6.00 - 6.02" },
+                    { "param": "Ext. Die Relief Dia", "spec": "4.35 - 4.36" },
+                    { "param": "Pin Total length", "spec": "52.50 - 52.60" }
+                ],
+                "III Station": [
+                    { "param": "1st Step Bore", "spec": "7.74 - 7.75" },
+                    { "param": "Sliding Punch mouth Dia", "spec": "12.00 Ref." },
+                    { "param": "1st Step Bore", "spec": "2.59 - 2.60" },
+                    { "param": "Inner Dia", "spec": "6.30 - 6.35" },
+                    { "param": "1st Bore Dia", "spec": "4.34 - 4.36" },
+                    { "param": "Depth", "spec": "4.00 Ref." },
+                    { "param": "Profile Radius", "spec": "R6" },
+                    { "param": "Punch Pin Dia", "spec": "6.30 - 6.32" }
+                ]
+            },
+            "P005028401": {
+                "Cut off station": [
+                    { "param": "Quill Bore", "spec": "5.80 - 5.85" },
+                    { "param": "Cutter Bore", "spec": "5.90-5.92" },
+                    { "param": "Quill Cutting edge", "spec": "No damage" },
+                    { "param": "Cutter Cutting edge", "spec": "No damage" }
+                ],
+                "I Station": [
+                    { "param": "1st Bore", "spec": "5.98-6.00" },
+                    { "param": "Punch Insert ID", "spec": "5.75-5.77" },
+                    { "param": "Length upto pointing", "spec": "31.30-31.50" },
+                    { "param": "Pin dia", "spec": "5.70-5.72" },
+                    { "param": "Pin Total length", "spec": "54.90-55.10" }
+                ],
+                "II Station": [
+                    { "param": "1st Bore", "spec": "6.15-6.17" },
+                    { "param": "Punch Insert ID", "spec": "6.10-6.12" },
+                    { "param": "Extrusion Bore", "spec": "4.35-4.37" },
+                    { "param": "Pin dia", "spec": "6.05-6.07" },
+                    { "param": "Ext. Die Relief Dia", "spec": "4.40-4.42" },
+                    { "param": "Pin Total length", "spec": "50.00-50.10" }
+                ]
+            },
+            "93500-05012-1H": {
+                "Cut off station": [
+                    { "param": "Quill Bore", "spec": "4.50 - 4.52" },
+                    { "param": "Cutter Bore", "spec": "4.55-4.57" },
+                    { "param": "Quill Cutting edge", "spec": "No damage" },
+                    { "param": "Cutter Cutting edge", "spec": "No damage" }
+                ],
+                "I Station": [
+                    { "param": "1st Bore", "spec": "4.40-4.41" },
+                    { "param": "Punch Id", "spec": "4.50-4.51" },
+                    { "param": "Punch Pin Dia", "spec": "4.45-4.56" },
+                    { "param": "Punch Pin Length", "spec": "32.90-33.10" },
+                    { "param": "Mouth Dia", "spec": "8.00-8.20" },
+                    { "param": "Step Bore", "spec": "5.70-5.80" }
+                ],
+                "II Station": [
+                    { "param": "1st Bore", "spec": "4.40-4.41" },
+                    { "param": "Punch Mouth Dia", "spec": "8.45-8.95" },
+                    { "param": "Punch Depth", "spec": "3.15-3.45" }
+                ],
+                "General ( Common for all stations)": [
+                    { "param": "Visual:", "spec": "No damage" },
+                    { "param": "Heading Insert Fit", "spec": "0.13-0.15" },
+                    { "param": "T C / Spacer Face", "spec": "Clean & Ok" },
+                    { "param": "Punch / Punch Pin Profile", "spec": "No damage" },
+                    { "param": "K O Pin Working Face", "spec": "Clean & Flat" },
+                    { "param": "T C Taper", "spec": "OK" }
+                ]
+            },
+            "DF181098": {
+                "Cut off station": [
+                    { "param": "Quill Bore", "spec": "4.50 - 4.52" },
+                    { "param": "Cutter Bore", "spec": "4.55-4.57" },
+                    { "param": "Quill Cutting edge", "spec": "No damage" },
+                    { "param": "Cutter Cutting edge", "spec": "No damage" }
+                ],
+                "I Station": [
+                    { "param": "1st Bore", "spec": "4.40-4.41" },
+                    { "param": "Punch Id", "spec": "4.50-4.51" },
+                    { "param": "Punch Pin Dia", "spec": "4.45-4.56" },
+                    { "param": "Punch Pin Length", "spec": "32.90-33.10" },
+                    { "param": "Mouth Dia", "spec": "9.00.9.10" },
+                    { "param": "Step Bore", "spec": "5.70-5.80" }
+                ],
+                "II Station": [
+                    { "param": "1st Bore", "spec": "4.40-4.41" },
+                    { "param": "Punch Mouth Dia", "spec": "11.20-11.80" },
+                    { "param": "Punch Depth", "spec": "2.95-3.25" },
+                    { "param": "Punch Profile Radius", "spec": "R7.7 Ref" }
+                ],
+                "General ( Common for all stations)": [
+                    { "param": "Visual:", "spec": "No damage" },
+                    { "param": "Heading Insert Fit", "spec": "0.13-0.15" },
+                    { "param": "T C / Spacer Face", "spec": "Clean & Ok" },
+                    { "param": "Punch / Punch Pin Profile", "spec": "No damage" },
+                    { "param": "K O Pin Working Face", "spec": "Clean & Flat" },
+                    { "param": "T C Taper", "spec": "OK" }
                 ]
             }
         };
