@@ -2252,7 +2252,7 @@
     </div>
 
     <script>
-        const API_URL = '/api';
+        const API_URL = '/api'; // Relative path guarantees it connects to your Render server!
 
         // Data Arrays
         let masterInventory = [];
@@ -2269,11 +2269,10 @@
         let ecnList = [];
         let toolSchedules = {};
         let issueHistory = [];
-        let revisedStockHistory = []; // Tracks newly created tools from Revisions
+        let revisedStockHistory = [];
+        let pendingRevision = null;
 
-        let pendingRevision = null; // Temp holder for the Modal
-
-
+        // New Detailed QA Specs
         let qaSpecs = {
             "E008036202": {
                 "Cut off station": [
@@ -2535,7 +2534,6 @@
         function switchTab(t) { document.querySelectorAll('.tab-section').forEach(x => x.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active')); document.getElementById(t).classList.add('active'); if (event && event.currentTarget) event.currentTarget.classList.add('active'); }
         function switchSubTab(s, b) { const p = b.closest('.tab-section'); p.querySelectorAll('.sub-tab-content').forEach(x => x.classList.remove('active')); p.querySelectorAll('.sub-nav-btn').forEach(x => x.classList.remove('active')); document.getElementById(s).classList.add('active'); b.classList.add('active'); }
 
-        // PDF Print Function
         function downloadPDF() { window.print(); }
 
         // --- MONGODB FETCH LOGIC ---
@@ -2605,7 +2603,6 @@
             }
         }
 
-        // --- RENDERING TABLES ---
         function renderAllTables() {
             document.getElementById('masterInventoryBody').innerHTML = masterInventory.map(item => {
                 let badgeClass = item.stock > (item.min || 0) ? "b-green" : (item.stock === 0 ? "b-red" : "b-yellow");
@@ -2652,7 +2649,6 @@
             document.getElementById('qaHistoryBody').innerHTML = qaHistory.map(q => `<tr><td>${q.date}</td><td><strong>${q.code}</strong></td><td><span class="badge b-success">${q.op}</span></td><td>${q.fid}</td><td>${q.bid}</td><td>${q.oal}</td></tr>`).join('');
             document.getElementById('consumablesHistoryBody').innerHTML = consumablesHistory.map(c => `<tr><td>${c.date}</td><td>${c.cat}</td><td>${c.spec}</td><td>${c.machine}</td><td><strong>${c.qty}</strong></td></tr>`).join('');
             document.getElementById('inventoryHistoryBody').innerHTML = invAdjustmentHistory.map(h => `<tr><td>${h.date}</td><td>${h.action}</td><td><strong>${h.code}</strong></td><td>${h.qty}</td><td>${h.operator}</td><td>${h.reason}</td></tr>`).join('');
-
             document.getElementById('issueHistoryBody').innerHTML = issueHistory.map(i => `<tr><td>${i.date}</td><td><strong>${i.code}</strong></td><td>${i.desc}</td><td>${i.machine}</td><td><span class="badge b-blue">${i.qty}</span></td><td>${i.operator}</td></tr>`).join('');
 
             document.getElementById('indentHistoryBody').innerHTML = indentHistory.map(i => {
@@ -2664,18 +2660,11 @@
             document.getElementById('analyticsHistoryBody').innerHTML = analyticsHistory.map(a => `<tr><td>${a.date}</td><td>${a.machine}</td><td>${a.desc}</td><td>${a.impact}</td><td>${a.action}</td></tr>`).join('');
             document.getElementById('docTableBody').innerHTML = documentRepo.map((d, i) => `<tr><td>${d.date}</td><td><strong>${d.part}</strong></td><td><span class="badge b-blue">${d.type}</span></td><td>${d.filename}</td><td><button class="btn btn-outline" style="padding: 4px 8px; font-size:11px;" onclick="viewDoc('${d.dataUrl}')">👁️ View</button> <button class="btn btn-danger" style="padding: 4px 8px; font-size:11px;" onclick="deleteDoc(${i})">🗑️</button></td></tr>`).join('');
 
-
-
-            // --- START: UPDATED DWM TABLE RENDER ---
             const dwmBody = document.getElementById('dwmTableBody');
             if (dwmBody) {
                 dwmBody.innerHTML = dwmHistory.map(d => {
-                    // If no stop time exists, show a red Stop button. Otherwise, show the stop time.
                     let stopCell = d.stop ? d.stop : `<button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="stopDWMTask(${d.id})">⏹️ Stop</button>`;
-
-                    // Make the remarks field a live input box
                     let remarksCell = `<input type="text" class="prod-input" style="padding: 4px 8px; font-size: 12px; min-width: 120px;" value="${d.remarks || ''}" onchange="updateDwmRemark(${d.id}, this.value)" placeholder="Add remark...">`;
-
                     return `<tr>
                         <td>${d.date}</td>
                         <td><span class="badge b-dark">${d.shift}</span></td>
@@ -2693,9 +2682,6 @@
                     </tr>`;
                 }).join('');
             }
-            // --- END: UPDATED DWM TABLE RENDER ---
-
-
 
             if (document.getElementById('dwmDate') && !document.getElementById('dwmDate').value) {
                 document.getElementById('dwmDate').value = new Date().toISOString().split('T')[0];
@@ -2708,12 +2694,10 @@
             document.getElementById('dashDocCount').innerText = `${documentRepo.length} Documents`;
             document.getElementById('indNo').value = getDailyIndentNumber();
 
-            // Analytics Dashboard Metrics
             document.getElementById('statStockOut').innerText = masterInventory.filter(t => t.stock === 0).length;
             document.getElementById('statLowStock').innerText = masterInventory.filter(t => t.stock > 0 && t.stock <= (t.min || 0)).length;
             document.getElementById('statIndents').innerText = indentHistory.length;
 
-            // New Bottleneck Metrics
             let pendTR = ecnList.filter(e => e.status === 'PENDING TOOL ROOM').length;
             let pendQA = conversionHistory.filter(c => c.status === 'Pending QA').length + ecnList.filter(e => e.status === 'PENDING QA').length;
             let pendAdmin = conversionHistory.filter(c => c.status === 'Pending Admin').length;
@@ -2723,12 +2707,10 @@
             if (document.getElementById('statPendAdmin')) document.getElementById('statPendAdmin').innerText = pendAdmin;
             if (document.getElementById('statActiveIndentsAnalytic')) document.getElementById('statActiveIndentsAnalytic').innerText = indentHistory.length;
 
-            // Admin Notification Bell Logic
-            // Admin Notification Bell Logic
             let pendingAdminCount = pendAdmin;
             let badge = document.getElementById('adminNotifBadge');
 
-            if (badge) { // <-- ADDED SAFETY CHECK
+            if (badge) { 
                 if (pendingAdminCount > 0) {
                     badge.innerText = pendingAdminCount;
                     badge.style.display = 'inline-block';
@@ -2738,7 +2720,6 @@
             }
         }
 
-        // --- CSV PARSERS ---
         function parseCSVLine(text) {
             let ret = []; let inQuote = false; let value = '';
             for (let i = 0; i < text.length; i++) {
@@ -2825,7 +2806,6 @@
                         currentIndex += parsed.nextIndex;
                     }
 
-                    // Metadata Extraction
                     let meta = { layoutNo: "", size: "", date: "", machine: "", wireDia: "" };
                     for (let i = 0; i < Math.min(20, allRows.length); i++) {
                         let rowLower = allRows[i].map(c => c ? c.toLowerCase() : "");
@@ -2851,7 +2831,6 @@
 
                     toolSchedules[scheduleId] = { meta: meta, title: `${meta.size} | M/C: ${meta.machine}`, stations: {} };
 
-                    // Tool Data Extraction
                     let currentStation = "Main Station";
                     let toolsFound = 0;
                     let headerFound = false;
@@ -2887,7 +2866,6 @@
                             if (code && code.trim().length > 3) {
                                 if (!toolSchedules[scheduleId].stations[currentStation]) toolSchedules[scheduleId].stations[currentStation] = [];
 
-                                // --- EXACT REVISION SUFFIX LOGIC ("a", "1", "v" etc) ---
                                 let highestRev = 0;
                                 let toolRevs = [false, false, false, false];
 
@@ -2896,7 +2874,6 @@
                                         let cellIdx = map.revStart + r - 1;
                                         if (cellIdx < row.length) {
                                             let val = row[cellIdx].trim().toLowerCase();
-                                            // The user specifically wants 'a', '1', 'v' etc to add a tick
                                             if (val === 'a' || val === '1' || val === 'v' || val === 'y' || val === 'yes' || val === 'ü' || val === '2' || val === '3' || val === '4') {
                                                 highestRev = r;
                                                 toolRevs[r - 1] = true;
@@ -2905,14 +2882,12 @@
                                     }
                                 }
 
-                                // Construct suffix: /00, /01, /02, /03, /04 based strictly on highest revision marked
                                 let revSuffix = highestRev > 0 ? "/0" + highestRev : "/00";
 
                                 if (code) {
                                     let baseCode = code.split('/')[0];
                                     code = baseCode + revSuffix;
                                 }
-                                // ---------------------------------------
 
                                 toolSchedules[scheduleId].stations[currentStation].push({
                                     id: "T_" + Date.now() + Math.random().toString(36).substr(2, 9),
@@ -2956,7 +2931,6 @@
             }
         }
 
-        // --- MANUAL DATA ENTRY FORMS ---
         async function saveNewStock(e) {
             e.preventDefault();
             if (currentUserRole !== 'admin' && currentUserRole !== 'toolroom') return await customAlert("Access Denied.", "Security");
@@ -3061,7 +3035,6 @@
             switchTab('tool-schedules');
         }
 
-        // --- BOM VIEWER ---
         function renderToolSchedule() {
             const scheduleId = document.getElementById('bomSelect').value;
             const card = document.getElementById('bomDisplayCard');
@@ -3128,7 +3101,6 @@
             }
         }
 
-        // --- NEW REVISION MODAL LOGIC ---
         function toggleRevision(scheduleId, stationName, toolId, revIndex) {
             if (currentUserRole !== 'qa' && currentUserRole !== 'admin') {
                 return customAlert("Only Admin and QA Department can sign off on revisions.");
@@ -3137,7 +3109,6 @@
             let tool = toolSchedules[scheduleId].stations[stationName].find(t => t.id === toolId);
             if (!tool) return;
 
-            // If they are un-checking a box, just uncheck it and revert to previous max rev
             if (tool.revs[revIndex] === true) {
                 tool.revs[revIndex] = false;
                 recalcBOMCode(tool);
@@ -3146,7 +3117,6 @@
                 return;
             }
 
-            // If checking a new box, trigger the document modal!
             let maxRev = revIndex + 1;
             for (let i = 0; i < 4; i++) {
                 if (tool.revs[i] && (i + 1) > maxRev) maxRev = i + 1;
@@ -3165,7 +3135,6 @@
                 newCode: newCode
             };
 
-            // Open Modal
             document.getElementById('revNewCode').value = newCode;
             document.getElementById('revisionModalOverlay').classList.add('active');
         }
@@ -3174,7 +3143,7 @@
             pendingRevision = null;
             document.getElementById('revisionForm').reset();
             document.getElementById('revisionModalOverlay').classList.remove('active');
-            renderToolSchedule(); // re-render to reset any temporary visual state
+            renderToolSchedule();
         }
 
         async function submitRevisionDoc(e) {
@@ -3193,18 +3162,15 @@
             reader.onload = async function (event) {
                 const dataUrl = event.target.result;
 
-                // 1. Add Document to DB
                 documentRepo.unshift({ date: getNow(), part: newCode, type: docType, filename: file.name, dataUrl: dataUrl });
 
-                // 2. Update BOM Checkbox & Code
                 let tool = toolSchedules[pendingRevision.scheduleId].stations[pendingRevision.stationName].find(t => t.id === pendingRevision.toolId);
                 tool.revs[pendingRevision.revIndex] = true;
                 tool.code = newCode;
 
-                // 3. Create new entry in Master Stock Database (Clone from old if it exists)
                 let oldMasterItem = masterInventory.find(t => t.code === pendingRevision.oldCode);
                 if (oldMasterItem) {
-                    let newItem = JSON.parse(JSON.stringify(oldMasterItem)); // Deep copy
+                    let newItem = JSON.parse(JSON.stringify(oldMasterItem)); 
                     newItem.code = newCode;
                     newItem.stock = 0;
                     newItem.rngStock = 0;
@@ -3215,11 +3181,9 @@
                     if (existIdx > -1) masterInventory[existIdx] = newItem;
                     else masterInventory.push(newItem);
                 } else {
-                    // Make a skeleton if the original wasn't in DB yet
                     masterInventory.push({ code: newCode, desc: tool.desc, stock: 0, rngStock: 0, spareStock: 0, min: 5, actualLife: 0, assumedLife: 50000 });
                 }
 
-                // 4. Log to "Tool Schedule Changed Stock" Tab
                 revisedStockHistory.unshift({
                     date: getNow(),
                     oldCode: pendingRevision.oldCode || 'N/A',
@@ -3232,7 +3196,7 @@
                 closeRevisionModal();
                 await customAlert("✅ Revision Approved! Document linked, and Master Stock updated with the new tool.");
                 renderAllTables();
-                renderToolSchedule(); // refresh BOM view
+                renderToolSchedule(); 
             };
             reader.readAsDataURL(file);
         }
@@ -3249,8 +3213,6 @@
             }
         }
 
-
-        // --- TRANSACTIONS (Issue, Return, Exchange) ---
         async function executeSmartSearch() {
             const q = document.getElementById('scannerInput').value.trim().toLowerCase();
             if (!q) return;
@@ -3549,7 +3511,6 @@
             if (tI > -1) { masterInventory[tI].spareStock += c.qty; masterInventory[tI].stock += c.qty; } c.status = 'Approved'; saveAllData(); renderAllTables(); await customAlert(`Added to Master Stock.`);
         }
 
-        // --- DWM WORK PLAN ---
         function calcDWMDuration() {
             let start = document.getElementById('dwmStart').value;
             let stop = document.getElementById('dwmStop').value;
@@ -3578,13 +3539,11 @@
             await customAlert("✅ Tool Room Work Plan Logged Successfully!");
         }
 
-        // Update the dropdown to pull from our new qaSpecs object
         function updateQADropdown() {
             const qaSelect = document.getElementById('qaSelect');
             if (!qaSelect) return;
             qaSelect.innerHTML = '<option value="">-- Choose Part Number --</option>';
 
-            // Pull the part numbers directly from our massive list
             for (let partNo in qaSpecs) {
                 let opt = document.createElement('option');
                 opt.value = partNo;
@@ -3633,7 +3592,6 @@
             const inspector = document.getElementById('qaInspectorInput').value;
             if (!inspector) return await customAlert("Please enter the Inspector Name / ID before signing off.");
 
-            // Log this full signoff into the Analytics/QA History
             qaHistory.unshift({
                 date: getNow(),
                 code: partNo,
@@ -3647,7 +3605,6 @@
             renderAllTables();
             await customAlert(`✅ Pre/Post Qualification Form for ${partNo} successfully validated and saved to Database.`);
 
-            // Reset Form
             document.getElementById('qaSelect').value = "";
             document.getElementById('qaInspectorInput').value = "";
             document.getElementById('qaFormArea').style.display = 'none';
@@ -3685,15 +3642,10 @@
         }
         function exportTableToCSV(tid, fn) { let t = document.getElementById(tid); let r = t.querySelectorAll("tr"); let d = []; for (let i = 0; i < r.length; i++) { let c = r[i].querySelectorAll("td, th"); let rd = []; for (let j = 0; j < c.length - 1; j++) rd.push('"' + c[j].innerText.replace(/"/g, '""') + '"'); d.push(rd.join(",")); } let b = new Blob([d.join("\n")], { type: "text/csv" }); let l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = fn; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
 
-
-        // ==========================================
-        // DWM: LIVE STOPWATCH & REMARKS LOGIC
-        // ==========================================
         function stopDWMTask(id) {
             let record = dwmHistory.find(d => d.id === id);
             if (!record) return;
 
-            // Get current time in HH:MM format
             let now = new Date();
             let hours = String(now.getHours()).padStart(2, '0');
             let mins = String(now.getMinutes()).padStart(2, '0');
@@ -3701,16 +3653,13 @@
 
             record.stop = stopTime;
 
-            // Calculate duration if a start time exists
             if (record.start) {
                 let [sh, sm] = record.start.split(':').map(Number);
                 let [eh, em] = stopTime.split(':').map(Number);
                 let startMins = (sh * 60) + sm;
                 let stopMins = (eh * 60) + em;
 
-                // Handle shifts that cross midnight
                 if (stopMins < startMins) stopMins += (24 * 60);
-
                 record.dur = stopMins - startMins;
             }
 
@@ -3723,32 +3672,24 @@
             let record = dwmHistory.find(d => d.id === id);
             if (record) {
                 record.remarks = newRemark;
-                saveAllData(); // Silently save to DB without interrupting their typing
+                saveAllData();
             }
         }
 
-
-        // ==========================================
-        // SEAMLESS AUTO-LOGIN FROM MAIN ERP
-        // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
-            // Read the role passed by the Main ERP iframe URL
             const urlParams = new URLSearchParams(window.location.search);
             const autoRole = urlParams.get('role');
 
             if (autoRole === 'admin' || autoRole === 'toolroom' || autoRole === 'qa') {
-                // Set the role and hide the local login screen
                 currentUserRole = autoRole;
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('loginScreen').style.display = 'none';
 
-                // Update the UI profile
                 document.getElementById('activeUserDisplay').innerHTML = `
             <span style="color:#28a745;">🟢 Connected via Main ERP</span><br>
             <strong style="color:white; font-size:14px; text-transform:uppercase;">${autoRole}</strong>
         `;
 
-                // Boot up the system
                 applyRBAC();
                 switchTab('dashboard');
                 loadDataFromMongo();
