@@ -405,40 +405,26 @@
                 Credentials</p>
         </div>
     </div>
-    <div id="topNav"
-        style="background: #212529; padding: 10px 20px 0 20px; display: none; justify-content: space-between; align-items: center; color: white; gap: 10px; overflow: hidden;">
-
-        <div style="font-weight: bold; font-size: 16px; color: #ff9800; padding-bottom: 8px; white-space: nowrap;">🏭
-            PPL ERP</div>
-
-        <div id="navButtons"
-            style="display: flex; gap: 2px; flex: 1; align-items: flex-end; justify-content: center; height: 100%; padding-top: 10px;">
-            <button class="tab-btn active" id="nav-prod"
-                onclick="switchMainTab('productionCard', 'nav-prod')">Production</button>
-            <button class="tab-btn" id="nav-qc" onclick="switchMainTab('qcCard', 'nav-qc')"
-                style="display: none; background: #17a2b8; color: white;">QC</button>
-            <button class="tab-btn" id="nav-inv" onclick="switchMainTab('invCard', 'nav-inv')"
-                style="display: none;">Inventory</button>
-            <button class="tab-btn" id="nav-tx" onclick="switchMainTab('txCard', 'nav-tx')"
-                style="display: none;">Movements</button>
-            <button class="tab-btn" id="nav-rm" onclick="switchMainTab('rawMaterialCard', 'nav-rm')"
-                style="display: none;">Raw Materials</button>
-            <button class="tab-btn" id="nav-po" onclick="switchMainTab('poCard', 'nav-po')"
-                style="display: none;">POs</button>
-            <button class="tab-btn" id="nav-sales" onclick="switchMainTab('salesCard', 'nav-sales')"
-                style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
-            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')"
-                style="display: none; background: #343a40; color: white; border-left: 2px solid #555;">🛠️ Tool
-                Room</button>
+    <div id="topNav" style="background: #212529; padding: 10px 20px 0 20px; display: none; justify-content: space-between; align-items: center; color: white; gap: 10px; overflow: hidden;">
+        
+        <div style="font-weight: bold; font-size: 16px; color: #ff9800; padding-bottom: 8px; white-space: nowrap;">🏭 PPL ERP</div>
+        
+        <div id="navButtons" style="display: flex; gap: 2px; flex: 1; align-items: flex-end; justify-content: center; height: 100%; padding-top: 10px;">
+            <button class="tab-btn active" id="nav-prod" onclick="switchMainTab('productionCard', 'nav-prod')">Production</button>
+            <button class="tab-btn" id="nav-qc" onclick="switchMainTab('qcCard', 'nav-qc')" style="display: none; background: #17a2b8; color: white;">QC</button>
+            <button class="tab-btn" id="nav-inv" onclick="switchMainTab('invCard', 'nav-inv')" style="display: none;">Inventory</button>
+            <button class="tab-btn" id="nav-tx" onclick="switchMainTab('txCard', 'nav-tx')" style="display: none;">Movements</button>
+            <button class="tab-btn" id="nav-rm" onclick="switchMainTab('rawMaterialCard', 'nav-rm')" style="display: none;">Raw Materials</button>
+            <button class="tab-btn" id="nav-po" onclick="switchMainTab('poCard', 'nav-po')" style="display: none;">POs</button>
+            <button class="tab-btn" id="nav-sales" onclick="switchMainTab('salesCard', 'nav-sales')" style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
+            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')" style="display: none; background: #343a40; color: white; border-left: 2px solid #555;">🛠️ Tool Room</button>
         </div>
 
         <div style="font-size: 13px; display: flex; align-items: center; padding-bottom: 8px; white-space: nowrap;">
             <span id="roleDisplay" class="role-badge" style="padding: 4px 8px; font-size: 12px;"></span>
-            <a href="#" onclick="logout()"
-                style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 10px;">Logout</a>
+            <a href="#" onclick="logout()" style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 10px;">Logout</a>
         </div>
     </div>
-
     <div style="font-size: 13px; display: flex; align-items: center; padding-bottom: 8px; white-space: nowrap;">
         <span id="roleDisplay" class="role-badge" style="padding: 4px 8px; font-size: 12px;"></span>
         <a href="#" onclick="logout()"
@@ -1389,6 +1375,7 @@
             document.getElementById('txCard').style.display = 'none';
             document.getElementById('rawMaterialCard').style.display = 'none';
             document.getElementById('poCard').style.display = 'none';
+            document.getElementById('toolroomCard').style.display = 'none'; // <-- FIXED: Now hides the Tool Room iframe!
 
             document.querySelectorAll('#navButtons .tab-btn').forEach(btn => btn.classList.remove('active'));
             if (cardId === 'salesCard') { loadCustomers(); loadSalesOrders(); }
