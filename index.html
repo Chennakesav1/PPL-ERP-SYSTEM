@@ -1124,55 +1124,33 @@
             </div>
 
             <div class="card" id="poCard" style="display: none;">
-            <div style="background: #fffdf0; padding: 15px; border-radius: 8px; border-left: 5px solid var(--warning); margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                <h3 style="margin-top: 0; color: #856404; display: flex; justify-content: space-between; align-items: center;">
-                    <span>📥 Pending Purchase Indents (From Tool Room)</span>
-                </h3>
-                <div class="table-responsive" style="max-height: 250px; border: 1px solid #ffeba1;">
-                    <table id="poRequestsTable">
-                        <thead style="background: #ffeba1; color: #856404;">
+                <h2>Purchase Orders
+                    <div class="search-container">
+                        <input type="text" id="searchPOInput" class="search-box" style="width: 200px;"
+                            onkeyup="filterPOs()" placeholder="🔍 Search POs...">
+                        <button class="add-btn" onclick="openPOModal()" style="background-color: #ff9800;">📝 Create
+                            PO</button>
+                    </div>
+                </h2>
+                <div class="table-wrapper">
+                    <table id="poTable">
+                        <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Indent No</th>
-                                <th>Priority</th>
-                                <th>Tool Code</th>
-                                <th>Description</th>
-                                <th>Qty</th>
+                                <th>PO Number</th>
+                                <th>Supplier</th>
+                                <th>Material</th>
+                                <th>Grade</th>
+                                <th>Scope</th>
+                                <th>Qty (Kg)</th>
+                                <th>Total Cost (₹)</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="poRequestsBody"></tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
-
-            <h2 style="color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
-                Raw Material Purchase Orders
-                <div class="search-container">
-                    <input type="text" id="searchPOInput" class="search-box" style="width: 200px;"
-                        onkeyup="filterPOs()" placeholder="🔍 Search POs...">
-                    <button class="add-btn" onclick="openPOModal()" style="background-color: #ff9800;">📝 Create RM PO</button>
-                </div>
-            </h2>
-            <div class="table-wrapper">
-                <table id="poTable">
-                    <thead>
-                        <tr>
-                            <th>PO Number</th>
-                            <th>Supplier</th>
-                            <th>Material</th>
-                            <th>Grade</th>
-                            <th>Scope</th>
-                            <th>Qty (Kg)</th>
-                            <th>Total Cost (₹)</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
 
 
             <div id="toolroomCard" class="card"
@@ -1472,7 +1450,6 @@
             if (currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'PURCHASE')) {
                 loadRawMaterials();
                 loadPOs();
-                renderPendingPORequests();
             }
         }
 
@@ -2174,50 +2151,12 @@
         function closePOModal() { document.getElementById('poModal').style.display = 'none';['poSupplier', 'poMaterialCode', 'poExpectedKg', 'poCostPerKg'].forEach(id => document.getElementById(id).value = ''); }
 
         async function submitPO() {
-            const supplierName = document.getElementById('poSupplier').value.trim(); 
-            const materialCode = document.getElementById('poMaterialCode').value.trim(); 
-            const expectedKg = document.getElementById('poExpectedKg').value; 
-            const costPerKg = document.getElementById('poCostPerKg').value;
-            
+            const supplierName = document.getElementById('poSupplier').value.trim(); const materialCode = document.getElementById('poMaterialCode').value.trim(); const expectedKg = document.getElementById('poExpectedKg').value; const costPerKg = document.getElementById('poCostPerKg').value;
             if (!supplierName || !materialCode || !expectedKg || !costPerKg) return showToast("Fill all required fields", true);
-            
             try {
-                const res = await fetch(`${API_URL}/purchase-orders`, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ 
-                        supplierName, 
-                        materialCode, 
-                        grade: document.getElementById('poGrade').value.trim(), 
-                        scope: document.getElementById('poScope').value.trim(), 
-                        expectedKg, 
-                        costPerKg, 
-                        username: currentUser.username 
-                    }) 
-                });
-                
-                if (res.ok) { 
-                    // CLOSING THE LOOP: Mark Indent as PO Generated
-                    if (activeIndentIdForPO && window.indentHistory) {
-                        let indent = window.indentHistory.find(i => String(i.id) === String(activeIndentIdForPO));
-                        if (indent) indent.status = 'PO Generated'; // Changes status so it disappears from Pending
-                        activeIndentIdForPO = null;
-                        
-                        // Save the updated indent array to DB
-                        await fetch(`${API_URL}/sync`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ indentHistory: window.indentHistory })
-                        });
-                    }
-
-                    showToast("✅ PO Generated!"); 
-                    closePOModal(); 
-                    refreshDashboard(); 
-                } else {
-                    showToast("❌ Error", true);
-                }
-            } catch (e) { console.error(e); }
+                const res = await fetch(`${API_URL}/purchase-orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ supplierName, materialCode, grade: document.getElementById('poGrade').value.trim(), scope: document.getElementById('poScope').value.trim(), expectedKg, costPerKg, username: currentUser.username }) });
+                if (res.ok) { showToast("✅ PO Generated!"); closePOModal(); refreshDashboard(); } else showToast("❌ Error", true);
+            } catch (e) { }
         }
 
         async function receivePO(poId) {
@@ -3273,60 +3212,6 @@
                 }
             }
         }
-
-
-        function renderPendingPORequests() {
-            const tbody = document.getElementById('poRequestsBody');
-            const countBadge = document.getElementById('pendingIndentCount');
-            if (!tbody) return;
-
-            // Filter for indents that haven't been fulfilled or turned into POs yet
-            let pendingIndents = (window.indentHistory || []).filter(i => i.status === 'Active' || !i.status);
-            
-            if (countBadge) countBadge.innerText = pendingIndents.length + " Pending";
-
-            if (pendingIndents.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #666;">No pending purchase requests from the Tool Room.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = pendingIndents.map(i => {
-                let prioBadge = i.priority === 'URGENT' 
-                    ? '<span class="badge b-red">URGENT</span>' 
-                    : '<span class="badge b-dark">Normal</span>';
-
-                return `<tr>
-                    <td>${i.date}</td>
-                    <td><strong>${i.no}</strong></td>
-                    <td>${prioBadge}</td>
-                    <td><strong style="color: var(--accent);">${i.code}</strong></td>
-                    <td>${i.desc}</td>
-                    <td style="font-size: 16px;"><strong>${i.qty}</strong></td>
-                    <td>
-                        <button class="btn btn-warning" style="padding: 6px 12px; font-size: 12px;" onclick="convertIndentToPO('${i.id}')">📝 Create PO</button>
-                    </td>
-                </tr>`;
-            }).join('');
-        }
-
-        let activeIndentIdForPO = null; // Memory to link the PO back to the Indent
-
-        function convertIndentToPO(indentId) {
-            let indent = window.indentHistory.find(i => String(i.id) === String(indentId));
-            if (!indent) return;
-            
-            // Open Modal
-            openPOModal();
-            
-            // Auto-fill the PO Form with Tool Room data
-            document.getElementById('poMaterialCode').value = indent.code;
-            document.getElementById('poExpectedKg').value = indent.qty;
-            document.getElementById('poScope').value = `Indent Ref: ${indent.no} | Desc: ${indent.desc}`;
-            
-            // Save ID so we can mark it as processed later
-            activeIndentIdForPO = indentId; 
-        }
-
 
 
 
