@@ -2732,6 +2732,7 @@
                 document.getElementById('dwmDate').value = new Date().toISOString().split('T')[0];
             }
             renderAssemblyHistory();
+            renderPendingPORequests();
         }
 
         function updateDashboards() {
@@ -4508,6 +4509,92 @@
             renderAllTables();
             updateDashboards();
             await customAlert(`✅ Successfully received ${rQty} units of ${indent.code} into Spare Stock!`);
+        }
+
+
+
+        
+        // 1. Renders the pending indents in the PO Tab
+        function renderPendingPORequests() {
+            const tbody = document.getElementById('poRequestsBody');
+            if (!tbody) return;
+
+            // Only show indents that haven't been emailed or fulfilled yet
+            let pendingIndents = indentHistory.filter(i => i.status === 'Active');
+
+            if (pendingIndents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #666;">No pending purchase requests from the Tool Room.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = pendingIndents.map(i => {
+                let prioBadge = i.priority === 'URGENT' 
+                    ? '<span class="badge b-red" style="font-size:12px;">URGENT</span>' 
+                    : '<span class="badge b-dark" style="font-size:12px;">Normal</span>';
+
+                return `<tr>
+                    <td>${i.date}</td>
+                    <td><strong>${i.no}</strong></td>
+                    <td>${prioBadge}</td>
+                    <td><strong style="color: var(--accent); font-size:14px;">${i.code}</strong></td>
+                    <td>${i.desc}</td>
+                    <td style="font-size: 16px; color: var(--success);"><strong>${i.qty}</strong></td>
+                    <td>
+                        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="emailIndentToVendor(${i.id}, this)">📧 Email Vendor</button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        // 2. Sends the email and updates the DB
+        async function emailIndentToVendor(indentId, btn) {
+            let indent = indentHistory.find(i => i.id === indentId);
+            if (!indent) return;
+
+            // Construct the email body
+            let emailBody = `Hello Vendor,\n\nPlease process the following requirement for PPL Enterprises:\n\n` +
+                            `Indent No: ${indent.no}\n` +
+                            `Tool Code: ${indent.code}\n` +
+                            `Description: ${indent.desc}\n` +
+                            `Machine: ${indent.machine}\n` +
+                            `Quantity Required: ${indent.qty}\n` +
+                            `Priority: ${indent.priority}\n\n` +
+                            `Please reply to this email to confirm availability and pricing.\n\nRegards,\nPPL Purchase Department`;
+
+            let originalText = btn.innerText;
+            btn.innerText = "⏳ Sending...";
+            btn.disabled = true;
+
+            try {
+                // Send email using your existing marketing API endpoint
+                const res = await fetch(`${API_URL}/marketing/send-bulk-email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        filter: 'single',
+                        specificEmail: 'mh6609505@gmail.com', // Sent exactly to this email
+                        subject: `Purchase Indent Request - ${indent.no} [${indent.priority}]`,
+                        bodyText: emailBody
+                    })
+                });
+
+                const data = await res.json();
+                
+                if (res.ok && data.success) {
+                    indent.status = 'Emailed to Vendor'; // Change status so it leaves the pending list
+                    saveAllData(); // Sync to DB
+                    renderPendingPORequests(); // Refresh the table
+                    showToast("✅ Email sent to Vendor successfully!");
+                } else {
+                    showToast("❌ Email Failed: " + (data.error || 'Unknown error'), true);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                showToast("❌ Network error while sending email", true);
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {

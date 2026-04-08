@@ -1124,33 +1124,55 @@
             </div>
 
             <div class="card" id="poCard" style="display: none;">
-                <h2>Purchase Orders
-                    <div class="search-container">
-                        <input type="text" id="searchPOInput" class="search-box" style="width: 200px;"
-                            onkeyup="filterPOs()" placeholder="🔍 Search POs...">
-                        <button class="add-btn" onclick="openPOModal()" style="background-color: #ff9800;">📝 Create
-                            PO</button>
-                    </div>
-                </h2>
-                <div class="table-wrapper">
-                    <table id="poTable">
-                        <thead>
+            <div style="background: #fffdf0; padding: 15px; border-radius: 8px; border-left: 5px solid var(--warning); margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; color: #856404; display: flex; justify-content: space-between; align-items: center;">
+                    <span>📥 Pending Purchase Indents (From Tool Room)</span>
+                </h3>
+                <div class="table-responsive" style="max-height: 250px; border: 1px solid #ffeba1;">
+                    <table id="poRequestsTable">
+                        <thead style="background: #ffeba1; color: #856404;">
                             <tr>
-                                <th>PO Number</th>
-                                <th>Supplier</th>
-                                <th>Material</th>
-                                <th>Grade</th>
-                                <th>Scope</th>
-                                <th>Qty (Kg)</th>
-                                <th>Total Cost (₹)</th>
-                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Indent No</th>
+                                <th>Priority</th>
+                                <th>Tool Code</th>
+                                <th>Description</th>
+                                <th>Qty</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody id="poRequestsBody"></tbody>
                     </table>
                 </div>
             </div>
+
+            <h2 style="color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
+                Raw Material Purchase Orders
+                <div class="search-container">
+                    <input type="text" id="searchPOInput" class="search-box" style="width: 200px;"
+                        onkeyup="filterPOs()" placeholder="🔍 Search POs...">
+                    <button class="add-btn" onclick="openPOModal()" style="background-color: #ff9800;">📝 Create RM PO</button>
+                </div>
+            </h2>
+            <div class="table-wrapper">
+                <table id="poTable">
+                    <thead>
+                        <tr>
+                            <th>PO Number</th>
+                            <th>Supplier</th>
+                            <th>Material</th>
+                            <th>Grade</th>
+                            <th>Scope</th>
+                            <th>Qty (Kg)</th>
+                            <th>Total Cost (₹)</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
 
 
             <div id="toolroomCard" class="card"
@@ -3212,6 +3234,7 @@
                 }
             }
         }
+
 
 
 
