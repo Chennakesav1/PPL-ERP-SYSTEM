@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRECIFAST - Ultimate Enterprise ERP V34</title>
+    <title>PRECIFAST ERP SYSTEM</title>
     <style>
         /* --- Global & Branding --- */
         :root {
@@ -286,8 +286,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
@@ -361,11 +368,35 @@
             justify-content: space-between;
         }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-        .grid-5 { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-        .grid-6 { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .grid-6 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
 
         /* --- FORMS & INPUTS --- */
         .form-group {
@@ -460,17 +491,50 @@
             gap: 8px;
         }
 
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background: var(--accent); }
-        .btn-primary:hover { background: #0056b3; }
-        .btn-success { background: var(--success); }
-        .btn-success:hover { background: #218838; }
-        .btn-warning { background: var(--warning); color: #000; }
-        .btn-warning:hover { background: #e0a800; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { background: #c82333; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
         .btn-tiny {
             padding: 2px 6px;
             font-size: 10px;
@@ -497,12 +561,35 @@
             text-transform: uppercase;
         }
 
-        .b-blue { background: #e0f0ff; color: #0056b3; }
-        .b-red { background: #ffebeb; color: var(--danger); }
-        .b-green { background: #e6f4ea; color: var(--success); }
-        .b-yellow { background: #fff8e1; color: #b78103; }
-        .b-purple { background: #f3e8ff; color: #6b21a8; }
-        .b-dark { background: #1e293b; color: #fff; }
+        .b-blue {
+            background: #e0f0ff;
+            color: #0056b3;
+        }
+
+        .b-red {
+            background: #ffebeb;
+            color: var(--danger);
+        }
+
+        .b-green {
+            background: #e6f4ea;
+            color: var(--success);
+        }
+
+        .b-yellow {
+            background: #fff8e1;
+            color: #b78103;
+        }
+
+        .b-purple {
+            background: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .b-dark {
+            background: #1e293b;
+            color: #fff;
+        }
 
         /* --- TABLES --- */
         .table-responsive {
@@ -520,7 +607,8 @@
             white-space: nowrap;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px 12px;
             text-align: left;
             border-bottom: 1px solid #e2e8f0;
@@ -535,8 +623,13 @@
             z-index: 5;
         }
 
-        tr:nth-child(even) { background-color: #f8fafc; }
-        tr:hover td { background-color: #eef2f6; }
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tr:hover td {
+            background-color: #eef2f6;
+        }
 
         .station-header {
             background: #e2e8f0;
@@ -561,8 +654,13 @@
             background-color: var(--primary);
         }
 
-        .mega-table tr:nth-child(even) td:first-child { background: #f8fafc; }
-        .mega-table tr:hover td:first-child { background-color: #eef2f6; }
+        .mega-table tr:nth-child(even) td:first-child {
+            background: #f8fafc;
+        }
+
+        .mega-table tr:hover td:first-child {
+            background-color: #eef2f6;
+        }
 
         .tool-hover {
             text-decoration: underline;
@@ -590,9 +688,17 @@
             transition: width 0.4s ease;
         }
 
-        .life-safe { background: var(--success); }
-        .life-warn { background: var(--warning); }
-        .life-danger { background: var(--danger); }
+        .life-safe {
+            background: var(--success);
+        }
+
+        .life-warn {
+            background: var(--warning);
+        }
+
+        .life-danger {
+            background: var(--danger);
+        }
 
         .ecn-card {
             border-left: 5px solid var(--danger);
@@ -626,8 +732,13 @@
             border-radius: 6px;
         }
 
-        .ecn-box.old { border-color: var(--danger); }
-        .ecn-box.new { border-color: var(--success); }
+        .ecn-box.old {
+            border-color: var(--danger);
+        }
+
+        .ecn-box.new {
+            border-color: var(--success);
+        }
 
         .stat-box {
             padding: 20px;
@@ -637,8 +748,17 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-box h3 { margin: 0; font-size: 36px; }
-        .stat-box p { margin: 5px 0 0 0; font-size: 14px; font-weight: bold; text-transform: uppercase; }
+        .stat-box h3 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .stat-box p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
         /* Upload Zone */
         .upload-zone {
@@ -651,7 +771,9 @@
             transition: 0.3s;
         }
 
-        .upload-zone:hover { background: #cce5ff; }
+        .upload-zone:hover {
+            background: #cce5ff;
+        }
 
         .rev-checkboxes {
             display: flex;
@@ -701,7 +823,10 @@
         /* --- MODALS --- */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: rgba(10, 37, 64, 0.8);
             display: flex;
             align-items: center;
@@ -713,7 +838,10 @@
             backdrop-filter: blur(5px);
         }
 
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
 
         .modal-box {
             background: white;
@@ -727,7 +855,9 @@
             text-align: center;
         }
 
-        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
 
         .modal-box h3 {
             margin-top: 0;
@@ -763,7 +893,10 @@
             gap: 15px;
         }
 
-        .modal-actions button { flex: 1; padding: 14px; }
+        .modal-actions button {
+            flex: 1;
+            padding: 14px;
+        }
 
         #mongoStatus {
             position: absolute;
@@ -779,28 +912,126 @@
             z-index: 100;
         }
 
-        #mongoStatus.connected { background: #e6f4ea; color: #155724; border-color: #c3e6cb; }
-        #mongoStatus.error { background: #ffebeb; color: #721c24; border-color: #f5c6cb; }
+        #mongoStatus.connected {
+            background: #e6f4ea;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
 
-        .manual-bom-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        .manual-bom-table input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .manual-bom-table th { background: #e2e8f0; color: var(--primary); padding: 10px; font-size: 12px; text-transform: uppercase; }
-        .manual-bom-table td { padding: 5px; }
+        #mongoStatus.error {
+            background: #ffebeb;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        .manual-bom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .manual-bom-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .manual-bom-table th {
+            background: #e2e8f0;
+            color: var(--primary);
+            padding: 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .manual-bom-table td {
+            padding: 5px;
+        }
 
         @media print {
-            body { background: white; color: black; display: block; overflow: visible; }
-            .sidebar, .sub-nav, .btn, .upload-zone, h1, .login-overlay, .search-filter, #mongoStatus { display: none !important; }
-            .main-content { padding: 0; overflow: visible; }
-            .tab-section { display: none !important; }
-            #tool-schedules { display: block !important; }
-            .card { box-shadow: none; border: none; padding: 0; margin: 0; }
-            .table-responsive { max-height: none; overflow: visible; border: none; }
-            th { background-color: #f1f5f9 !important; color: #000 !important; border: 1px solid #ccc; -webkit-print-color-adjust: exact; }
-            td { border: 1px solid #ccc; white-space: normal; }
-            #bomMetaData { background: #f8fafc !important; -webkit-print-color-adjust: exact; padding: 10px !important; margin-bottom: 15px; border: 1px solid #ccc; }
-            .station-header { background: #d1d5db !important; color: #000 !important; -webkit-print-color-adjust: exact; }
-            .bom-edit-input { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; font-size: 12px !important; }
-            .rev-box { border: 1px solid #ccc !important; }
+            body {
+                background: white;
+                color: black;
+                display: block;
+                overflow: visible;
+            }
+
+            .sidebar,
+            .sub-nav,
+            .btn,
+            .upload-zone,
+            h1,
+            .login-overlay,
+            .search-filter,
+            #mongoStatus {
+                display: none !important;
+            }
+
+            .main-content {
+                padding: 0;
+                overflow: visible;
+            }
+
+            .tab-section {
+                display: none !important;
+            }
+
+            #tool-schedules {
+                display: block !important;
+            }
+
+            .card {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .table-responsive {
+                max-height: none;
+                overflow: visible;
+                border: none;
+            }
+
+            th {
+                background-color: #f1f5f9 !important;
+                color: #000 !important;
+                border: 1px solid #ccc;
+                -webkit-print-color-adjust: exact;
+            }
+
+            td {
+                border: 1px solid #ccc;
+                white-space: normal;
+            }
+
+            #bomMetaData {
+                background: #f8fafc !important;
+                -webkit-print-color-adjust: exact;
+                padding: 10px !important;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+            }
+
+            .station-header {
+                background: #d1d5db !important;
+                color: #000 !important;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .bom-edit-input {
+                border: none !important;
+                background: transparent !important;
+                color: black !important;
+                padding: 0 !important;
+                font-size: 12px !important;
+            }
+
+            .rev-box {
+                border: 1px solid #ccc !important;
+            }
         }
     </style>
 </head>
@@ -810,28 +1041,30 @@
     <div id="loginScreen" class="login-overlay">
         <div class="login-box">
             <h1>PRECIFAST</h1>
-            <p>Enterprise Manufacturing ERP V34 (Dynamic BOM Edition)</p>
+            <p>LOGIN FORM</p>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Role / Department</label>
                     <select id="loginRole">
-                        <option value="admin">Administrator / General Manager</option>
+                        <option value="admin">Administrator</option>
                         <option value="toolroom">Tool Room Manager</option>
                         <option value="qa">Quality Assurance (QA)</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Username</label><input type="text" id="loginUser" required placeholder="Enter username"></div>
-                <div class="form-group"><label>Password</label><input type="password" id="loginPwd" required placeholder="Enter password"></div>
-                <div id="loginError" style="color: var(--danger); font-size: 13px; font-weight: bold; margin-bottom: 15px; display: none;">Invalid Credentials</div>
+                <div class="form-group"><label>Username</label><input type="text" id="loginUser" required
+                        placeholder="Enter username"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="loginPwd" required
+                        placeholder="Enter password"></div>
+                <div id="loginError"
+                    style="color: var(--danger); font-size: 13px; font-weight: bold; margin-bottom: 15px; display: none;">
+                    Invalid Credentials</div>
                 <button type="submit" class="btn btn-primary login-btn">Secure Login 🔒</button>
-                <div class="credentials-hint">
-                    <strong>Demo Credentials:</strong><br>Admin: <code>admin</code> / <code>admin123</code><br>Tool Room: <code>toolroom</code> / <code>tool123</code><br>QA Dept: <code>qa</code> / <code>qa123</code>
-                </div>
+
             </form>
         </div>
     </div>
 
-    <div id="mongoStatus">⏳ Connecting to MongoDB...</div>
+    <div id="mongoStatus">⏳ Connecting...</div>
 
     <div class="sidebar">
         <div class="sidebar-header">
@@ -840,39 +1073,81 @@
         </div>
 
         <div class="nav-group-title" data-roles="admin,toolroom,qa">Dashboard</div>
-        <button class="nav-btn active" data-roles="admin,toolroom,qa" onclick="switchTab('dashboard')">🏠 Home Center</button>
+        <button class="nav-btn active" data-roles="admin,toolroom,qa" onclick="switchTab('dashboard')">🏠 Home
+            Center</button>
 
         <div class="nav-group-title" data-roles="admin,toolroom">Tool Room Operations</div>
-        <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('dwm-plan')">📅 Daily Work Plan</button>
+        <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('assembly-check')">⚙️ Assembly
+            Check</button> <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('dwm-plan')">📅 Daily
+            Work Plan</button>
         <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('issue-scan')">🔍 Issue & Return</button>
-        <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('conversions')">🔄 Rework & Conversions</button>
+        <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('conversions')">🔄 Rework &
+            Conversions</button>
         <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('consumables')">🛢️ Consumables</button>
         <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('master-stock')">📦 Master Stock</button>
 
         <div class="nav-group-title" data-roles="admin,qa,toolroom">Engineering & QA</div>
-        <button class="nav-btn" data-roles="admin,toolroom,qa" onclick="switchTab('tool-schedules')">📋 Tool Schedules</button>
-        <button class="nav-btn" data-roles="admin,qa" onclick="switchTab('pre-qualification')">🔬 Pre/Post Qualification</button>
+        <button class="nav-btn" data-roles="admin,toolroom,qa" onclick="switchTab('tool-schedules')">📋 Tool
+            Schedules</button>
+        <button class="nav-btn" data-roles="admin,qa" onclick="switchTab('pre-qualification')">🔬 Pre/Post
+            Qualification</button>
         <button class="nav-btn" data-roles="admin,qa" onclick="switchTab('qa-queue-tab')">⚖️ QA Pending</button>
 
         <div class="nav-group-title" data-roles="admin,qa">Documentation</div>
-        <button class="nav-btn" data-roles="admin,qa" onclick="switchTab('drawings-repo')">📁 Drawings & Doc Master</button>
+        <button class="nav-btn" data-roles="admin,qa" onclick="switchTab('drawings-repo')">📁 Drawings & Doc
+            Master</button>
         <button class="nav-btn" data-roles="admin,qa" onclick="switchTab('ecn-tracker')">⚠️ ECN Tracker</button>
 
         <div class="nav-group-title" data-roles="admin,toolroom">Admin Controls</div>
-        <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('manual-entry')">➕ Master Data & BOMs</button>
-        <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('admin-approvals')">🛡️ Stock Approvals</button>
+        <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('manual-entry')">➕ Master Data &
+            BOMs</button>
+        <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('admin-approvals')">🛡️ Stock
+            Approvals</button>
         <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('indents')">📝 Purchase Indents</button>
         <button class="nav-btn" data-roles="admin,toolroom" onclick="switchTab('analytics')">📊 Analytics Log</button>
 
+        <div class="nav-group-title" data-roles="admin">Security</div>
+        <button class="nav-btn" data-roles="admin" onclick="switchTab('audit-trail')">🕵️‍♂️ Master Audit Trail</button>
+
         <div style="margin-top: auto; padding: 20px; border-top: 1px solid #1a3a5c;">
-            <button class="btn btn-danger" style="width: 100%; font-size: 13px;" onclick="handleLogout()">🚪 Log Out</button>
+            <button class="btn btn-danger" style="width: 100%; font-size: 13px;" onclick="handleLogout()">🚪 Log
+                Out</button>
         </div>
+
     </div>
 
 
     <div class="main-content">
 
+
         <div id="dashboard" class="tab-section active">
+
+
+            <div id="global-pm-container"
+                style="display: none; background: #fffdf0; border: 2px solid var(--danger); border-radius: 8px; padding: 15px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(220, 53, 69, 0.1);">
+                <h3
+                    style="margin-top: 0; color: var(--danger); display: flex; justify-content: space-between; align-items: center;">
+                    <span>🚨 Preventive Maintenance Action Required</span>
+                    <span
+                        style="font-size: 14px; background: var(--danger); color: white; padding: 4px 10px; border-radius: 20px;">Global
+                        Alert</span>
+                </h3>
+                <div class="table-responsive" style="max-height: 200px; border:none; margin-top: 10px;">
+                    <table>
+                        <thead style="background: #ffebeb; color: var(--danger);">
+                            <tr>
+                                <th>Tool Code</th>
+                                <th>Machine</th>
+                                <th>Loc & Stock</th>
+                                <th>Life Used</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pmWidgetBody"></tbody>
+                    </table>
+                </div>
+            </div>
             <h1>Manufacturing & Engineering Dashboard</h1>
             <div class="card">
                 <p id="dashboardWelcomeMsg">Welcome to the ERP Center.</p>
@@ -896,8 +1171,10 @@
         <div id="dwm-plan" class="tab-section">
             <h1>📅 Tool Room Daily Work Plan (DWM)</h1>
             <div class="sub-nav">
-                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('dwm-log-area', this)">➕ Log Work</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('dwm-history-area', this)">📋 DWM History</button>
+                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('dwm-log-area', this)">➕ Log
+                    Work</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('dwm-history-area', this)">📋 DWM
+                    History</button>
             </div>
 
             <div id="dwm-log-area" class="sub-tab-content active">
@@ -915,11 +1192,16 @@
                                     <option>General</option>
                                 </select>
                             </div>
-                            <div class="form-group"><label>Machine Name</label><input type="text" id="dwmMachine" placeholder="e.g. 164S"></div>
-                            <div class="form-group"><label>Part Number / Name</label><input type="text" id="dwmPart" placeholder="e.g. M14*HHB"></div>
-                            <div class="form-group"><label>Item / Tool *</label><input type="text" id="dwmTool" required placeholder="e.g. Tool Assembly"></div>
-                            <div class="form-group"><label>QTY</label><input type="number" id="dwmQty" value="1" required min="1"></div>
-                            <div class="form-group"><label>Operator *</label><input type="text" id="dwmOperator" required placeholder="Name"></div>
+                            <div class="form-group"><label>Machine Name</label><input type="text" id="dwmMachine"
+                                    placeholder="e.g. 164S"></div>
+                            <div class="form-group"><label>Part Number / Name</label><input type="text" id="dwmPart"
+                                    placeholder="e.g. M14*HHB"></div>
+                            <div class="form-group"><label>Item / Tool *</label><input type="text" id="dwmTool" required
+                                    placeholder="e.g. Tool Assembly"></div>
+                            <div class="form-group"><label>QTY</label><input type="number" id="dwmQty" value="1"
+                                    required min="1"></div>
+                            <div class="form-group"><label>Operator *</label><input type="text" id="dwmOperator"
+                                    required placeholder="Name"></div>
                             <div class="form-group"><label>Tool Room M/C</label>
                                 <select id="dwmTRMC">
                                     <option>Tool Store</option>
@@ -936,26 +1218,35 @@
                                     <option value="ACTUAL">ACTUAL</option>
                                 </select>
                             </div>
-                            <div class="form-group"><label>Start Time</label><input type="time" id="dwmStart" onchange="calcDWMDuration()"></div>
-                            <div class="form-group"><label>Stop Time</label><input type="time" id="dwmStop" onchange="calcDWMDuration()"></div>
-                            <div class="form-group"><label>Time Dur. (Min)</label><input type="text" id="dwmDur" readonly placeholder="Auto-calculated" style="background: #f1f5f9; font-weight: bold; color: var(--primary);"></div>
+                            <div class="form-group"><label>Start Time</label><input type="time" id="dwmStart"
+                                    onchange="calcDWMDuration()"></div>
+                            <div class="form-group"><label>Stop Time</label><input type="time" id="dwmStop"
+                                    onchange="calcDWMDuration()"></div>
+                            <div class="form-group"><label>Time Dur. (Min)</label><input type="text" id="dwmDur"
+                                    readonly placeholder="Auto-calculated"
+                                    style="background: #f1f5f9; font-weight: bold; color: var(--primary);"></div>
                         </div>
                         <div class="form-group" style="margin-top: 10px;">
                             <label>Remarks</label>
                             <input type="text" id="dwmRemarks" placeholder="Any additional notes...">
                         </div>
-                        <button type="submit" class="btn btn-primary" style="margin-top: 15px; width: 100%;">💾 Save DWM Record</button>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 15px; width: 100%;">💾 Save DWM
+                            Record</button>
                     </form>
                 </div>
             </div>
 
             <div id="dwm-history-area" class="sub-tab-content">
                 <div class="card" style="padding: 0;">
-                    <div class="section-header" style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
+                    <div class="section-header"
+                        style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
                         📋 DWM Execution History
                         <div style="display:flex; gap:10px; align-items:center;">
-                            <input type="text" class="search-filter" placeholder="Filter by date, operator, machine..." onkeyup="filterGenericTable('dwmTable', this.value)">
-                            <button class="btn btn-success" style="padding: 8px 15px; font-size: 13px;" onclick="exportTableToCSV('dwmTable', 'ToolRoom_Work_Plan.csv')">⬇️ Download Excel</button>
+                            <input type="text" class="search-filter" placeholder="Filter by date, operator, machine..."
+                                onkeyup="filterGenericTable('dwmTable', this.value)">
+                            <button class="btn btn-success" style="padding: 8px 15px; font-size: 13px;"
+                                onclick="exportTableToCSV('dwmTable', 'ToolRoom_Work_Plan.csv')">⬇️ Download
+                                Excel</button>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -987,10 +1278,14 @@
         <div id="issue-scan" class="tab-section">
             <h1>Tool Issuance & Return Database</h1>
             <div class="sub-nav">
-                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('issue-area', this)">🔍 Smart Issue</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('return-area', this)">📥 Log Return / Exchange</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('issue-hist-area', this)">📤 Direct Issue Log</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('ret-hist-area', this)">🕒 Exchange History</button>
+                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('issue-area', this)">🔍 Smart
+                    Issue</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('return-area', this)">📥 Log Return /
+                    Exchange</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('issue-hist-area', this)">📤 Direct
+                    Issue Log</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('ret-hist-area', this)">🕒 Exchange
+                    History</button>
             </div>
 
             <div id="issue-area" class="sub-tab-content active">
@@ -998,7 +1293,9 @@
                     <div class="form-group">
                         <label>Intelligent Search (Code, Machine, Size, Family, Part Name):</label>
                         <div style="display: flex; gap: 15px;">
-                            <input type="text" id="scannerInput" placeholder="Try typing 'M12', 'CNF-16', 'FLG'..." style="flex: 1; font-size: 18px; padding: 15px; font-weight: bold;" onkeypress="if(event.key === 'Enter') executeSmartSearch()">
+                            <input type="text" id="scannerInput" placeholder="Try typing 'M12', 'CNF-16', 'FLG'..."
+                                style="flex: 1; font-size: 18px; padding: 15px; font-weight: bold;"
+                                onkeypress="if(event.key === 'Enter') executeSmartSearch()">
                             <button class="btn btn-primary" onclick="executeSmartSearch()">Search Database</button>
                         </div>
                     </div>
@@ -1023,35 +1320,51 @@
                 </div>
                 <div class="card" id="scanResult" style="display: none; border-left: 5px solid var(--success);">
                     <h3 class="section-header">✅ Selected Tool Details</h3>
-                    <div class="grid-2" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <div class="grid-2"
+                        style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
                         <div>
-                            <p><strong>Tool Code:</strong> <span id="resCode" class="badge b-yellow" style="font-size: 16px;">--</span></p>
-                            <p><strong>Machine & Size:</strong> <span id="resMachine" class="badge b-dark">--</span> | <span id="resPartSize" class="badge b-purple">--</span></p>
-                            <p><strong>Applicable Parts:</strong> <span id="resPartNames" style="color:var(--accent); font-weight:bold;">--</span></p>
-                            <p><strong>Spec:</strong> Pitch <span id="resPitch" style="font-weight:bold;">--</span> | Wire Dia <span id="resWireDia" style="font-weight:bold;">--</span> | STN <span id="resStn" style="font-weight:bold;">--</span></p>
+                            <p><strong>Tool Code:</strong> <span id="resCode" class="badge b-yellow"
+                                    style="font-size: 16px;">--</span></p>
+                            <p><strong>Machine & Size:</strong> <span id="resMachine" class="badge b-dark">--</span> |
+                                <span id="resPartSize" class="badge b-purple">--</span>
+                            </p>
+                            <p><strong>Applicable Parts:</strong> <span id="resPartNames"
+                                    style="color:var(--accent); font-weight:bold;">--</span></p>
+                            <p><strong>Spec:</strong> Pitch <span id="resPitch" style="font-weight:bold;">--</span> |
+                                Wire Dia <span id="resWireDia" style="font-weight:bold;">--</span> | STN <span
+                                    id="resStn" style="font-weight:bold;">--</span></p>
                             <p><strong>Description:</strong> <span id="resDesc">--</span></p>
                             <p><strong>Tool Life:</strong> <span id="resLifeStr" style="font-weight:bold;">--</span></p>
                         </div>
                         <div style="text-align: right; border-left: 1px solid #cbd5e1; padding-left: 20px;">
                             <h4 style="margin:0 0 15px 0;">Stock Availability</h4>
                             <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span><strong>Running Stock</strong><br><small id="resRngLoc" style="color:var(--primary); font-weight:bold;">--</small></span><span class="badge b-green" style="font-size:18px;" id="resRngStock">0</span>
+                                <span><strong>Running Stock</strong><br><small id="resRngLoc"
+                                        style="color:var(--primary); font-weight:bold;">--</small></span><span
+                                    class="badge b-green" style="font-size:18px;" id="resRngStock">0</span>
                             </div>
                             <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span><strong>Spare Stock</strong><br><small id="resSpareLoc" style="color:var(--primary); font-weight:bold;">--</small></span><span class="badge b-blue" style="font-size:18px;" id="resSpareStock">0</span>
+                                <span><strong>Spare Stock</strong><br><small id="resSpareLoc"
+                                        style="color:var(--primary); font-weight:bold;">--</small></span><span
+                                    class="badge b-blue" style="font-size:18px;" id="resSpareStock">0</span>
                             </div>
-                            <div style="display:flex; justify-content: space-between; border-top: 2px dashed #cbd5e1; padding-top:10px;">
-                                <span>Total:</span><span style="font-size: 24px; font-weight: 800; color: var(--success);" id="resStock">0</span>
+                            <div
+                                style="display:flex; justify-content: space-between; border-top: 2px dashed #cbd5e1; padding-top:10px;">
+                                <span>Total:</span><span
+                                    style="font-size: 24px; font-weight: 800; color: var(--success);"
+                                    id="resStock">0</span>
                             </div>
                         </div>
                     </div>
                     <hr style="margin: 25px 0;">
                     <div class="grid-3">
                         <div class="form-group"><label>Operator Name</label><input type="text" id="issueOperator"></div>
-                        <div class="form-group"><label>Quantity to Issue</label><input type="number" id="issueQty" value="1" min="1"></div>
+                        <div class="form-group"><label>Quantity to Issue</label><input type="number" id="issueQty"
+                                value="1" min="1"></div>
                         <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
                             <button type="button" class="btn btn-warning" onclick="fillLastIssue()">🔄 Prev</button>
-                            <button class="btn btn-success" style="flex: 1;" onclick="executeIssue()">Execute Issue</button>
+                            <button class="btn btn-success" style="flex: 1;" onclick="executeIssue()">Execute
+                                Issue</button>
                         </div>
                     </div>
                 </div>
@@ -1062,9 +1375,12 @@
                     <form onsubmit="returnAndIssueTool(event)">
                         <h4 style="color:var(--warning); margin:0 0 15px 0;">1. Return Details</h4>
                         <div class="grid-4">
-                            <div class="form-group"><label>Returned Tool Code *</label><input type="text" id="retCode" required></div>
-                            <div class="form-group"><label>Machine</label><input type="text" id="retMachine" required></div>
-                            <div class="form-group"><label>Operator (Returned By) *</label><input type="text" id="retOperator" required></div>
+                            <div class="form-group"><label>Returned Tool Code *</label><input type="text" id="retCode"
+                                    required></div>
+                            <div class="form-group"><label>Machine</label><input type="text" id="retMachine" required>
+                            </div>
+                            <div class="form-group"><label>Operator (Returned By) *</label><input type="text"
+                                    id="retOperator" required></div>
                             <div class="form-group"><label>Return to Location</label>
                                 <select id="retLocType">
                                     <option value="scrap">Scrap / End of Life / Rework</option>
@@ -1073,9 +1389,12 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="grid-3" style="margin-top:15px; background: #fffdf0; padding:15px; border-radius:6px; border: 1px solid #ffeba1;">
-                            <div class="form-group"><label>Pieces Produced (Adds to Life) *</label><input type="number" id="retLifeAdd" required></div>
-                            <div class="form-group"><label>Qty Returned *</label><input type="number" id="retQty" required value="1" min="1"></div>
+                        <div class="grid-3"
+                            style="margin-top:15px; background: #fffdf0; padding:15px; border-radius:6px; border: 1px solid #ffeba1;">
+                            <div class="form-group"><label>Pieces Produced (Adds to Life) *</label><input type="number"
+                                    id="retLifeAdd" required></div>
+                            <div class="form-group"><label>Qty Returned *</label><input type="number" id="retQty"
+                                    required value="1" min="1"></div>
                             <div class="form-group"><label>FMEA Reason *</label>
                                 <select id="retReason">
                                     <option>Normal Wear (EOL)</option>
@@ -1087,22 +1406,31 @@
                         </div>
 
                         <h4 style="color:var(--success); margin:25px;">2. Issue Replacement (Optional)</h4>
-                        <div class="grid-4" style="background: #e6f4ea; padding:15px; border-radius:6px; border: 1px solid #c3e6cb;">
-                            <div class="form-group"><label>New Tool Code to Issue</label><input type="text" id="repCode" placeholder="Leave blank if no issue" oninput="autoFillRep()"></div>
-                            <div class="form-group"><label>Quantity</label><input type="number" id="repQty" value="1" min="1"></div>
-                            <div class="form-group"><label>Issued By (Auth)</label><input type="text" id="repIssuedBy" placeholder="Tool Room Incharge"></div>
-                            <div class="form-group"><label>Assumed Life</label><input type="text" id="repLife" readonly placeholder="Auto-filled" style="background:#f1f5f9;"></div>
+                        <div class="grid-4"
+                            style="background: #e6f4ea; padding:15px; border-radius:6px; border: 1px solid #c3e6cb;">
+                            <div class="form-group"><label>New Tool Code to Issue</label><input type="text" id="repCode"
+                                    placeholder="Leave blank if no issue" oninput="autoFillRep()"></div>
+                            <div class="form-group"><label>Quantity</label><input type="number" id="repQty" value="1"
+                                    min="1"></div>
+                            <div class="form-group"><label>Issued By (Auth)</label><input type="text" id="repIssuedBy"
+                                    placeholder="Tool Room Incharge"></div>
+                            <div class="form-group"><label>Assumed Life</label><input type="text" id="repLife" readonly
+                                    placeholder="Auto-filled" style="background:#f1f5f9;"></div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="margin-top: 20px; width:100%; font-size:16px;">Process Return & Execute Exchange</button>
+                        <button type="submit" class="btn btn-primary"
+                            style="margin-top: 20px; width:100%; font-size:16px;">Process Return & Execute
+                            Exchange</button>
                     </form>
                 </div>
             </div>
 
             <div id="issue-hist-area" class="sub-tab-content">
                 <div class="card" style="padding:0;">
-                    <div class="section-header" style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
-                        📤 Direct Issue Log <input type="text" class="search-filter" placeholder="Filter..." onkeyup="filterGenericTable('issueHistoryTable', this.value)">
+                    <div class="section-header"
+                        style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
+                        📤 Direct Issue Log <input type="text" class="search-filter" placeholder="Filter..."
+                            onkeyup="filterGenericTable('issueHistoryTable', this.value)">
                     </div>
                     <div class="table-responsive" style="max-height: 400px; border: none;">
                         <table id="issueHistoryTable">
@@ -1124,8 +1452,10 @@
 
             <div id="ret-hist-area" class="sub-tab-content">
                 <div class="card" style="padding:0;">
-                    <div class="section-header" style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
-                        🕒 Exchange History <input type="text" class="search-filter" placeholder="Filter..." onkeyup="filterGenericTable('returnTable', this.value)">
+                    <div class="section-header"
+                        style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
+                        🕒 Exchange History <input type="text" class="search-filter" placeholder="Filter..."
+                            onkeyup="filterGenericTable('returnTable', this.value)">
                     </div>
                     <div class="table-responsive" style="max-height: 400px; border: none;">
                         <table id="returnTable">
@@ -1150,32 +1480,44 @@
         <div id="conversions" class="tab-section">
             <h1>Tool Conversion & Rework Log</h1>
             <div class="sub-nav">
-                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('conv-form-area', this)">🔄 Request Conversion</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('conv-history-area', this)">🕒 Conversion History</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('conv-ecn-area', this)">⚠️ Pending ECN Reworks</button>
+                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('conv-form-area', this)">🔄
+                    Request Conversion</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('conv-history-area', this)">🕒
+                    Conversion History</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('conv-ecn-area', this)">⚠️ Pending ECN
+                    Reworks</button>
             </div>
 
             <div id="conv-form-area" class="sub-tab-content active">
                 <div class="card" style="border-top: 4px solid #17a2b8;">
                     <form onsubmit="executeConversion(event)">
                         <div class="grid-2">
-                            <div style="background: #ffebeb; padding: 15px; border-radius: 5px; border: 1px solid #f5c6cb;">
+                            <div
+                                style="background: #ffebeb; padding: 15px; border-radius: 5px; border: 1px solid #f5c6cb;">
                                 <h4 style="margin-top:0; color: var(--danger);">1. Source Tool (Deduct)</h4>
-                                <div class="form-group"><label>Source Code</label><input type="text" id="convSrcCode" required></div>
+                                <div class="form-group"><label>Source Code</label><input type="text" id="convSrcCode"
+                                        required></div>
                             </div>
-                            <div style="background: #e6f4ea; padding: 15px; border-radius: 5px; border: 1px solid #c3e6cb;">
+                            <div
+                                style="background: #e6f4ea; padding: 15px; border-radius: 5px; border: 1px solid #c3e6cb;">
                                 <h4 style="margin-top:0; color: var(--success);">2. Target Tool (Create)</h4>
-                                <div class="form-group"><label>Target Code</label><input type="text" id="convTgtCode" required></div>
+                                <div class="form-group"><label>Target Code</label><input type="text" id="convTgtCode"
+                                        required></div>
                             </div>
                         </div>
                         <h4 style="color: var(--primary); margin-top: 20px;">3. Conversion Details</h4>
                         <div class="grid-4">
-                            <div class="form-group"><label>Qty</label><input type="number" id="convQty" value="1" min="1" required></div>
-                            <div class="form-group"><label>Target Machine</label><input type="text" id="convMachine" required></div>
-                            <div class="form-group"><label>Reason</label><input type="text" id="convDetails" required></div>
-                            <div class="form-group"><label>Operator</label><input type="text" id="convOp" required></div>
+                            <div class="form-group"><label>Qty</label><input type="number" id="convQty" value="1"
+                                    min="1" required></div>
+                            <div class="form-group"><label>Target Machine</label><input type="text" id="convMachine"
+                                    required></div>
+                            <div class="form-group"><label>Reason</label><input type="text" id="convDetails" required>
+                            </div>
+                            <div class="form-group"><label>Operator</label><input type="text" id="convOp" required>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">🔄 Submit Request (Sends to QA)</button>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">🔄 Submit
+                            Request (Sends to QA)</button>
                     </form>
                 </div>
             </div>
@@ -1203,7 +1545,8 @@
 
             <div id="conv-ecn-area" class="sub-tab-content">
                 <div class="card" style="padding: 0; border: 1px solid var(--warning);">
-                    <div class="section-header" style="padding: 15px; background: #fffdf0; border-bottom: 1px solid #ffeba1; margin:0; color: #856404;">
+                    <div class="section-header"
+                        style="padding: 15px; background: #fffdf0; border-bottom: 1px solid #ffeba1; margin:0; color: #856404;">
                         🛠️ Tools Requiring Rework (Incoming from Engineering)
                     </div>
                     <div class="table-responsive">
@@ -1218,6 +1561,73 @@
                                 </tr>
                             </thead>
                             <tbody id="ecnReworkQueueBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="assembly-check" class="tab-section">
+            <h1>⚙️ Assembly Readiness Check</h1>
+            <div class="sub-nav">
+                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('assembly-exec-area', this)">📋
+                    Check & Assemble</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('assembly-history-area', this)">🕒
+                    Assembly History</button>
+            </div>
+
+            <div id="assembly-exec-area" class="sub-tab-content active">
+                <div class="card" style="border-top: 4px solid var(--accent);">
+                    <div class="form-group" style="max-width: 600px;">
+                        <label>Select Product Part Number to Assemble:</label>
+                        <select id="assemblyBomSelect" onchange="renderAssemblyCheck()">
+                            <option value="">-- Choose Part Number --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card" id="assemblyDisplayCard" style="display: none; padding: 0;">
+                    <div class="section-header"
+                        style="padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0; display:flex; justify-content:space-between; align-items:center;">
+                        <span id="assemblyTitle" style="font-weight: 800; color: #0A2540;">Assembly Status</span>
+                        <div id="assemblyActionZone"></div>
+                    </div>
+                    <div class="table-responsive" style="border: none; max-height: 500px;">
+                        <table id="assemblyTable" class="mega-table">
+                            <thead>
+                                <tr>
+                                    <th>Station</th>
+                                    <th>Tool Code</th>
+                                    <th>Description</th>
+                                    <th>Location (Rng/Spr)</th>
+                                    <th>Reqd Qty</th>
+                                    <th>In Stock</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assemblyTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="assembly-history-area" class="sub-tab-content">
+                <div class="card" style="padding: 0;">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Product / BOM Assembled</th>
+                                    <th>Assembled By</th>
+                                    <th>Total Tools Deducted</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assemblyHistoryBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -1243,7 +1653,8 @@
                         <option>Lathe</option>
                     </select>
                 </div>
-                <div class="form-group" style="grid-column: span 4;"><button class="btn btn-primary" style="width: 100%;" onclick="issueConsumable()">Issue Consumable</button></div>
+                <div class="form-group" style="grid-column: span 4;"><button class="btn btn-primary"
+                        style="width: 100%;" onclick="issueConsumable()">Issue Consumable</button></div>
             </div>
             <div class="card" style="padding:0;">
                 <div class="table-responsive">
@@ -1266,15 +1677,20 @@
         <div id="master-stock" class="tab-section">
             <h1>📦 Master Stock Database</h1>
             <div class="sub-nav">
-                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('master-stock-main', this)">📦 Live Inventory</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('master-stock-revised', this)">🔄 Tool Schedule Changed Stock</button>
+                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('master-stock-main', this)">📦
+                    Live Inventory</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('master-stock-revised', this)">🔄 Tool
+                    Schedule Changed Stock</button>
             </div>
 
             <div id="master-stock-main" class="sub-tab-content active">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div>
-                        <input type="text" id="masterSearch" placeholder="Filter Table Data..." onkeyup="filterGenericTable('masterStockTable', this.value)" class="search-filter">
-                        <button class="btn btn-outline" onclick="exportTableToCSV('masterStockTable', 'Master_Inventory.csv')">⬇️ Export CSV</button>
+                        <input type="text" id="masterSearch" placeholder="Filter Table Data..."
+                            onkeyup="filterGenericTable('masterStockTable', this.value)" class="search-filter">
+                        <button class="btn btn-outline"
+                            onclick="exportTableToCSV('masterStockTable', 'Master_Inventory.csv')">⬇️ Export
+                            CSV</button>
                     </div>
                 </div>
                 <div class="card" style="padding: 0; overflow: hidden; border: 1px solid var(--primary);">
@@ -1324,7 +1740,8 @@
 
             <div id="master-stock-revised" class="sub-tab-content">
                 <div class="card" style="padding: 0; overflow: hidden; border: 1px solid var(--warning);">
-                    <div class="section-header" style="padding: 15px; background: #fffdf0; border-bottom: 1px solid #ffeba1; margin:0;">
+                    <div class="section-header"
+                        style="padding: 15px; background: #fffdf0; border-bottom: 1px solid #ffeba1; margin:0;">
                         📋 History of New Tools Created by Revision Updates
                     </div>
                     <div class="table-responsive" style="max-height: 75vh;">
@@ -1355,14 +1772,17 @@
             </div>
 
             <div class="card" id="bomDisplayCard" style="display: none; padding:0;">
-                <div class="section-header" style="padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
+                <div class="section-header"
+                    style="padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
                     <span id="bomTitle" style="font-weight: 800; color: #0A2540;">Part BOM</span>
                     <div>
-                        <button class="btn btn-outline" style="padding: 6px 12px; font-size:13px;" onclick="downloadPDF()">⬇️ Download PDF</button>
+                        <button class="btn btn-outline" style="padding: 6px 12px; font-size:13px;"
+                            onclick="downloadPDF()">⬇️ Download PDF</button>
                     </div>
                 </div>
 
-                <div id="bomMetaData" style="padding: 15px 20px; background: #fff; border-bottom: 2px solid var(--primary); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; font-size: 14px;">
+                <div id="bomMetaData"
+                    style="padding: 15px 20px; background: #fff; border-bottom: 2px solid var(--primary); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; font-size: 14px;">
                 </div>
 
                 <div class="table-responsive" style="border: none; overflow-x: auto; max-height: none;">
@@ -1384,11 +1804,15 @@
 
         <div id="pre-qualification" class="tab-section">
             <h1>🔬 Pre/Post Qualification</h1>
-            
+
             <div class="sub-nav">
-                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('qa-inspect-area', this)">📝 Conduct Inspection</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('qa-template-area', this)">⚙️ Build QA Template</button>
-                <button type="button" class="sub-nav-btn" style="color: #856404; background: #fffdf0; border: 1px solid #ffeba1;" onclick="switchSubTab('import-qa-area', this)">📥 Import QA CSV</button>
+                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('qa-inspect-area', this)">📝
+                    Conduct Inspection</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('qa-template-area', this)">⚙️ Build QA
+                    Template</button>
+                <button type="button" class="sub-nav-btn"
+                    style="color: #856404; background: #fffdf0; border: 1px solid #ffeba1;"
+                    onclick="switchSubTab('import-qa-area', this)">📥 Import QA CSV</button>
             </div>
 
             <div id="qa-inspect-area" class="sub-tab-content active">
@@ -1400,37 +1824,46 @@
                                 <option value="">-- Choose Part Number --</option>
                             </select>
                         </div>
-                        <div class="form-group"><label>Inspector Name / ID:</label><input type="text" id="qaInspectorInput" placeholder="Enter Inspector Name"></div>
+                        <div class="form-group"><label>Inspector Name / ID:</label><input type="text"
+                                id="qaInspectorInput" placeholder="Enter Inspector Name"></div>
                     </div>
                 </div>
                 <div id="qaFormArea" style="display: none;">
                     <div id="qaStationsContainer"></div>
-                    <div style="text-align: right; margin-top: 20px;"><button class="btn btn-success" onclick="submitQA()" style="font-size: 16px; padding: 15px 30px;">✅ Sign Off QA Report</button></div>
+                    <div style="text-align: right; margin-top: 20px;"><button class="btn btn-success"
+                            onclick="submitQA()" style="font-size: 16px; padding: 15px 30px;">✅ Sign Off QA
+                            Report</button></div>
                 </div>
             </div>
 
             <div id="qa-template-area" class="sub-tab-content">
                 <div class="card" style="border-top: 4px solid var(--primary);">
                     <h3 class="section-header">➕ Create / Edit QA Inspection Template</h3>
-                    <p style="color:#666; font-size:14px; margin-top: 0;">Create a new template from scratch, or import an existing one to edit.</p>
-                    
+                    <p style="color:#666; font-size:14px; margin-top: 0;">Create a new template from scratch, or import
+                        an existing one to edit.</p>
+
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label>Part Number / Code *</label>
                         <div style="display: flex; gap: 10px; max-width: 600px;">
-                            <input type="text" id="templatePartNo" placeholder="e.g. M8x1.25x36.5" style="border-color: var(--accent); font-weight: bold; flex: 1;">
+                            <input type="text" id="templatePartNo" placeholder="e.g. M8x1.25x36.5"
+                                style="border-color: var(--accent); font-weight: bold; flex: 1;">
                             <select id="importTemplateSelect" style="flex: 1;">
                                 <option value="">-- Import Existing Template --</option>
                             </select>
-                            <button type="button" class="btn btn-outline" onclick="loadExistingTemplate()">📥 Load</button>
+                            <button type="button" class="btn btn-outline" onclick="loadExistingTemplate()">📥
+                                Load</button>
                         </div>
                     </div>
-                    
-                    <h4 style="color: var(--primary); border-bottom: 1px solid #ddd; padding-bottom: 5px;">Stations & Parameters</h4>
+
+                    <h4 style="color: var(--primary); border-bottom: 1px solid #ddd; padding-bottom: 5px;">Stations &
+                        Parameters</h4>
                     <div id="templateStationsContainer"></div>
-                    
+
                     <div style="margin-top: 20px;">
-                        <button type="button" class="btn btn-warning" onclick="addTemplateStation()">➕ Add Station</button>
-                        <button type="button" class="btn btn-primary" onclick="saveQATemplate()" style="margin-left:10px;">💾 Save Template to DB</button>
+                        <button type="button" class="btn btn-warning" onclick="addTemplateStation()">➕ Add
+                            Station</button>
+                        <button type="button" class="btn btn-primary" onclick="saveQATemplate()"
+                            style="margin-left:10px;">💾 Save Template to DB</button>
                     </div>
                 </div>
             </div>
@@ -1438,13 +1871,16 @@
             <div id="import-qa-area" class="sub-tab-content">
                 <div class="card" style="border-top: 5px solid var(--warning);">
                     <h3 class="section-header">Bulk Import QA Templates from CSV</h3>
-                    <p style="color:#666; font-size:14px;">Upload exported Pre/Post Qualification CSVs. You can select multiple files at once!</p>
+                    <p style="color:#666; font-size:14px;">Upload exported Pre/Post Qualification CSVs. You can select
+                        multiple files at once!</p>
                     <div class="upload-zone">
                         <input type="file" id="csvQAInput" accept=".csv" multiple style="font-size:16px; padding:10px;">
                     </div>
-                    <button class="btn btn-warning" style="width:100%; font-size:16px; color: black; font-weight: bold;" onclick="processQACSVUpload()">🚀 Process & Sync QA Specs</button>
+                    <button class="btn btn-warning" style="width:100%; font-size:16px; color: black; font-weight: bold;"
+                        onclick="processQACSVUpload()">🚀 Process & Sync QA Specs</button>
                     <hr style="margin:30px 0;">
-                    <button class="btn btn-danger" style="width:100%;" onclick="wipeDatabase('qaSpecs')">⚠️ WIPE QA TEMPLATES DATABASE</button>
+                    <button class="btn btn-danger" style="width:100%;" onclick="wipeDatabase('qaSpecs')">⚠️ WIPE QA
+                        TEMPLATES DATABASE</button>
                 </div>
             </div>
         </div>
@@ -1472,8 +1908,10 @@
                 </div>
             </div>
             <div class="card" style="padding: 0;">
-                <div class="section-header" style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
-                    📋 Past QA Log <input type="text" class="search-filter" placeholder="Filter..." onkeyup="filterGenericTable('qaTable', this.value)">
+                <div class="section-header"
+                    style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
+                    📋 Past QA Log <input type="text" class="search-filter" placeholder="Filter..."
+                        onkeyup="filterGenericTable('qaTable', this.value)">
                 </div>
                 <div class="table-responsive">
                     <table id="qaTable">
@@ -1499,7 +1937,8 @@
                 <h3 class="section-header" style="border:none; margin-bottom:0;">Upload New Document</h3>
                 <form onsubmit="handleDocUpload(event)">
                     <div class="grid-4">
-                        <div class="form-group"><label>Part Number / Tool Code</label><input type="text" id="upPart" required placeholder="e.g. M6X10 or T.01.0..."></div>
+                        <div class="form-group"><label>Part Number / Tool Code</label><input type="text" id="upPart"
+                                required placeholder="e.g. M6X10 or T.01.0..."></div>
                         <div class="form-group"><label>Doc Type</label>
                             <select id="upType" required>
                                 <option>Product Drawing</option>
@@ -1508,8 +1947,10 @@
                                 <option>FMEA</option>
                             </select>
                         </div>
-                        <div class="form-group"><label>File (PDF/Image)</label><input type="file" id="upFile" required accept="image/*,application/pdf"></div>
-                        <div class="form-group"><label>&nbsp;</label><button type="submit" class="btn btn-primary">⬆️ Upload to DB</button></div>
+                        <div class="form-group"><label>File (PDF/Image)</label><input type="file" id="upFile" required
+                                accept="image/*,application/pdf"></div>
+                        <div class="form-group"><label>&nbsp;</label><button type="submit" class="btn btn-primary">⬆️
+                                Upload to DB</button></div>
                     </div>
                 </form>
             </div>
@@ -1538,16 +1979,24 @@
                 <h3>➕ Create New ECN</h3>
                 <form onsubmit="createNewECN(event)">
                     <div class="grid-3">
-                        <div class="form-group"><label>Part/Tool Impacted *</label><input type="text" id="ecnPart" required placeholder="e.g., T.01.0.001.012/00"></div>
-                        <div class="form-group"><label>Change Description *</label><input type="text" id="ecnDesc" required placeholder="e.g., Pointing Dia Reduction"></div>
-                        <div class="form-group"><label>Requested By *</label><input type="text" id="ecnBy" required placeholder="e.g., Chenna"></div>
+                        <div class="form-group"><label>Part/Tool Impacted *</label><input type="text" id="ecnPart"
+                                required placeholder="e.g., T.01.0.001.012/00"></div>
+                        <div class="form-group"><label>Change Description *</label><input type="text" id="ecnDesc"
+                                required placeholder="e.g., Pointing Dia Reduction"></div>
+                        <div class="form-group"><label>Requested By *</label><input type="text" id="ecnBy" required
+                                placeholder="e.g., Chenna"></div>
                     </div>
-                    <div class="grid-3" style="margin-top: 15px; background: #fffdf0; padding: 15px; border: 1px solid #ffeba1; border-radius: 6px;">
-                        <div class="form-group"><label>Parameter Changed *</label><input type="text" id="ecnParam" required placeholder="e.g., Pointing Dia"></div>
-                        <div class="form-group"><label>BEFORE Specification</label><input type="text" id="ecnBefore" placeholder="e.g., 4.00 ± 0.10"></div>
-                        <div class="form-group"><label>AFTER Specification *</label><input type="text" id="ecnAfter" required placeholder="e.g., 3.80"></div>
+                    <div class="grid-3"
+                        style="margin-top: 15px; background: #fffdf0; padding: 15px; border: 1px solid #ffeba1; border-radius: 6px;">
+                        <div class="form-group"><label>Parameter Changed *</label><input type="text" id="ecnParam"
+                                required placeholder="e.g., Pointing Dia"></div>
+                        <div class="form-group"><label>BEFORE Specification</label><input type="text" id="ecnBefore"
+                                placeholder="e.g., 4.00 ± 0.10"></div>
+                        <div class="form-group"><label>AFTER Specification *</label><input type="text" id="ecnAfter"
+                                required placeholder="e.g., 3.80"></div>
                     </div>
-                    <button type="submit" class="btn btn-danger" style="margin-top: 20px;">Submit Engineering Change</button>
+                    <button type="submit" class="btn btn-danger" style="margin-top: 20px;">Submit Engineering
+                        Change</button>
                 </form>
             </div>
             <div id="ecnListContainer"></div>
@@ -1555,50 +2004,73 @@
 
         <div id="manual-entry" class="tab-section">
             <div class="sub-nav">
-                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('import-tools-area', this)">📥 Import Tools CSV</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('import-boms-area', this)">📥 Import BOMs CSV</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('manual-tool-area', this)">➕ Manual Tool Entry</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('manual-bom-area', this)">➕ Manual BOM Entry</button>
+                <button type="button" class="sub-nav-btn active" onclick="switchSubTab('import-tools-area', this)">📥
+                    Import Tools CSV</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('import-boms-area', this)">📥 Import
+                    BOMs CSV</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('manual-tool-area', this)">➕ Manual Tool
+                    Entry</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('manual-bom-area', this)">➕ Manual BOM
+                    Entry</button>
             </div>
 
             <div id="import-tools-area" class="sub-tab-content active">
                 <div class="card" style="border-top: 5px solid var(--success);">
                     <h3 class="section-header">Bulk Import Master Tools from CSV</h3>
-                    <p style="color:#666; font-size:14px;">Upload exported Master Tool Codes CSV. Dynamically maps columns and handles sub-headers.</p>
-                    <div class="upload-zone"><input type="file" id="csvToolInput" accept=".csv" style="font-size:16px; padding:10px;"></div>
-                    <button class="btn btn-success" style="width:100%; font-size:16px;" onclick="processToolCSVUpload()">🚀 Process & Sync Tools to DB</button>
-                    <hr style="margin:30px 0;"><button class="btn btn-danger" style="width:100%;" onclick="wipeDatabase('tools')">⚠️ WIPE TOOLS DATABASE</button>
+                    <p style="color:#666; font-size:14px;">Upload exported Master Tool Codes CSV. Dynamically maps
+                        columns and handles sub-headers.</p>
+                    <div class="upload-zone"><input type="file" id="csvToolInput" accept=".csv"
+                            style="font-size:16px; padding:10px;"></div>
+                    <button class="btn btn-success" style="width:100%; font-size:16px;"
+                        onclick="processToolCSVUpload()">🚀 Process & Sync Tools to DB</button>
+                    <hr style="margin:30px 0;"><button class="btn btn-danger" style="width:100%;"
+                        onclick="wipeDatabase('tools')">⚠️ WIPE TOOLS DATABASE</button>
                 </div>
             </div>
 
             <div id="import-boms-area" class="sub-tab-content">
                 <div class="card" style="border-top: 5px solid var(--primary);">
                     <h3 class="section-header">Bulk Import Tool Schedules (BOMs) from CSV</h3>
-                    <p style="color:#666; font-size:14px;">Upload Tool Schedule CSV. The system auto-detects Part Size, Machine, Stations, and Tool lists.</p>
-                    <div class="upload-zone"><input type="file" id="csvBomInput" accept=".csv" style="font-size:16px; padding:10px;"></div>
-                    <button class="btn btn-primary" style="width:100%; font-size:16px;" onclick="processBomCSVUpload()">🚀 Process & Sync BOM to DB</button>
-                    <hr style="margin:30px 0;"><button class="btn btn-danger" style="width:100%;" onclick="wipeDatabase('boms')">⚠️ WIPE BOMS DATABASE</button>
+                    <p style="color:#666; font-size:14px;">Upload Tool Schedule CSV. The system auto-detects Part Size,
+                        Machine, Stations, and Tool lists.</p>
+                    <div class="upload-zone"><input type="file" id="csvBomInput" accept=".csv"
+                            style="font-size:16px; padding:10px;"></div>
+                    <button class="btn btn-primary" style="width:100%; font-size:16px;"
+                        onclick="processBomCSVUpload()">🚀 Process & Sync BOM to DB</button>
+                    <hr style="margin:30px 0;"><button class="btn btn-danger" style="width:100%;"
+                        onclick="wipeDatabase('boms')">⚠️ WIPE BOMS DATABASE</button>
                 </div>
             </div>
 
             <div id="manual-tool-area" class="sub-tab-content">
                 <div class="card" style="border-top: 5px solid var(--accent);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:15px;">
-                        <h3 class="section-header" style="border:none; margin:0;">Complete Master Tool Profile Setup</h3>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom:15px;">
+                        <h3 class="section-header" style="border:none; margin:0;">Complete Master Tool Profile Setup
+                        </h3>
                         <button class="btn btn-warning" onclick="loadToolForEditPrompt()">✏️ Load Existing Code</button>
                     </div>
                     <form id="masterForm" onsubmit="saveNewStock(event)">
-                        <h4 style="color:var(--primary); margin:0 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">1. Primary Identification</h4>
+                        <h4
+                            style="color:var(--primary); margin:0 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">
+                            1. Primary Identification</h4>
                         <div class="grid-4">
-                            <div class="form-group"><label>Tool Code *</label><input type="text" id="exCode" required style="font-weight:bold; border-color:var(--primary);"></div>
-                            <div class="form-group"><label>M/C Name *</label><input type="text" id="exMachine" required></div>
+                            <div class="form-group"><label>Tool Code *</label><input type="text" id="exCode" required
+                                    style="font-weight:bold; border-color:var(--primary);"></div>
+                            <div class="form-group"><label>M/C Name *</label><input type="text" id="exMachine" required>
+                            </div>
                             <div class="form-group"><label>Part Size</label><input type="text" id="exPartSize"></div>
-                            <div class="form-group"><label>Tool Family *</label><input type="text" id="exFamily" required></div>
-                            <div class="form-group"><label>Tool Description *</label><input type="text" id="exDesc" required></div>
-                            <div class="form-group"><label>Applicable Part Names</label><input type="text" id="exPartNames" placeholder="Comma separated"></div>
+                            <div class="form-group"><label>Tool Family *</label><input type="text" id="exFamily"
+                                    required></div>
+                            <div class="form-group"><label>Tool Description *</label><input type="text" id="exDesc"
+                                    required></div>
+                            <div class="form-group"><label>Applicable Part Names</label><input type="text"
+                                    id="exPartNames" placeholder="Comma separated"></div>
                             <div class="form-group"><label>STN (Station)</label><input type="text" id="exStn"></div>
                         </div>
-                        <h4 style="color:var(--primary); margin:20px 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">2. Dimensional Specifications</h4>
+                        <h4
+                            style="color:var(--primary); margin:20px 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">
+                            2. Dimensional Specifications</h4>
                         <div class="grid-6">
                             <div class="form-group"><label>Pitch (mm)</label><input type="text" id="exPitch"></div>
                             <div class="form-group"><label>Wire Dia</label><input type="text" id="exWireDia"></div>
@@ -1612,37 +2084,57 @@
                             <div class="form-group"><label>Depth (mm)</label><input type="text" id="exDepth"></div>
                             <div class="form-group"><label>Tool Material</label><input type="text" id="exMtrl"></div>
                         </div>
-                        <h4 style="color:var(--primary); margin:20px 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">3. Life & Inventory Thresholds</h4>
+                        <h4
+                            style="color:var(--primary); margin:20px 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">
+                            3. Life & Inventory Thresholds</h4>
                         <div class="grid-5">
-                            <div class="form-group"><label>Assumed Life</label><input type="number" id="exAssumedLife" value="50000"></div>
-                            <div class="form-group"><label>Actual Life</label><input type="number" id="exActualLife" value="0"></div>
-                            <div class="form-group"><label>Min Qty</label><input type="number" id="exMin" value="5"></div>
-                            <div class="form-group"><label>Max Qty</label><input type="number" id="exMax" value="0"></div>
-                            <div class="form-group"><label>Reqd Qty</label><input type="number" id="exReqd" value="0"></div>
-                            <div class="form-group"><label>Total Plan</label><input type="number" id="exTotalPlan" value="0"></div>
-                            <div class="form-group"><label>Forgb Qty</label><input type="number" id="exForgb" value="0"></div>
-                            <div class="form-group" style="grid-column:span 3;"><label>Remarks</label><input type="text" id="exRemarks"></div>
+                            <div class="form-group"><label>Assumed Life</label><input type="number" id="exAssumedLife"
+                                    value="50000"></div>
+                            <div class="form-group"><label>Actual Life</label><input type="number" id="exActualLife"
+                                    value="0"></div>
+                            <div class="form-group"><label>Min Qty</label><input type="number" id="exMin" value="5">
+                            </div>
+                            <div class="form-group"><label>Max Qty</label><input type="number" id="exMax" value="0">
+                            </div>
+                            <div class="form-group"><label>Reqd Qty</label><input type="number" id="exReqd" value="0">
+                            </div>
+                            <div class="form-group"><label>Total Plan</label><input type="number" id="exTotalPlan"
+                                    value="0"></div>
+                            <div class="form-group"><label>Forgb Qty</label><input type="number" id="exForgb" value="0">
+                            </div>
+                            <div class="form-group" style="grid-column:span 3;"><label>Remarks</label><input type="text"
+                                    id="exRemarks"></div>
                         </div>
-                        <h4 style="color:var(--primary); margin:20px 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">4. Physical Locations & Stock</h4>
+                        <h4
+                            style="color:var(--primary); margin:20px 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">
+                            4. Physical Locations & Stock</h4>
                         <div class="grid-2">
-                            <div style="background: #e6f4ea; padding: 15px; border-radius: 6px; border: 1px solid #c3e6cb;">
+                            <div
+                                style="background: #e6f4ea; padding: 15px; border-radius: 6px; border: 1px solid #c3e6cb;">
                                 <h4 style="margin-top:0; color: var(--success);">Running Stock</h4>
                                 <div class="grid-2">
-                                    <div class="form-group"><label>Rng Qty</label><input type="number" id="exRngQty" value="0"></div>
-                                    <div class="form-group"><label>Rng Loc</label><input type="text" id="exRngLoc"></div>
+                                    <div class="form-group"><label>Rng Qty</label><input type="number" id="exRngQty"
+                                            value="0"></div>
+                                    <div class="form-group"><label>Rng Loc</label><input type="text" id="exRngLoc">
+                                    </div>
                                 </div>
                             </div>
-                            <div style="background: #e0f0ff; padding: 15px; border-radius: 6px; border: 1px solid #b8daff;">
+                            <div
+                                style="background: #e0f0ff; padding: 15px; border-radius: 6px; border: 1px solid #b8daff;">
                                 <h4 style="margin-top:0; color: #0056b3;">Spare Stock</h4>
                                 <div class="grid-2">
-                                    <div class="form-group"><label>Spare Qty</label><input type="number" id="exSpareQty" value="0"></div>
-                                    <div class="form-group"><label>Spare Loc</label><input type="text" id="exSpareLoc"></div>
+                                    <div class="form-group"><label>Spare Qty</label><input type="number" id="exSpareQty"
+                                            value="0"></div>
+                                    <div class="form-group"><label>Spare Loc</label><input type="text" id="exSpareLoc">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div style="margin-top: 30px; text-align:right;">
-                            <button type="button" class="btn btn-outline" onclick="document.getElementById('masterForm').reset()">Clear</button>
-                            <button type="submit" class="btn btn-primary" style="margin-left: 10px; font-size:16px;">💾 Save Profile to DB 🔒</button>
+                            <button type="button" class="btn btn-outline"
+                                onclick="document.getElementById('masterForm').reset()">Clear</button>
+                            <button type="submit" class="btn btn-primary" style="margin-left: 10px; font-size:16px;">💾
+                                Save Profile to DB 🔒</button>
                         </div>
                     </form>
                 </div>
@@ -1652,11 +2144,16 @@
                 <div class="card" style="border-top: 5px solid var(--accent);">
                     <h3 class="section-header">Manual Tool Schedule (BOM) Builder</h3>
                     <div class="grid-3">
-                        <div class="form-group"><label>Part Number / ID (Unique) *</label><input type="text" id="mbomId" required placeholder="e.g. M10x1.25x27"></div>
-                        <div class="form-group"><label>Machine Name</label><input type="text" id="mbomMachine" placeholder="e.g. 164S"></div>
-                        <div class="form-group"><label>Wire Dia</label><input type="text" id="mbomWire" placeholder="e.g. Ø11.75"></div>
+                        <div class="form-group"><label>Part Number / ID (Unique) *</label><input type="text" id="mbomId"
+                                required placeholder="e.g. M10x1.25x27"></div>
+                        <div class="form-group"><label>Machine Name</label><input type="text" id="mbomMachine"
+                                placeholder="e.g. 164S"></div>
+                        <div class="form-group"><label>Wire Dia</label><input type="text" id="mbomWire"
+                                placeholder="e.g. Ø11.75"></div>
                     </div>
-                    <h4 style="color:var(--primary); margin:20px 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">Add Tools to Schedule</h4>
+                    <h4
+                        style="color:var(--primary); margin:20px 0 10px 0; border-bottom:1px solid #ddd; padding-bottom:5px;">
+                        Add Tools to Schedule</h4>
                     <div class="table-responsive" style="overflow-x: auto; max-height: 400px;">
                         <table class="manual-bom-table mega-table" id="mbomTable">
                             <thead>
@@ -1672,9 +2169,11 @@
                             <tbody id="mbomTbody"></tbody>
                         </table>
                     </div>
-                    <button type="button" class="btn btn-outline" style="margin-top: 10px;" onclick="addBomRow()">➕ Add Another Tool Row</button>
+                    <button type="button" class="btn btn-outline" style="margin-top: 10px;" onclick="addBomRow()">➕ Add
+                        Another Tool Row</button>
                     <div style="margin-top: 30px; text-align:right;">
-                        <button type="button" class="btn btn-success" style="font-size:16px;" onclick="saveManualBOM()">💾 Save Tool Schedule to DB</button>
+                        <button type="button" class="btn btn-success" style="font-size:16px;"
+                            onclick="saveManualBOM()">💾 Save Tool Schedule to DB</button>
                     </div>
                 </div>
             </div>
@@ -1703,8 +2202,10 @@
                 </div>
             </div>
             <div class="card" style="padding: 0;">
-                <div class="section-header" style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
-                    📋 Adjustments Log <input type="text" class="search-filter" placeholder="Filter logs..." onkeyup="filterGenericTable('inventoryHistoryTable', this.value)">
+                <div class="section-header"
+                    style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
+                    📋 Adjustments Log <input type="text" class="search-filter" placeholder="Filter logs..."
+                        onkeyup="filterGenericTable('inventoryHistoryTable', this.value)">
                 </div>
                 <div class="table-responsive">
                     <table id="inventoryHistoryTable">
@@ -1729,28 +2230,37 @@
             <div class="card" style="border-left: 5px solid var(--primary);">
                 <form onsubmit="generateIndent(event)">
                     <div class="grid-3">
-                        <div class="form-group"><label>Indent No.</label><input type="text" id="indNo" readonly style="font-weight:bold; color:var(--primary);"></div>
+                        <div class="form-group"><label>Indent No.</label><input type="text" id="indNo" readonly
+                                style="font-weight:bold; color:var(--primary);"></div>
                         <div class="form-group"><label>Priority</label><select id="indPriority">
                                 <option>Normal Stock</option>
                                 <option style="color:red; font-weight:bold;">URGENT</option>
                             </select></div>
-                        <div class="form-group"><label>Required Qty</label><input type="number" id="indQty" required min="1"></div>
+                        <div class="form-group"><label>Required Qty</label><input type="number" id="indQty" required
+                                min="1"></div>
                     </div>
                     <div class="grid-4">
-                        <div class="form-group"><label>Tool Code (Type to Auto-Fill) *</label><input type="text" id="indCode" required placeholder="e.g. T.04.1.031" oninput="autoFillIndent()"></div>
-                        <div class="form-group"><label>Machine Name</label><input type="text" id="indMachine" required></div>
-                        <div class="form-group"><label>Part Size</label><input type="text" id="indPartSize" required></div>
-                        <div class="form-group"><label>Tool Description</label><input type="text" id="indDesc" required></div>
+                        <div class="form-group"><label>Tool Code (Type to Auto-Fill) *</label><input type="text"
+                                id="indCode" required placeholder="e.g. T.04.1.031" oninput="autoFillIndent()"></div>
+                        <div class="form-group"><label>Machine Name</label><input type="text" id="indMachine" required>
+                        </div>
+                        <div class="form-group"><label>Part Size</label><input type="text" id="indPartSize" required>
+                        </div>
+                        <div class="form-group"><label>Tool Description</label><input type="text" id="indDesc" required>
+                        </div>
                     </div>
                     <div id="indDocsDisplay" class="indent-docs-zone">
                         <span style="color:#999; font-size:12px;">Type a Tool Code to check for linked documents.</span>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="margin-top:15px; width: 100%;">Generate & Send Indent 🔒</button>
+                    <button type="submit" class="btn btn-primary" style="margin-top:15px; width: 100%;">Generate & Send
+                        Indent 🔒</button>
                 </form>
             </div>
             <div class="card" style="padding:0;">
-                <div class="section-header" style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
-                    🕒 Active Indents <input type="text" class="search-filter" placeholder="Filter indents..." onkeyup="filterGenericTable('indentsTable', this.value)">
+                <div class="section-header"
+                    style="padding: 15px; background: #f8fafc; border-bottom: 1px solid #ddd; margin:0;">
+                    🕒 Active Indents <input type="text" class="search-filter" placeholder="Filter indents..."
+                        onkeyup="filterGenericTable('indentsTable', this.value)">
                 </div>
                 <div class="table-responsive">
                     <table id="indentsTable">
@@ -1765,6 +2275,8 @@
                                 <th>Qty</th>
                                 <th>Priority</th>
                                 <th>Linked Docs</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="indentHistoryBody"></tbody>
@@ -1776,7 +2288,8 @@
         <div id="analytics" class="tab-section">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h1>📊 Analytics Log</h1>
-                <button class="btn btn-warning" onclick="exportTableToCSV('analyticsTable', 'Loss_Alert_Report.csv')">⬇️ Export Monthly Loss Report (CSV)</button>
+                <button class="btn btn-warning" onclick="exportTableToCSV('analyticsTable', 'Loss_Alert_Report.csv')">⬇️
+                    Export Monthly Loss Report (CSV)</button>
             </div>
 
             <div class="grid-3" style="margin-bottom: 20px;">
@@ -1831,6 +2344,29 @@
                             </tr>
                         </thead>
                         <tbody id="analyticsHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div id="audit-trail" class="tab-section">
+            <h1>🕵️‍♂️ Master Audit Trail</h1>
+            <p style="color:#666;">Immutable security log of all system actions. Accessible only by Administrators.</p>
+            <div class="card" style="padding: 0; border: 2px solid #1e293b;">
+                <div class="table-responsive" style="max-height: 600px; border:none;">
+                    <table id="auditTable">
+                        <thead style="background: #1e293b; color: white;">
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>User / Role</th>
+                                <th>Action Type</th>
+                                <th>Detailed Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -1897,6 +2433,8 @@
         let issueHistory = [];
         let revisedStockHistory = [];
         let pendingRevision = null;
+        let assemblyHistory = [];
+        let auditTrail = [];
 
         // Default Fallback QA Specs (In case DB is empty)
         let qaSpecs = {
@@ -1977,7 +2515,7 @@
         }
         function handleLogout() { currentUserRole = null; document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('loginUser').value = ''; document.getElementById('loginPwd').value = ''; document.getElementById('activeUserDisplay').innerText = 'Not Logged In'; }
         function applyRBAC() { document.querySelectorAll('.nav-btn, .nav-group-title').forEach(el => { if (el.hasAttribute('data-roles')) el.style.display = el.getAttribute('data-roles').split(',').includes(currentUserRole) ? '' : 'none'; }); }
-        
+
         function switchTab(t) {
             document.querySelectorAll('.tab-section').forEach(x => x.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
@@ -1986,7 +2524,7 @@
             let activeBtn = document.querySelector(`.nav-btn[onclick*="switchTab('${t}')"]`);
             if (activeBtn) activeBtn.classList.add('active');
         }
-        
+
         function switchSubTab(s, b) { const p = b.closest('.tab-section'); p.querySelectorAll('.sub-tab-content').forEach(x => x.classList.remove('active')); p.querySelectorAll('.sub-nav-btn').forEach(x => x.classList.remove('active')); document.getElementById(s).classList.add('active'); b.classList.add('active'); }
 
         function downloadPDF() { window.print(); }
@@ -2014,13 +2552,15 @@
                         ecnList = data.state.ecnList || [];
                         issueHistory = data.state.issueHistory || [];
                         revisedStockHistory = data.state.revisedStockHistory || [];
+                        assemblyHistory = data.state.assemblyHistory || [];
+                        auditTrail = data.state.auditTrail || [];
 
                         // NEW: Pull QA Specs from DB
                         if (data.state.qaSpecs && Object.keys(data.state.qaSpecs).length > 0) {
                             qaSpecs = data.state.qaSpecs;
                         }
                     }
-                    statusEl.innerText = "🟢 Connected to MongoDB";
+                    statusEl.innerText = "🟢 Connected";
                     statusEl.className = "connected";
                 } else { throw new Error("Failed"); }
             } catch (e) {
@@ -2047,24 +2587,29 @@
                         masterInventory, returnHistory, conversionHistory, qaHistory,
                         consumablesHistory, indentHistory, analyticsHistory,
                         invAdjustmentHistory, documentRepo, lastIssueMemory, toolSchedules, dwmHistory, ecnList, issueHistory, revisedStockHistory,
-                        qaSpecs // <-- NEW: Saves templates to DB
+                        qaSpecs, auditTrail, assemblyHistory// ADD THIS TO THE LIST // <-- NEW: Saves templates to DB
                     })
                 });
                 populateBomDropdown();
                 updateQADropdown();
                 updateTemplateDropdown();
                 updateDashboards();
+
             } catch (e) { console.error(e); }
         }
 
         function populateBomDropdown() {
             const select = document.getElementById('bomSelect');
-            select.innerHTML = '<option value="">-- Choose Part Number --</option>';
+            const assemblySelect = document.getElementById('assemblyBomSelect'); // NEW
+            let html = '<option value="">-- Choose Part Number --</option>';
+
             for (let partNo in toolSchedules) {
                 let size = (toolSchedules[partNo].meta && toolSchedules[partNo].meta.size) ? toolSchedules[partNo].meta.size : partNo;
                 let machine = (toolSchedules[partNo].meta && toolSchedules[partNo].meta.machine) ? toolSchedules[partNo].meta.machine : "Unknown";
-                select.innerHTML += `<option value="${partNo}">${size} (M/C: ${machine})</option>`;
+                html += `<option value="${partNo}">${size} (M/C: ${machine})</option>`;
             }
+            if (select) select.innerHTML = html;
+            if (assemblySelect) assemblySelect.innerHTML = html; // NEW
         }
 
         function renderAllTables() {
@@ -2079,47 +2624,83 @@
                 let docHTML = linkedDocs.map(d => `<button class="btn-tiny" onclick="viewDoc('${d.dataUrl}')">${d.type === 'Product Drawing' ? 'PD' : (d.type === 'Tool Drawing' ? 'TD' : 'CP')}</button>`).join('');
 
                 return `<tr>
-                    <td><strong class="tool-hover" title="Parts: ${(item.partNames || []).join(', ')}">${item.code}</strong></td>
-                    <td><span class="badge b-dark">${item.machine || '-'}</span></td><td><span class="badge b-purple">${item.partSize || '-'}</span></td>
-                    <td>${item.pitch || '-'}</td><td>${item.wireDia || '-'}</td><td style="color:var(--accent); font-weight:bold;">${(item.partNames || []).join(', ')}</td>
-                    <td>${item.stn || '-'}</td><td>${item.family || '-'}</td><td style="white-space:normal; min-width:150px;">${item.desc || '-'}</td>
-                    <td>${item.marking || '-'}</td><td>${item.af || '-'}</td><td>${item.length || '-'}</td><td>${item.id || '-'}</td><td>${item.od || '-'}</td>
-                    <td>${item.carbDia || '-'}</td><td>${item.ptLen || '-'}</td><td>${item.depth || '-'}</td><td>${item.mtrl || '-'}</td>
-                    <td>${lifeHTML}</td><td><strong style="color:var(--success); font-size:15px;">${item.rngStock || 0}</strong></td><td><small>${item.rngLoc || '-'}</small></td>
-                    <td><strong style="color:var(--primary); font-size:15px;">${item.spareStock || 0}</strong></td><td><small>${item.spareLoc || '-'}</small></td>
-                    <td style="background:#f1f5f9; border-left:2px solid #cbd5e1;"><strong class="badge ${badgeClass}" style="font-size:16px;">${item.stock || 0}</strong></td>
-                    <td>${item.min || 0}</td><td>${item.max || '-'}</td><td><span class="badge b-yellow" style="color:black;">${item.reqd || 0}</span></td>
-                    <td>${item.totalPlan || '-'}</td><td>${item.forgb || '-'}</td><td style="white-space:normal; min-width:150px; font-size:11px;">${item.remarks || '-'}</td>
-                    <td>${docHTML}</td>
-                    <td style="display:flex; gap:5px;"><button class="btn btn-outline" style="padding:4px 8px; font-size:11px;" onclick="quickAdjust('${item.code}')">🔧</button><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteProduct('${item.code}')">🗑️</button></td>
-                </tr>`;
+            <td><strong class="tool-hover" title="Parts: ${(item.partNames || []).join(', ')}">${item.code}</strong></td>
+            <td><span class="badge b-dark">${item.machine || '-'}</span></td><td><span class="badge b-purple">${item.partSize || '-'}</span></td>
+            <td>${item.pitch || '-'}</td><td>${item.wireDia || '-'}</td><td style="color:var(--accent); font-weight:bold;">${(item.partNames || []).join(', ')}</td>
+            <td>${item.stn || '-'}</td><td>${item.family || '-'}</td><td style="white-space:normal; min-width:150px;">${item.desc || '-'}</td>
+            <td>${item.marking || '-'}</td><td>${item.af || '-'}</td><td>${item.length || '-'}</td><td>${item.id || '-'}</td><td>${item.od || '-'}</td>
+            <td>${item.carbDia || '-'}</td><td>${item.ptLen || '-'}</td><td>${item.depth || '-'}</td><td>${item.mtrl || '-'}</td>
+            <td>${lifeHTML}</td><td><strong style="color:var(--success); font-size:15px;">${item.rngStock || 0}</strong></td><td><small>${item.rngLoc || '-'}</small></td>
+            <td><strong style="color:var(--primary); font-size:15px;">${item.spareStock || 0}</strong></td><td><small>${item.spareLoc || '-'}</small></td>
+            <td style="background:#f1f5f9; border-left:2px solid #cbd5e1;"><strong class="badge ${badgeClass}" style="font-size:16px;">${item.stock || 0}</strong></td>
+            <td>${item.min || 0}</td><td>${item.max || '-'}</td><td><span class="badge b-yellow" style="color:black;">${item.reqd || 0}</span></td>
+            <td>${item.totalPlan || '-'}</td><td>${item.forgb || '-'}</td><td style="white-space:normal; min-width:150px; font-size:11px;">${item.remarks || '-'}</td>
+            <td>${docHTML}</td>
+            <td style="display:flex; gap:5px;"><button class="btn btn-outline" style="padding:4px 8px; font-size:11px;" onclick="quickAdjust('${item.code}')">🔧</button><button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteProduct('${item.code}')">🗑️</button></td>
+        </tr>`;
             }).join('');
 
             const revBody = document.getElementById('revisedStockBody');
             if (revBody) {
                 revBody.innerHTML = revisedStockHistory.map(r => `<tr>
-                    <td>${r.date}</td>
-                    <td><del style="color:#999;">${r.oldCode}</del></td>
-                    <td><strong style="color:var(--success); font-size: 15px;">${r.newCode}</strong></td>
-                    <td>${r.desc}</td>
-                    <td><span class="badge b-blue">📄 ${r.docAdded}</span></td>
-                </tr>`).join('');
+            <td>${r.date}</td>
+            <td><del style="color:#999;">${r.oldCode}</del></td>
+            <td><strong style="color:var(--success); font-size: 15px;">${r.newCode}</strong></td>
+            <td>${r.desc}</td>
+            <td><span class="badge b-blue">📄 ${r.docAdded}</span></td>
+        </tr>`).join('');
             }
 
             document.getElementById('returnHistoryBody').innerHTML = returnHistory.map(r => `<tr><td>${r.date}</td><td>${r.action || '<span class="badge b-yellow">RETURNED</span>'}</td><td><strong>${r.retCode || r.code}</strong></td><td><span style="color:var(--danger); font-weight:bold;">+${r.piecesAdded} Pcs</span></td><td>${r.reason}</td><td>${r.operator}</td><td><strong style="color:var(--success);">${r.issued || 'None'}</strong></td></tr>`).join('');
             document.getElementById('pendingQaBody').innerHTML = conversionHistory.filter(c => c.status === 'Pending QA').map(c => `<tr><td>${c.date}</td><td><strong>${c.src}</strong></td><td><strong>${c.tgt}</strong></td><td>${c.qty || 1}</td><td>${c.op}</td><td><button class="btn btn-success" style="padding: 4px 8px; font-size:12px;" onclick="approveQA(${c.id})">Inspect ✅</button></td></tr>`).join('');
-            document.getElementById('pendingAdminBody').innerHTML = conversionHistory.filter(c => c.status === 'Pending Admin').map(c => `<tr><td>${c.qaDate}</td><td><strong>${c.src}</strong></td><td><strong>${c.tgt}</strong></td><td>${c.qty || 1}</td><td>${c.qaOp}</td><td><small>FID: ${c.fid} | BID: ${c.bid} | OAL: ${c.oal}</small></td><td><button class="btn btn-primary" style="padding: 4px 8px; font-size:12px;" onclick="adminFinalApprove(${c.id})">Final Approve 🔒</button></td></tr>`).join('');
+
+            // --- NEW: Unified Admin Queue ---
+            let adminHtml = '';
+            conversionHistory.filter(c => c.status === 'Pending Admin').forEach(c => {
+                adminHtml += `<tr><td>${c.qaDate}</td><td><strong>${c.src}</strong></td><td><strong>${c.tgt}</strong> <span class="badge b-purple">CONV</span></td><td>${c.qty || 1}</td><td>${c.qaOp}</td><td><button class="btn btn-primary" style="padding: 4px 8px; font-size:12px;" onclick="adminFinalApprove('CONV', ${c.id})">Final Approve 🔒</button></td></tr>`;
+            });
+            ecnList.filter(e => e.status === 'PENDING ADMIN').forEach(e => {
+                adminHtml += `<tr><td>${e.qaDate}</td><td><strong>${e.part}</strong></td><td><strong>${e.param} ➔ ${e.after}</strong> <span class="badge b-red">ECN</span></td><td>1</td><td>${e.qaOp}</td><td><button class="btn btn-primary" style="padding: 4px 8px; font-size:12px;" onclick="adminFinalApprove('ECN', ${e.id})">Final Approve 🔒</button></td></tr>`;
+            });
+            qaHistory.filter(q => q.status === 'Pending Admin').forEach(q => {
+                adminHtml += `<tr><td>${q.date}</td><td><strong>${q.code}</strong></td><td><strong>Inspection Report</strong> <span class="badge b-success">QA</span></td><td>-</td><td>${q.op}</td><td><button class="btn btn-primary" style="padding: 4px 8px; font-size:12px;" onclick="adminFinalApprove('QA', ${q.id})">Final Approve 🔒</button></td></tr>`;
+            });
+            document.getElementById('pendingAdminBody').innerHTML = adminHtml || '<tr><td colspan="6" style="text-align:center; padding:20px; color:#666;">No items pending Admin approval.</td></tr>';
+
             document.getElementById('conversionHistoryBody').innerHTML = conversionHistory.map(c => `<tr><td>${c.date}</td><td><span class="badge ${c.status === 'Pending QA' ? 'b-yellow' : (c.status === 'Pending Admin' ? 'b-blue' : 'b-green')}">${c.status}</span></td><td><strong>${c.src}</strong></td><td><strong>${c.tgt}</strong></td><td>${c.qty || 1}</td><td>${c.desc}</td><td>${c.op}</td></tr>`).join('');
-            document.getElementById('qaHistoryBody').innerHTML = qaHistory.map(q => `<tr><td>${q.date}</td><td><strong>${q.code}</strong></td><td><span class="badge b-success">${q.op}</span></td><td>${q.fid}</td><td>${q.bid}</td><td>${q.oal}</td></tr>`).join('');
+
+            // --- NEW: Updated QA History (View Details Button) ---
+            document.getElementById('qaHistoryBody').innerHTML = qaHistory.filter(q => q.status !== 'Pending Admin').map(q => {
+                let detailBtn = q.details ? `<button class="btn-tiny" onclick="customAlert('${q.details.replace(/'/g, "\\\\'").replace(/"/g, "&quot;")}', 'Detailed QA Report')">View Specs</button>` : (q.oal || '-');
+                return `<tr><td>${q.date}</td><td><strong>${q.code}</strong></td><td><span class="badge b-success">${q.op}</span></td><td>${q.fid || '-'}</td><td>${q.bid || '-'}</td><td>${detailBtn}</td></tr>`;
+            }).join('');
+
             document.getElementById('consumablesHistoryBody').innerHTML = consumablesHistory.map(c => `<tr><td>${c.date}</td><td>${c.cat}</td><td>${c.spec}</td><td>${c.machine}</td><td><strong>${c.qty}</strong></td></tr>`).join('');
             document.getElementById('inventoryHistoryBody').innerHTML = invAdjustmentHistory.map(h => `<tr><td>${h.date}</td><td>${h.action}</td><td><strong>${h.code}</strong></td><td>${h.qty}</td><td>${h.operator}</td><td>${h.reason}</td></tr>`).join('');
             document.getElementById('issueHistoryBody').innerHTML = issueHistory.map(i => `<tr><td>${i.date}</td><td><strong>${i.code}</strong></td><td>${i.desc}</td><td>${i.machine}</td><td><span class="badge b-blue">${i.qty}</span></td><td>${i.operator}</td></tr>`).join('');
 
             document.getElementById('indentHistoryBody').innerHTML = indentHistory.map(i => {
-                let linkedDocs = documentRepo.filter(d => d.part === i.code || d.part === i.partSize);
-                let docHTML = linkedDocs.map(d => `<button class="btn-tiny" onclick="viewDoc('${d.dataUrl}')">${d.type === 'Product Drawing' ? 'PD' : 'TD'}</button>`).join('');
-                return `<tr><td>${i.date}</td><td><strong>${i.no}</strong></td><td>${i.machine}</td><td>${i.partSize}</td><td><strong>${i.code}</strong></td><td>${i.desc}</td><td>${i.qty}</td><td>${i.priority}</td><td>${docHTML}</td></tr>`;
+                let statusBadge = i.status === 'Fulfilled' ? '<span class="badge b-green">FULFILLED</span>' : '<span class="badge b-warning">ACTIVE</span>';
+                let actionBtn = i.status === 'Fulfilled' ? `<small style="color:var(--success); font-weight:bold;">Rcvd: ${i.receivedDate}</small>` : `<button class="btn btn-success" style="padding: 4px 8px; font-size:11px;" onclick="receiveIndent(${i.id})">📦 Receive</button>`;
+
+                return `<tr>
+            <td>${i.date}</td><td><strong>${i.no}</strong></td><td>${i.machine}</td><td>${i.partSize}</td>
+            <td><strong style="color:var(--accent);">${i.code}</strong></td><td>${i.qty}</td>
+            <td>${i.priority === 'URGENT' ? '<span style="color:red; font-weight:bold;">URGENT</span>' : 'Normal'}</td>
+            <td>${statusBadge}</td><td>${actionBtn}</td>
+        </tr>`;
             }).join('');
+
+            // Render the Audit Trail
+            let auditBody = document.getElementById('auditTableBody');
+            if (auditBody) {
+                auditBody.innerHTML = auditTrail.map(a => `<tr>
+            <td style="color:#666; font-size:12px;">${a.date}</td>
+            <td><strong style="color:var(--primary);">${a.user}</strong></td>
+            <td><span class="badge b-dark">${a.action}</span></td>
+            <td>${a.details}</td>
+        </tr>`).join('');
+            }
 
             document.getElementById('analyticsHistoryBody').innerHTML = analyticsHistory.map(a => `<tr><td>${a.date}</td><td>${a.machine}</td><td>${a.desc}</td><td>${a.impact}</td><td>${a.action}</td></tr>`).join('');
             document.getElementById('docTableBody').innerHTML = documentRepo.map((d, i) => `<tr><td>${d.date}</td><td><strong>${d.part}</strong></td><td><span class="badge b-blue">${d.type}</span></td><td>${d.filename}</td><td><button class="btn btn-outline" style="padding: 4px 8px; font-size:11px;" onclick="viewDoc('${d.dataUrl}')">👁️ View</button> <button class="btn btn-danger" style="padding: 4px 8px; font-size:11px;" onclick="deleteDoc(${i})">🗑️</button></td></tr>`).join('');
@@ -2130,26 +2711,27 @@
                     let stopCell = d.stop ? d.stop : `<button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="stopDWMTask(${d.id})">⏹️ Stop</button>`;
                     let remarksCell = `<input type="text" class="prod-input" style="padding: 4px 8px; font-size: 12px; min-width: 120px;" value="${d.remarks || ''}" onchange="updateDwmRemark(${d.id}, this.value)" placeholder="Add remark...">`;
                     return `<tr>
-                        <td>${d.date}</td>
-                        <td><span class="badge b-dark">${d.shift}</span></td>
-                        <td>${d.machine || '-'}</td>
-                        <td>${d.part || '-'}</td>
-                        <td style="color:var(--accent); font-weight:bold;">${d.tool}</td>
-                        <td>${d.qty}</td>
-                        <td>${d.operator}</td>
-                        <td>${d.trmc}</td>
-                        <td><span class="badge ${d.planAct === 'ACTUAL' ? 'b-success' : 'b-yellow'}">${d.planAct}</span></td>
-                        <td>${d.start || '-'}</td>
-                        <td>${stopCell}</td>
-                        <td><strong style="color: var(--primary);">${d.dur || '-'}</strong></td>
-                        <td>${remarksCell}</td>
-                    </tr>`;
+                <td>${d.date}</td>
+                <td><span class="badge b-dark">${d.shift}</span></td>
+                <td>${d.machine || '-'}</td>
+                <td>${d.part || '-'}</td>
+                <td style="color:var(--accent); font-weight:bold;">${d.tool}</td>
+                <td>${d.qty}</td>
+                <td>${d.operator}</td>
+                <td>${d.trmc}</td>
+                <td><span class="badge ${d.planAct === 'ACTUAL' ? 'b-success' : 'b-yellow'}">${d.planAct}</span></td>
+                <td>${d.start || '-'}</td>
+                <td>${stopCell}</td>
+                <td><strong style="color: var(--primary);">${d.dur || '-'}</strong></td>
+                <td>${remarksCell}</td>
+            </tr>`;
                 }).join('');
             }
 
             if (document.getElementById('dwmDate') && !document.getElementById('dwmDate').value) {
                 document.getElementById('dwmDate').value = new Date().toISOString().split('T')[0];
             }
+            renderAssemblyHistory();
         }
 
         function updateDashboards() {
@@ -2164,7 +2746,11 @@
 
             let pendTR = ecnList.filter(e => e.status === 'PENDING TOOL ROOM').length;
             let pendQA = conversionHistory.filter(c => c.status === 'Pending QA').length + ecnList.filter(e => e.status === 'PENDING QA').length;
-            let pendAdmin = conversionHistory.filter(c => c.status === 'Pending Admin').length;
+            
+            // Unified Admin Queue Count
+            let pendAdmin = conversionHistory.filter(c => c.status === 'Pending Admin').length +
+                ecnList.filter(e => e.status === 'PENDING ADMIN').length +
+                qaHistory.filter(q => q.status === 'Pending Admin').length;
 
             if (document.getElementById('statPendTR')) document.getElementById('statPendTR').innerText = pendTR;
             if (document.getElementById('statPendQA')) document.getElementById('statPendQA').innerText = pendQA;
@@ -2180,6 +2766,112 @@
                     badge.style.display = 'none';
                 }
             }
+
+            // --- CORRECTED: Auto-Hiding Preventive Maintenance Widget with Smart Indent Checking ---
+            let pmHtml = '';
+            let alertCount = 0; // Track if we have any alerts
+
+            masterInventory.forEach(t => {
+                let act = t.actualLife || 0;
+                let assm = t.assumedLife || 0;
+                if (assm > 0) {
+                    let pct = (act / assm) * 100;
+                    if (pct >= 85) {
+                        alertCount++; // Found a tool that needs maintenance!
+                        let isCritical = pct >= 100;
+                        let badge = isCritical ? '<span class="badge b-red" style="font-size:12px;">CRITICAL (>100%)</span>' : '<span class="badge b-warning" style="font-size:12px; color:black;">WARNING (>85%)</span>';
+                        
+                        // NEW: Build the Location and Stock string
+                        let locStr = `<small>R: ${t.rngLoc||'-'} <strong>(${t.rngStock||0})</strong><br>S: ${t.spareLoc||'-'} <strong>(${t.spareStock||0})</strong></small>`;
+
+                        // Check Indent Status for this specific tool
+                        let toolIndents = indentHistory.filter(i => i.code === t.code);
+                        let actionHtml = '';
+                        
+                        if (toolIndents.length > 0 && toolIndents[0].status !== 'Fulfilled') {
+                            actionHtml = `<span class="badge b-yellow" style="color:black; padding: 6px;">⏳ Indent Active</span><br>`;
+                        } else if (toolIndents.length > 0 && toolIndents[0].status === 'Fulfilled') {
+                            actionHtml = `<span class="badge b-green" style="padding: 6px; margin-bottom: 4px;">📦 Indent Rcvd</span><br>
+                                          <button class="btn btn-outline btn-tiny" style="padding:4px 8px; margin-top:5px;" onclick="switchTab('indents'); document.getElementById('indCode').value='${t.code}'; autoFillIndent();">🛒 Reorder</button>`;
+                        } else {
+                            actionHtml = `<button class="btn btn-danger btn-tiny" style="padding:6px 12px; font-weight:bold;" onclick="switchTab('indents'); document.getElementById('indCode').value='${t.code}'; autoFillIndent();">🛒 Reorder</button><br>`;
+                        }
+
+                        // NEW: Add the Scrap/Remove Button
+                        let scrapBtn = `<button class="btn btn-outline btn-tiny" style="padding:4px 8px; margin-top:5px; color: var(--danger); border-color: var(--danger);" onclick="markToolBroken('${t.code}')">🗑️ Scrap/Remove</button>`;
+                        actionHtml += scrapBtn;
+
+                        pmHtml += `<tr>
+                            <td><strong style="color:var(--danger);">${t.code}</strong></td>
+                            <td>${t.machine || '-'}</td>
+                            <td>${locStr}</td>
+                            <td><strong>${act.toLocaleString()}</strong> / ${assm.toLocaleString()} <span style="color:#666; font-size:11px;">(${pct.toFixed(1)}%)</span></td>
+                            <td>${badge}</td>
+                            <td>${actionHtml}</td>
+                        </tr>`;
+                    }
+                }
+            });
+            
+            let pmBody = document.getElementById('pmWidgetBody');
+            let pmContainer = document.getElementById('global-pm-container');
+            
+            if (alertCount > 0) {
+                if (pmBody) pmBody.innerHTML = pmHtml;
+                if (pmContainer) pmContainer.style.display = 'block';
+            } else {
+                if (pmContainer) pmContainer.style.display = 'none';
+                if (pmBody) pmBody.innerHTML = '';
+            }
+        }
+
+
+
+
+        async function markToolBroken(code) {
+            if (currentUserRole !== 'admin' && currentUserRole !== 'toolroom') return await customAlert("Access Denied. Only Admin and Tool Room can scrap tools.", "Security");
+            
+            let item = masterInventory.find(t => t.code === code);
+            if (!item) return await customAlert("Tool not found in inventory.");
+            if (item.stock <= 0) return await customAlert(`Cannot scrap ${code}. The current stock is already 0.`);
+
+            // Prompt for Quantity
+            let qtyStr = await customPrompt(`How many units of ${code} are broken or end-of-life?\n(Current Total Stock: ${item.stock})`, "Scrap Tool");
+            let qty = parseInt(qtyStr);
+            if (!qty || qty <= 0 || qty > item.stock) return await customAlert("Invalid quantity. Must be a number greater than 0 and less than or equal to current stock.");
+
+            // Prompt for Reason
+            let reason = await customPrompt(`Reason for scrapping ${qty}x ${code}:`, "Scrap Reason");
+            if (!reason) reason = "End of Life / Broken";
+
+            let op = currentUserRole ? currentUserRole.toUpperCase() : 'SYSTEM';
+
+            // Deduct stock (Priority to Running Stock, then Spare)
+            if (item.rngStock >= qty) {
+                item.rngStock -= qty;
+            } else {
+                let rem = qty - item.rngStock;
+                item.rngStock = 0;
+                item.spareStock -= rem;
+            }
+            item.stock = item.rngStock + item.spareStock;
+
+            // Reset actual life to 0 since the failing tool has been thrown away
+            item.actualLife = 0;
+
+            // Log to Inventory Adjustments
+            invAdjustmentHistory.unshift({
+                date: getNow(), action: '<span class="badge b-red">SCRAPPED</span>', code: code, qty: qty, operator: op, reason: reason
+            });
+            
+            // Log to Master Audit Trail
+            logAudit("SCRAP TOOL", `${op} scrapped ${qty}x [${code}]. Reason: ${reason}. Stock reduced to ${item.stock}.`);
+
+            saveAllData();
+            renderAllTables();
+            updateDashboards();
+            
+            await customAlert(`✅ Successfully scrapped ${qty} units of ${code}. Stock updated and life counter reset.`);
         }
 
         function parseCSVLine(text) {
@@ -2236,12 +2928,98 @@
                             let r = parseInt(map.rng > -1 ? cols[map.rng] : 0) || 0; let s = parseInt(map.spr > -1 ? cols[map.spr] : 0) || 0;
                             let p = {
                                 code: c, machine: map.mc > -1 ? cols[map.mc] : "-", partSize: map.ps > -1 ? cols[map.ps] : "-", pitch: map.pt > -1 ? cols[map.pt] : "-", wireDia: map.wd > -1 ? cols[map.wd] : "-", partNames: pNames, stn: map.stn > -1 ? cols[map.stn] : "-", family: map.fam > -1 ? cols[map.fam] : "-", desc: map.desc > -1 ? cols[map.desc] : "-",
-                                rngStock: r, rngLoc: map.loc1 > -1 ? cols[map.loc1] : "-", spareStock: s, spareLoc: map.loc2 > -1 ? cols[map.loc2] : "-", stock: r + s, min: map.min > -1 ? (parseInt(cols[map.min]) || 5) : 5, assumedLife: map.life > -1 ? (parseInt(cols[map.life]) || 50000) : 50000, actualLife: 0,
+                                rngStock: r, spareStock: s, stock: r + s, min: map.min > -1 ? (parseInt(cols[map.min]) || 5) : 5, assumedLife: map.life > -1 ? (parseInt(cols[map.life]) || 50000) : 50000, actualLife: 0,
                                 od: map.od > -1 ? cols[map.od] : "-", length: map.length > -1 ? cols[map.length] : "-", id: map.id > -1 ? cols[map.id] : "-"
                             };
-                            let idx = masterInventory.findIndex(t => t.code === c); if (idx > -1) masterInventory[idx] = { ...masterInventory[idx], ...p }; else masterInventory.push(p);
+
+                            // --- 1. DEFINE EXACT RACK SIZES & MACHINE ALLOCATIONS IN MEMORY ---
+                            if (!window.machineBins) {
+                                // Helper function to build rack labels
+                                const genBins = (racks, rows, bins) => {
+                                    let list = [];
+                                    for (let r of racks) {
+                                        for (let row = 1; row <= rows; row++) {
+                                            for (let b = 1; b <= bins; b++) list.push(`R${r}-Ro${row}-B${b}`);
+                                        }
+                                    }
+                                    return list;
+                                };
+                                const genSpares = (racks) => {
+                                    let list = [];
+                                    for (let r of racks) {
+                                        for (let row = 1; row <= 4; row++) {
+                                            for (let b = 1; b <= 3; b++) list.push(`SPR${r}-Ro${row}-B${b}`);
+                                        }
+                                    }
+                                    return list;
+                                };
+
+                                // Map your custom rack dimensions to specific machines
+                                window.machineBins = {
+                                    "64S": {
+                                        running: genBins([1, 2], 8, 6), // Racks 1-2 (8 rows x 6 bins)
+                                        spare: genSpares([1]),          // Spare Rack 1
+                                        rIdx: 0, sIdx: 0
+                                    },
+                                    "84S": {
+                                        running: genBins([3, 4], 5, 6), // Racks 3-4 (5 rows x 6 bins)
+                                        spare: genSpares([1]),          // Spare Rack 1
+                                        rIdx: 0, sIdx: 0
+                                    },
+                                    "6L4S": {
+                                        // Rack 5 (5x6) + Rack 6 (6x6)
+                                        running: [...genBins([5], 5, 6), ...genBins([6], 6, 6)],
+                                        spare: genSpares([2]),          // Spare Rack 2
+                                        rIdx: 0, sIdx: 0
+                                    },
+                                    "164S": {
+                                        running: genBins([7, 8], 6, 6), // Racks 7-8 (6 rows x 6 bins)
+                                        spare: genSpares([2]),          // Spare Rack 2
+                                        rIdx: 0, sIdx: 0
+                                    },
+                                    "254LL": {
+                                        running: genBins([9], 6, 6),    // Rack 9 (6 rows x 6 bins)
+                                        spare: genSpares([3]),          // Spare Rack 3
+                                        rIdx: 0, sIdx: 0
+                                    },
+                                    "MISC": {
+                                        running: ["TSR-MISC"], // Fallback if machine name is weird/missing
+                                        spare: ["TSL-MISC"],
+                                        rIdx: 0, sIdx: 0
+                                    }
+                                };
+                            }
+
+                            // --- 2. MATCH TOOL TO ITS MACHINE ZONE ---
+                            let mName = (p.machine || "").toUpperCase();
+                            let mKey = "MISC";
+
+                            if (mName.includes("6L4S")) mKey = "6L4S";
+                            else if (mName.includes("164S")) mKey = "164S";
+                            else if (mName.includes("64S")) mKey = "64S"; // Must go after 164S to avoid mixup
+                            else if (mName.includes("84S")) mKey = "84S";
+                            else if (mName.includes("254LL")) mKey = "254LL";
+
+                            // --- 3. DEAL THE LOCATIONS (DELETES OLD LOCATIONS) ---
+                            let alloc = window.machineBins[mKey];
+
+                            // Assign current bin and increment counter so next tool gets next bin
+                            p.rngLoc = alloc.running[alloc.rIdx % alloc.running.length];
+                            p.spareLoc = alloc.spare[alloc.sIdx % alloc.spare.length];
+
+                            alloc.rIdx++;
+                            alloc.sIdx++;
+
+                            // --- 4. SAVE TO DATABASE ---
+                            let idx = masterInventory.findIndex(t => t.code === c);
+                            if (idx > -1) {
+                                masterInventory[idx] = { ...masterInventory[idx], ...p };
+                            } else {
+                                masterInventory.push(p);
+                            }
                             importCount++;
                         }
+
                     }
                     if (importCount > 0) { saveAllData(); renderAllTables(); await customAlert(`✅ Imported ${importCount} Tools perfectly!`); switchTab('master-stock'); }
                     else await customAlert("Failed to parse CSV headers. Check formatting.");
@@ -2411,7 +3189,7 @@
                     if (match) { partNo = match[1].trim(); break; }
                 }
 
-                if (!partNo) continue; 
+                if (!partNo) continue;
 
                 let stations = {};
                 let currentStation = null;
@@ -3068,9 +3846,47 @@
             saveAllData(); renderAllTables(); renderQAQueue(); await customAlert(`Sent to Admin for stock update.`);
         }
 
-        async function adminFinalApprove(id) {
-            if (currentUserRole !== 'admin' && currentUserRole !== 'toolroom') return await customAlert("Access Denied."); let c = conversionHistory.find(x => x.id === id); let tI = masterInventory.findIndex(x => x.code === c.tgt);
-            if (tI > -1) { masterInventory[tI].spareStock += c.qty; masterInventory[tI].stock += c.qty; } c.status = 'Approved'; saveAllData(); renderAllTables(); await customAlert(`Added to Master Stock.`);
+        async function adminFinalApprove(type, id) {
+            if (currentUserRole !== 'admin' && currentUserRole !== 'toolroom') return await customAlert("Access Denied.");
+
+            if (type === 'CONV') {
+                let c = conversionHistory.find(x => x.id === id);
+                let tI = masterInventory.findIndex(x => x.code === c.tgt);
+                if (tI > -1) {
+                    masterInventory[tI].spareStock += c.qty;
+                    masterInventory[tI].stock += c.qty;
+                }
+                c.status = 'Approved';
+                qaHistory.unshift({ date: getNow(), code: c.tgt, op: c.qaOp, fid: c.fid, bid: c.bid, oal: c.oal });
+                invAdjustmentHistory.unshift({ date: getNow(), action: '<span class="badge b-purple">CONV IN</span>', code: c.tgt, qty: c.qty, operator: c.qaOp, reason: 'Approved Conversion' });
+                await customAlert(`✅ Conversion Approved and added to Master Stock.`);
+            }
+            else if (type === 'ECN') {
+                let e = ecnList.find(x => x.id === id);
+                e.status = 'IMPLEMENTED';
+                let toolIndex = masterInventory.findIndex(t => t.code === e.part || t.partSize === e.part);
+                if (toolIndex > -1) {
+                    let currentRemarks = masterInventory[toolIndex].remarks || '';
+                    masterInventory[toolIndex].remarks = `[ECN: ${e.param}=${e.after} | TR Note: ${e.toolRoomRemarks}] ` + currentRemarks;
+                }
+                qaHistory.unshift({ date: getNow(), code: e.part, op: e.qaOp, fid: e.fid, bid: e.bid, oal: e.oal });
+                conversionHistory.unshift({
+                    id: Date.now(), date: getNow(), src: e.part, tgt: e.part, qty: 1,
+                    desc: `ECN MODIFICATION: ${e.param} changed to ${e.after}. TR Notes: ${e.toolRoomRemarks || 'None'}`,
+                    op: `${e.qaOp} (QA) / TR`, status: 'Approved'
+                });
+                await customAlert(`✅ ECN Approved! Master Stock updated and logged permanently to history.`);
+            }
+            else if (type === 'QA') {
+                let q = qaHistory.find(x => x.id === id);
+                q.status = 'Approved';
+                await customAlert(`✅ QA Inspection Report Approved and securely archived.`);
+            }
+
+            saveAllData();
+            renderAllTables();
+            renderECNs();
+            updateDashboards();
         }
 
         function calcDWMDuration() {
@@ -3154,22 +3970,78 @@
             const inspector = document.getElementById('qaInspectorInput').value;
             if (!inspector) return await customAlert("Please enter the Inspector Name / ID before signing off.");
 
+            // Gather all the dynamic QA parameter actual values
+            let qaDetails = [];
+            const rows = document.querySelectorAll('#qaStationsContainer .qa-row');
+            rows.forEach(r => {
+                let param = r.querySelector('span').innerText;
+                let spec = r.querySelector('strong').innerText;
+                let actual = r.querySelector('input').value || "N/A";
+                qaDetails.push(`${param}: Actual [${actual}] (Spec: ${spec})`);
+            });
+
+            // Send to Admin instead of auto-approving
             qaHistory.unshift({
+                id: Date.now(),
                 date: getNow(),
                 code: partNo,
                 op: inspector,
-                fid: "QA PASS",
-                bid: "QA PASS",
-                oal: "Validated"
+                details: qaDetails.join('<br>'),
+                fid: "See Details",
+                bid: "See Details",
+                status: 'Pending Admin'
             });
 
             saveAllData();
             renderAllTables();
-            await customAlert(`✅ Pre/Post Qualification Form for ${partNo} successfully validated and saved to Database.`);
+            updateDashboards();
+            await customAlert(`✅ QA Inspection Report for ${partNo} generated and sent to Admin for final approval.`);
 
             document.getElementById('qaSelect').value = "";
             document.getElementById('qaInspectorInput').value = "";
             document.getElementById('qaFormArea').style.display = 'none';
+        }
+
+        async function approveQA(id) {
+            let c = conversionHistory.find(x => x.id === id);
+            let op = await customPrompt(`QA Inspector Name:`, "QA Sign-Off");
+            if (!op) return;
+
+            let fid = await customPrompt(`Front I/D (mm):`, "QA Step 1/3");
+            let bid = await customPrompt(`Back I/D (mm):`, "QA Step 2/3");
+            let oal = await customPrompt(`Overall Length OAL (mm):`, "QA Step 3/3");
+
+            c.status = 'Pending Admin';
+            c.qaDate = getNow();
+            c.qaOp = op;
+            c.fid = fid || "N/A";
+            c.bid = bid || "N/A";
+            c.oal = oal || "N/A";
+
+            saveAllData(); renderAllTables(); renderQAQueue(); updateDashboards();
+            await customAlert(`✅ Sent to Admin for final stock update.`);
+        }
+
+        async function approveEcnQA(ecnId) {
+            let ecn = ecnList.find(e => e.id === ecnId);
+            if (!ecn) return;
+            let inspector = await customPrompt(`QA Inspector Name for ${ecn.part}:`, "QA Sign-Off");
+            if (!inspector) return;
+
+            let fid = await customPrompt(`Front I/D (mm):`, "QA Step 1/3");
+            let bid = await customPrompt(`Back I/D (mm):`, "QA Step 2/3");
+            let oal = await customPrompt(`Overall Length OAL (mm):`, "QA Step 3/3");
+
+            // Route to Admin instead of auto-implementing
+            ecn.status = 'PENDING ADMIN';
+            ecn.qaOp = inspector;
+            ecn.qaDate = getNow();
+            ecn.fid = fid || "N/A";
+            ecn.bid = bid || "N/A";
+            ecn.oal = oal || "N/A";
+
+            saveAllData(); renderECNs(); renderQAQueue(); renderAllTables(); updateDashboards();
+            await customAlert(`✅ ECN QA Completed! Sent to Admin Queue for final stock and history update.`, "Success");
         }
 
         async function handleDocUpload(e) {
@@ -3199,8 +4071,17 @@
 
         function generateIndent(e) {
             e.preventDefault();
-            indentHistory.unshift({ date: getNow(), no: document.getElementById('indNo').value, machine: document.getElementById('indMachine').value, partSize: document.getElementById('indPartSize').value, code: document.getElementById('indCode').value, desc: document.getElementById('indDesc').value, qty: document.getElementById('indQty').value, priority: document.getElementById('indPriority').value });
-            saveAllData(); renderAllTables(); e.target.reset(); document.getElementById('indNo').value = getDailyIndentNumber(); document.getElementById('indDocsDisplay').innerHTML = '<span style="color:#999; font-size:12px;">Type a Tool Code to check for linked documents.</span>';
+            let newInd = {
+                id: Date.now(), status: 'Active', date: getNow(), no: document.getElementById('indNo').value,
+                machine: document.getElementById('indMachine').value, partSize: document.getElementById('indPartSize').value,
+                code: document.getElementById('indCode').value, desc: document.getElementById('indDesc').value,
+                qty: document.getElementById('indQty').value, priority: document.getElementById('indPriority').value
+            };
+            indentHistory.unshift(newInd);
+            logAudit("CREATED INDENT", `Generated PO ${newInd.no} for ${newInd.qty}x ${newInd.code}`);
+            saveAllData(); renderAllTables(); e.target.reset(); document.getElementById('indNo').value = getDailyIndentNumber();
+            document.getElementById('indDocsDisplay').innerHTML = '<span style="color:#999; font-size:12px;">Type a Tool Code to check for linked documents.</span>';
+            updateDashboards();
         }
         function exportTableToCSV(tid, fn) { let t = document.getElementById(tid); let r = t.querySelectorAll("tr"); let d = []; for (let i = 0; i < r.length; i++) { let c = r[i].querySelectorAll("td, th"); let rd = []; for (let j = 0; j < c.length - 1; j++) rd.push('"' + c[j].innerText.replace(/"/g, '""') + '"'); d.push(rd.join(",")); } let b = new Blob([d.join("\n")], { type: "text/csv" }); let l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = fn; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
 
@@ -3303,9 +4184,9 @@
             });
 
             qaSpecs[partNo] = stations;
-            saveAllData(); 
-            updateQADropdown(); 
-            updateTemplateDropdown(); 
+            saveAllData();
+            updateQADropdown();
+            updateTemplateDropdown();
 
             customAlert(`✅ QA Template for [${partNo}] saved successfully!`);
 
@@ -3367,6 +4248,266 @@
                 });
             }
             customAlert(`✅ Loaded template for [${partNo}]. You can edit it below.`);
+        }
+
+        // ==========================================
+        // ASSEMBLY CHECK LOGIC
+        // ==========================================
+        function renderAssemblyCheck() {
+            const scheduleId = document.getElementById('assemblyBomSelect').value;
+            const card = document.getElementById('assemblyDisplayCard');
+            const tbody = document.getElementById('assemblyTableBody');
+            const actionZone = document.getElementById('assemblyActionZone');
+
+            if (!scheduleId || !toolSchedules[scheduleId]) {
+                card.style.display = 'none';
+                return;
+            }
+
+            let bom = toolSchedules[scheduleId];
+            document.getElementById('assemblyTitle').innerText = `Readiness: ${bom.title}`;
+
+            let html = '';
+            let canAssembleAll = true;
+            let totalToolsRequired = 0;
+
+            for (const [station, tools] of Object.entries(bom.stations)) {
+                tools.forEach(t => {
+                    let reqQty = t.qty || 1;
+                    totalToolsRequired += reqQty;
+                    let invItem = masterInventory.find(inv => inv.code === t.code);
+
+                    let stock = invItem ? invItem.stock : 0;
+                    let loc = invItem ? `<small>R: ${invItem.rngLoc || '-'}<br>S: ${invItem.spareLoc || '-'}</small>` : 'N/A';
+                    let desc = invItem ? invItem.desc : (t.desc || 'Unknown');
+
+                    let isShort = stock < reqQty;
+                    if (isShort) canAssembleAll = false;
+
+                    let statusBadge = isShort ? `<span class="badge b-red">SHORTAGE</span>` : `<span class="badge b-green">READY</span>`;
+                    let actionBtn = isShort ? `<button class="btn btn-warning" style="padding:4px 8px; font-size:11px;" onclick="sendToIndentFromAssembly('${t.code}', ${reqQty - stock})">🛒 Indent</button>` : '-';
+                    let rowStyle = isShort ? 'background: #fff0f0;' : '';
+
+                    html += `<tr style="${rowStyle}">
+                        <td><strong>${station}</strong></td>
+                        <td style="color:var(--accent); font-weight:bold;">${t.code}</td>
+                        <td>${desc}</td>
+                        <td>${loc}</td>
+                        <td style="text-align:center;"><strong>${reqQty}</strong></td>
+                        <td style="text-align:center; color:${isShort ? 'red' : 'green'};"><strong>${stock}</strong></td>
+                        <td>${statusBadge}</td>
+                        <td>${actionBtn}</td>
+                    </tr>`;
+                });
+            }
+
+            tbody.innerHTML = html;
+
+            if (canAssembleAll && totalToolsRequired > 0) {
+                actionZone.innerHTML = `<button class="btn btn-success" onclick="executeAssembly('${scheduleId}')">✅ All Tools Ready - Execute Assembly</button>`;
+            } else {
+                actionZone.innerHTML = `<span style="color: var(--danger); font-weight: bold;">⚠️ Cannot Assemble - Resolve Shortages First</span>`;
+            }
+
+            // Update History Table
+            document.getElementById('assemblyHistoryBody').innerHTML = assemblyHistory.map(a => `<tr>
+                <td>${a.date}</td><td><strong>${a.title}</strong></td><td>${a.operator}</td><td><span class="badge b-blue">${a.toolsDeducted} Tools</span></td>
+            </tr>`).join('');
+
+            card.style.display = 'block';
+        }
+
+        async function executeAssembly(scheduleId) {
+            let conf = await customConfirm("This will deduct stock for all tools in this schedule. Continue?", "Confirm Assembly");
+            if (!conf) return;
+
+            let operator = await customPrompt("Enter Operator / Assembler Name:", "Assembly Execution");
+            if (!operator) return;
+
+            let bom = toolSchedules[scheduleId];
+            let toolsDeductedCount = 0;
+            let deductedItems = []; // Array to remember exactly what was taken
+
+            // Deduct Stock
+            for (const [station, tools] of Object.entries(bom.stations)) {
+                tools.forEach(t => {
+                    let reqQty = t.qty || 1;
+                    let invItem = masterInventory.find(inv => inv.code === t.code);
+
+                    if (invItem && invItem.stock >= reqQty) {
+                        // Priority deduct from Running, then Spare
+                        if (invItem.rngStock >= reqQty) {
+                            invItem.rngStock -= reqQty;
+                        } else {
+                            let rem = reqQty - invItem.rngStock;
+                            invItem.rngStock = 0;
+                            invItem.spareStock -= rem;
+                        }
+                        invItem.stock = invItem.rngStock + invItem.spareStock;
+                        toolsDeductedCount += reqQty;
+
+                        // Save to memory for potential disassembly later
+                        deductedItems.push({ code: t.code, qty: reqQty });
+
+                        // Log to global inventory adjustments
+                        invAdjustmentHistory.unshift({
+                            date: getNow(), action: '<span class="badge b-purple">ASSEMBLED</span>', code: t.code, qty: reqQty, operator: operator, reason: `Assembled for ${bom.meta.size}`
+                        });
+                    }
+                });
+            }
+
+            // Log to Assembly History with full memory
+            assemblyHistory.unshift({
+                id: Date.now(), // Unique ID for this specific assembly
+                date: getNow(),
+                title: bom.title,
+                operator: operator,
+                toolsDeducted: toolsDeductedCount,
+                deductedItems: deductedItems, // Saved list of exact tools taken
+                status: 'Assembled'
+            });
+
+            saveAllData();
+            renderAllTables();
+            renderAssemblyCheck();
+            renderAssemblyHistory(); // Refresh history view
+            await customAlert(`✅ Assembly completed! ${toolsDeductedCount} tools deducted from inventory.`);
+        }
+
+        async function disassembleItem(assemblyId) {
+            if (currentUserRole !== 'admin' && currentUserRole !== 'toolroom') return await customAlert("Access Denied. Only Admin or Tool Room can disassemble.", "Security");
+
+            // Find the exact assembly record
+            let record = assemblyHistory.find(a => a.id === assemblyId);
+            if (!record) return await customAlert("Error: Assembly record not found.");
+
+            let conf = await customConfirm(`Are you sure you want to disassemble "${record.title}"? \nThis will return ${record.toolsDeducted} tools safely back into Master Stock.`, "Confirm Disassembly");
+            if (!conf) return;
+
+            let operator = await customPrompt("Enter Operator Name processing this disassembly:", "Disassembly Log");
+            if (!operator) return;
+
+            // Loop through the exact tools that were taken and refund them
+            if (record.deductedItems && record.deductedItems.length > 0) {
+                record.deductedItems.forEach(item => {
+                    let invItem = masterInventory.find(inv => inv.code === item.code);
+                    if (invItem) {
+                        // Return items to Running Stock by default
+                        invItem.rngStock += item.qty;
+                        invItem.stock = invItem.rngStock + invItem.spareStock;
+
+                        // Log the refund in global adjustments
+                        invAdjustmentHistory.unshift({
+                            date: getNow(), action: '<span class="badge b-yellow">DISASSEMBLED</span>', code: item.code, qty: item.qty, operator: operator, reason: `Disassembled from ${record.title}`
+                        });
+                    }
+                });
+            }
+
+            // Update the record status so it can't be disassembled twice
+            record.status = 'Disassembled';
+            record.disassembleDate = getNow();
+            record.disassembleOp = operator;
+
+            saveAllData();
+            renderAllTables();
+            renderAssemblyCheck();
+            renderAssemblyHistory();
+
+            await customAlert(`✅ Successfully Disassembled! All tools have been returned to Master Stock.`);
+        }
+
+        function renderAssemblyHistory() {
+            const tbody = document.getElementById('assemblyHistoryBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = assemblyHistory.map(a => {
+                let isDisassembled = a.status === 'Disassembled';
+
+                let statusBadge = isDisassembled
+                    ? '<span class="badge b-yellow">DISASSEMBLED</span>'
+                    : '<span class="badge b-green">ASSEMBLED</span>';
+
+                let actionBtn = isDisassembled
+                    ? `<small style="color:#666;">By ${a.disassembleOp} on<br>${a.disassembleDate}</small>`
+                    : `<button class="btn btn-danger" style="padding: 4px 8px; font-size:12px;" onclick="disassembleItem(${a.id})">↩️ Disassemble & Return Stock</button>`;
+
+                return `<tr>
+                    <td>${a.date}</td>
+                    <td><strong>${a.title}</strong></td>
+                    <td>${a.operator}</td>
+                    <td><span class="badge b-blue">${a.toolsDeducted} Tools</span></td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function sendToIndentFromAssembly(toolCode, missingQty) {
+            switchTab('indents'); // Go to indent tab
+            document.getElementById('indCode').value = toolCode;
+            document.getElementById('indQty').value = missingQty;
+            document.getElementById('indPriority').selectedIndex = 1; // Set to URGENT
+            autoFillIndent(); // Trigger the auto-fill to pull desc/machine
+            customAlert(`Moved to Indents. Tool Code and Shortage Qty (${missingQty}) auto-filled. Please submit the indent.`, "Quick Indent");
+        }
+
+
+
+        // ==========================================
+        // 1 & 4. AUDIT TRAIL & RECEIVE GOODS LOGIC
+        // ==========================================
+        function logAudit(actionType, details) {
+            let user = currentUserRole ? currentUserRole.toUpperCase() : 'SYSTEM';
+            auditTrail.unshift({
+                id: Date.now(),
+                date: getNow(),
+                user: user,
+                action: actionType,
+                details: details
+            });
+            // Keep log from getting infinitely huge in memory (keep last 2000 events)
+            if (auditTrail.length > 2000) auditTrail.pop();
+            saveAllData(); // Trigger background sync
+        }
+
+        async function receiveIndent(id) {
+            if (currentUserRole !== 'admin') return await customAlert("Security: Only Administrators can receive physical goods into the system.");
+
+            let indent = indentHistory.find(i => i.id === id);
+            if (!indent || indent.status === 'Fulfilled') return;
+
+            let qtyStr = await customPrompt(`Receiving PO for ${indent.code}.\nOrdered Qty: ${indent.qty}\n\nEnter Actual Quantity Received:`, "Receive Goods");
+            let rQty = parseInt(qtyStr);
+            if (!rQty || rQty <= 0) return;
+
+            let invItem = masterInventory.find(t => t.code === indent.code);
+            if (invItem) {
+                invItem.spareStock += rQty; // New goods always go to Spare Stock first
+                invItem.stock = invItem.rngStock + invItem.spareStock;
+            } else {
+                // Failsafe: if the tool was completely deleted while the PO was out
+                masterInventory.push({
+                    code: indent.code, desc: indent.desc, machine: indent.machine, partSize: indent.partSize,
+                    rngStock: 0, spareStock: rQty, stock: rQty, min: 5, actualLife: 0, assumedLife: 50000
+                });
+            }
+
+            indent.status = 'Fulfilled';
+            indent.receivedDate = getNow();
+            indent.receivedQty = rQty;
+
+            invAdjustmentHistory.unshift({
+                date: getNow(), action: '<span class="badge b-green">RECEIVED PO</span>', code: indent.code, qty: rQty, operator: currentUserRole, reason: `Received Indent #${indent.no}`
+            });
+
+            logAudit("RECEIVED GOODS", `Admin received ${rQty} units of [${indent.code}] against Indent ${indent.no}`);
+
+            saveAllData();
+            renderAllTables();
+            updateDashboards();
+            await customAlert(`✅ Successfully received ${rQty} units of ${indent.code} into Spare Stock!`);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
