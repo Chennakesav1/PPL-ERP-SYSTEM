@@ -1117,12 +1117,13 @@
                                         <th>Size</th>
                                         <th>Qty Requested</th>
                                         <th>Priority</th>
+                                        <th>Linked Docs</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="9" style="text-align: center;">Loading requests...</td>
+                                        <td colspan="10" style="text-align: center;">Loading requests...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1146,13 +1147,14 @@
                                         <th>Size</th>
                                         <th>Expected Date</th>
                                         <th>Qty</th>
+                                        <th>Linked Docs</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="11" style="text-align: center;">Loading history...</td>
+                                        <td colspan="12" style="text-align: center;">Loading history...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1665,10 +1667,17 @@
                     if (tbody) {
                         tbody.innerHTML = '';
                         if (!window.activePurchaseIndents || window.activePurchaseIndents.length === 0) {
-                            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; font-weight: bold; color: #28a745;">No pending requests from Tool Room!</td></tr>';
+                            tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; font-weight: bold; color: #28a745;">No pending requests from Tool Room!</td></tr>';
                         } else {
                             window.activePurchaseIndents.forEach(ind => {
                                 let priorityHtml = ind.priority === 'URGENT' ? '<span style="color:red; font-weight:bold;">🚨 URGENT</span>' : '<span style="color:#666;">Normal</span>';
+
+                                // Fetch and format the Linked Docs for this row
+                                let linkedDocs = window.documentRepo.filter(d => d.part === ind.code);
+                                let docsHtml = linkedDocs.length > 0
+                                    ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>')
+                                    : '<span style="color:#999; font-style: italic; font-size: 11px;">None</span>';
+
                                 tbody.innerHTML += `
                             <tr>
                                 <td><strong>${ind.no}</strong></td>
@@ -1679,7 +1688,7 @@
                                 <td>${ind.partSize || '-'}</td>
                                 <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
                                 <td>${priorityHtml}</td>
-                                <td>
+                                <td>${docsHtml}</td> <td>
                                     <button onclick="createPOFromIndent('${ind.id}')" style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📝 Convert to PO</button>
                                 </td>
                             </tr>`;
@@ -1812,13 +1821,18 @@
 
                     if (po.type === 'TOOLING') {
                         let indentNo = po.poNumber.replace('PO-IND-', '');
-                        
-                        // Extract Original Indent Data to show separated fields
+
                         let origIndent = (window.indentHistory || []).find(i => i.no === indentNo);
                         let iDate = origIndent ? origIndent.date : new Date(po.orderDate).toLocaleDateString();
                         let iDesc = origIndent ? origIndent.desc : '-';
                         let iMac = origIndent ? origIndent.machine : '-';
                         let iSize = origIndent ? origIndent.partSize : '-';
+
+                        // Fetch and format the Linked Docs for this row
+                        let linkedDocs = window.documentRepo.filter(d => d.part === po.materialCode);
+                        let docsHtml = linkedDocs.length > 0
+                            ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>')
+                            : '<span style="color:#999; font-style: italic; font-size: 11px;">None</span>';
 
                         let receiveBtn = isPending ? `<button onclick="receiveIndentPO('${indentNo}', ${po.expectedKg})" style="background:#17a2b8; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">📥 Receive Tooling</button>` : `<span class="badge" style="background:#6f42c1; color:white; padding:4px; border-radius:4px; font-size:10px;">Sent to QA</span>`;
 
@@ -1832,7 +1846,7 @@
                             <td>${iSize}</td>
                             <td><strong style="color: #ff9800;">${expectedDate}</strong></td>
                             <td><strong style="font-size:15px;">${po.expectedKg || 0}</strong></td>
-                            <td><span style="padding: 4px 8px; border-radius: 4px; font-weight: bold; ${isPending ? 'background:#ffc107; color:#000;' : 'background:#28a745; color:#fff;'}">${status}</span></td>
+                            <td>${docsHtml}</td> <td><span style="padding: 4px 8px; border-radius: 4px; font-weight: bold; ${isPending ? 'background:#ffc107; color:#000;' : 'background:#28a745; color:#fff;'}">${status}</span></td>
                             <td>${receiveBtn}</td> </tr>`;
                     } else {
                         const actionBtn = isPending ? `<button onclick="receivePO('${po._id}')" style="background:#28a745; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">📥 Mark Received</button>` : `<span style="color:#666; font-size:12px;">Received on<br>${receivedText}</span>`;
