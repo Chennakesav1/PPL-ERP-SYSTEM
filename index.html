@@ -1180,7 +1180,7 @@
                 <div id="poIndentsSection" style="display: none; margin-top: 15px;">
 
                     <div id="pendingRequestsTableSection">
-                        <div class="table-wrapper" style="max-height: 500px;">
+                        <div class="table-wrapper" style="max-height: 350px; margin-bottom: 20px;">
                             <table id="pendingIndentsTable">
                                 <thead style="background-color: #17a2b8; color: white;">
                                     <tr>
@@ -1288,6 +1288,33 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
+
+                    <div id="indentPoHistorySection" style="margin-top: 20px;">
+                        <h3
+                            style="color: #6c757d; border-bottom: 2px solid #6c757d; padding-bottom: 5px; margin-top: 0;">
+                            📜 Tool Room PO History</h3>
+                        <div class="table-wrapper" style="max-height: 400px;">
+                            <table id="indentPoHistoryTable">
+                                <thead style="background-color: #6c757d; color: white;">
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>Supplier</th>
+                                        <th>Tool Code / Material</th>
+                                        <th>Scope / Ref</th>
+                                        <th>Expected Date</th>
+                                        <th>Qty</th>
+                                        <th>Total Cost</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="8" style="text-align: center;">Loading history...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                 </div>
@@ -2224,46 +2251,54 @@
             try {
                 const response = await fetch(`${API_URL}/purchase-orders`);
                 const pos = await response.json();
-                console.log("PO Data received:", pos);
 
-                // 1. Safety check to ensure the table actually exists in the DOM
-                const table = document.getElementById('poTable');
-                if (!table) {
-                    console.error("CRITICAL: Could not find <table id='poTable'> in the HTML!");
-                    return;
-                }
+                const rawTbody = document.querySelector('#poTable tbody');
+                const indentTbody = document.querySelector('#indentPoHistoryTable tbody');
 
-                const tbody = table.querySelector('tbody');
-                if (!tbody) {
-                    console.error("CRITICAL: Could not find <tbody> inside poTable!");
-                    return;
-                }
+                if (!rawTbody) return;
 
-                // 2. Clear the table
-                tbody.innerHTML = '';
+                rawTbody.innerHTML = '';
+                if (indentTbody) indentTbody.innerHTML = '';
 
                 if (!pos || pos.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px; font-weight: bold; color: #ff9800;">No POs found in database.</td></tr>';
+                    rawTbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px; font-weight: bold; color: #ff9800;">No Raw Material POs found.</td></tr>';
+                    if (indentTbody) indentTbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; font-weight: bold; color: #17a2b8;">No Tool Room POs found.</td></tr>';
                     return;
                 }
 
-                // 3. Build the rows as a single HTML string (faster and more reliable)
-                let rowsHTML = "";
+                let rawHTML = "";
+                let indentHTML = "";
 
                 pos.forEach(po => {
-                    // Fallbacks in case old database entries are missing fields
                     const status = po.status || 'PENDING';
                     const isPending = status === 'PENDING';
-                    const totalCost = Number(po.totalCost) || 0; // Forced Number to prevent toLocaleString crashes
+                    const totalCost = Number(po.totalCost) || 0;
                     const receivedText = po.receivedDate ? new Date(po.receivedDate).toLocaleDateString() : 'N/A';
+                    const expectedDate = po.expectedDeliveryDate ? new Date(po.expectedDeliveryDate).toLocaleDateString() : 'N/A';
 
-                    const actionBtn = isPending
-                        ? `<button onclick="receivePO('${po._id}')" style="background:#28a745; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">📥 Mark Received</button>`
-                        : `<span style="color:#666; font-size:12px;">Received on<br>${receivedText}</span>`;
-
-                    rowsHTML += `
+                    // Split logic based on PO Type
+                    if (po.type === 'TOOLING') {
+                        // Sent to Tool Room History Table (No receive button, Tool Room handles that)
+                        indentHTML += `
                 <tr>
-                    <td><strong>${po.poNumber || 'N/A'}</strong><br><span style="font-size:11px; color:#666;">👤 ${po.orderedBy || 'System'}</span></td>
+                    <td><strong>${po.poNumber || 'N/A'}</strong><br><span style="font-size:11px; color:#666;">👤 ${po.orderedBy || po.username || 'System'}</span></td>
+                    <td>${po.supplierName || '-'}</td>
+                    <td><strong style="color: var(--primary);">${po.materialCode || '-'}</strong></td>
+                    <td><span style="font-size:11px; color:#555;">${po.scope || '-'}</span></td>
+                    <td><strong style="color: #ff9800;">${expectedDate}</strong></td>
+                    <td><strong style="font-size:15px;">${po.expectedKg || 0}</strong></td>
+                    <td>₹${totalCost.toLocaleString()}</td>
+                    <td><span class="badge ${isPending ? 'b-yellow' : 'b-green'}" style="padding: 4px 8px; border-radius: 4px; font-weight: bold; ${isPending ? 'background:#ffc107; color:#000;' : 'background:#28a745; color:#fff;'}">${status}</span></td>
+                </tr>`;
+                    } else {
+                        // Sent to Raw Material Table (Buyer/Admin handles receiving here)
+                        const actionBtn = isPending
+                            ? `<button onclick="receivePO('${po._id}')" style="background:#28a745; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">📥 Mark Received</button>`
+                            : `<span style="color:#666; font-size:12px;">Received on<br>${receivedText}</span>`;
+
+                        rawHTML += `
+                <tr>
+                    <td><strong>${po.poNumber || 'N/A'}</strong><br><span style="font-size:11px; color:#666;">👤 ${po.orderedBy || po.username || 'System'}</span></td>
                     <td>${po.supplierName || '-'}</td>
                     <td><strong>${po.materialCode || '-'}</strong></td>
                     <td>${po.grade || '-'}</td>
@@ -2272,23 +2307,15 @@
                     <td>₹${totalCost.toLocaleString()}</td>
                     <td style="color:${isPending ? '#ff9800' : '#28a745'}; font-weight:bold;">${status}</td>
                     <td>${actionBtn}</td>
-                </tr>
-            `;
+                </tr>`;
+                    }
                 });
 
-                // 4. Inject all rows into the DOM at once
-                tbody.innerHTML = rowsHTML;
-                console.log("Successfully injected PO rows into the table.");
-
-                // 5. TEMPORARILY DISABLED: Let's prove the data is there before filtering it
-                // filterPOs(); 
+                rawTbody.innerHTML = rawHTML || '<tr><td colspan="9" style="text-align: center; padding: 20px; color: #666;">No Raw Material POs found.</td></tr>';
+                if (indentTbody) indentTbody.innerHTML = indentHTML || '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #666;">No Tool Room POs found.</td></tr>';
 
             } catch (error) {
                 console.error("ERROR LOADING POs:", error);
-                const tbody = document.querySelector('#poTable tbody');
-                if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
-                }
             }
         }
 
@@ -3436,37 +3463,7 @@
             }
         }
 
-        // Open the Form View & Auto-Fill
-        function createPOFromIndent(indentId) {
-            const indent = window.activePurchaseIndents.find(i => i.id === indentId);
-            if (!indent) return;
-
-            document.getElementById('pendingRequestsTableSection').style.display = 'none';
-            document.getElementById('indentPoFormSection').style.display = 'block';
-
-            document.getElementById('indPoIndentId').value = indent.id;
-            document.getElementById('indPoRef').value = indent.no;
-            document.getElementById('indPoPriority').value = indent.priority;
-            document.getElementById('indPoPriority').style.color = indent.priority === 'URGENT' ? 'red' : '#333';
-            document.getElementById('indPoToolCode').value = indent.code;
-            document.getElementById('indPoMachine').value = `${indent.machine} | ${indent.partSize}`;
-            document.getElementById('indPoDesc').value = indent.desc;
-
-            // NEW: Search for linked documents/drawings based on the tool code
-            let linkedDocs = window.documentRepo.filter(d => d.part === indent.code);
-            let docsHtml = linkedDocs.length > 0
-                ? linkedDocs.map(d => `<a href="${d.dataUrl}" target="_blank" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 3px 6px; border-radius: 4px;">📄 ${d.type}</a>`).join(' ')
-                : '<span style="color:#999; font-style: italic;">No drawings linked</span>';
-            document.getElementById('indPoDocs').innerHTML = docsHtml;
-
-            // Auto-fill requested quantity & clear supplier/price/date
-            document.getElementById('indPoQty').value = indent.qty;
-            document.getElementById('indPoSupplier').value = '';
-            document.getElementById('indPoPrice').value = '';
-            document.getElementById('indPoExpectedDate').value = '';
-
-            setTimeout(() => document.getElementById('indPoSupplier').focus(), 100);
-        }
+       
 
         // Submit PO
         async function submitIndentPO(e) {
@@ -3522,6 +3519,7 @@
 
                     cancelIndentPO();
                     loadPendingIndentsForPurchase();
+                    loadPOs();
                     showToast(`✅ PO successfully raised for ${indent.code}!`);
                 } else {
                     showToast("❌ Failed to create PO in database.", true);
@@ -3543,7 +3541,7 @@
         window.activePurchaseIndents = [];
         window.documentRepo = [];
 
-        // 1. Tab Switching Logic for Purchase Dashboard
+        // Tab Switching
         function switchPOTab(tab) {
             document.getElementById('poRawSection').style.display = tab === 'raw' ? 'block' : 'none';
             document.getElementById('poIndentsSection').style.display = tab === 'indents' ? 'block' : 'none';
@@ -3554,17 +3552,51 @@
             document.getElementById('tab-po-indents').style.background = tab === 'indents' ? '#17a2b8' : '#eee';
             document.getElementById('tab-po-indents').style.color = tab === 'indents' ? 'white' : '#555';
 
-            // IMPORTANT: Reset the Tool Room view to the table when clicking the tab
             if (tab === 'indents') {
                 document.getElementById('pendingRequestsTableSection').style.display = 'block';
+                document.getElementById('indentPoHistorySection').style.display = 'block'; // Ensure history is visible
                 document.getElementById('indentPoFormSection').style.display = 'none';
             }
         }
 
-        // 4. Cancel / Back to List
+        // Open Form
+        function createPOFromIndent(indentId) {
+            const indent = window.activePurchaseIndents.find(i => i.id === indentId);
+            if (!indent) return;
+
+            // Hide tables, show form
+            document.getElementById('pendingRequestsTableSection').style.display = 'none';
+            document.getElementById('indentPoHistorySection').style.display = 'none'; // Hide history while editing
+            document.getElementById('indentPoFormSection').style.display = 'block';
+
+            // ... (Rest of your auto-fill logic remains exactly the same) ...
+            document.getElementById('indPoIndentId').value = indent.id;
+            document.getElementById('indPoRef').value = indent.no;
+            document.getElementById('indPoPriority').value = indent.priority;
+            document.getElementById('indPoPriority').style.color = indent.priority === 'URGENT' ? 'red' : '#333';
+            document.getElementById('indPoToolCode').value = indent.code;
+            document.getElementById('indPoMachine').value = `${indent.machine} | ${indent.partSize}`;
+            document.getElementById('indPoDesc').value = indent.desc;
+
+            let linkedDocs = window.documentRepo.filter(d => d.part === indent.code);
+            let docsHtml = linkedDocs.length > 0
+                ? linkedDocs.map(d => `<a href="${d.dataUrl}" target="_blank" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 3px 6px; border-radius: 4px;">📄 ${d.type}</a>`).join(' ')
+                : '<span style="color:#999; font-style: italic;">No drawings linked</span>';
+            document.getElementById('indPoDocs').innerHTML = docsHtml;
+
+            document.getElementById('indPoQty').value = indent.qty;
+            document.getElementById('indPoSupplier').value = '';
+            document.getElementById('indPoPrice').value = '';
+            document.getElementById('indPoExpectedDate').value = '';
+
+            setTimeout(() => document.getElementById('indPoSupplier').focus(), 100);
+        }
+
+        // Back to List
         function cancelIndentPO() {
             document.getElementById('indentPoFormSection').style.display = 'none';
             document.getElementById('pendingRequestsTableSection').style.display = 'block';
+            document.getElementById('indentPoHistorySection').style.display = 'block'; // Bring history back
             document.getElementById('indentPoForm').reset();
         }
 
@@ -3619,37 +3651,8 @@
             }
         }
 
-        // 3. Open Form & Auto-Fill
-        function createPOFromIndent(indentId) {
-            const indent = window.activePurchaseIndents.find(i => i.id === indentId);
-            if (!indent) return;
+        
 
-            document.getElementById('pendingRequestsTableSection').style.display = 'none';
-            document.getElementById('indentPoFormSection').style.display = 'block';
-
-            document.getElementById('indPoIndentId').value = indent.id;
-            document.getElementById('indPoRef').value = indent.no;
-            document.getElementById('indPoPriority').value = indent.priority;
-            document.getElementById('indPoPriority').style.color = indent.priority === 'URGENT' ? 'red' : '#333';
-            document.getElementById('indPoToolCode').value = indent.code;
-            document.getElementById('indPoMachine').value = `${indent.machine} | ${indent.partSize}`;
-            document.getElementById('indPoDesc').value = indent.desc;
-
-            // Search for linked documents/drawings based on the tool code
-            let linkedDocs = window.documentRepo.filter(d => d.part === indent.code);
-            let docsHtml = linkedDocs.length > 0
-                ? linkedDocs.map(d => `<a href="${d.dataUrl}" target="_blank" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 3px 6px; border-radius: 4px;">📄 ${d.type}</a>`).join(' ')
-                : '<span style="color:#999; font-style: italic;">No drawings linked</span>';
-            document.getElementById('indPoDocs').innerHTML = docsHtml;
-
-            // Auto-fill requested quantity & clear supplier/price/date
-            document.getElementById('indPoQty').value = indent.qty;
-            document.getElementById('indPoSupplier').value = '';
-            document.getElementById('indPoPrice').value = '';
-            document.getElementById('indPoExpectedDate').value = '';
-
-            setTimeout(() => document.getElementById('indPoSupplier').focus(), 100);
-        }
 
 
 

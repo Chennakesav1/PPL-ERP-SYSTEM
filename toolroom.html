@@ -2680,23 +2680,29 @@
             document.getElementById('issueHistoryBody').innerHTML = issueHistory.map(i => `<tr><td>${i.date}</td><td><strong>${i.code}</strong></td><td>${i.desc}</td><td>${i.machine}</td><td><span class="badge b-blue">${i.qty}</span></td><td>${i.operator}</td></tr>`).join('');
 
 
-            // 2. Updated Indent History Rendering (inside renderAllTables)
             document.getElementById('indentHistoryBody').innerHTML = indentHistory.map(i => {
                 let statusBadge = '';
                 let actionBtn = '';
 
-                if (i.status === 'Fulfilled') {
-                    statusBadge = '<span class="badge b-green">IN STOCK (QA APPROVED)</span>';
-                    actionBtn = `<small style="color:var(--success); font-weight:bold;">Apprvd: ${i.qaDate || i.receivedDate}</small>`;
-                } else if (i.status === 'PENDING QA') {
+                // Step 4: Finished & QC Approved
+                if (i.status === 'QC APPROVED' || i.status === 'Fulfilled') {
+                    statusBadge = '<span class="badge b-green">QC APPROVED (In Stock)</span>';
+                    actionBtn = `<small style="color:var(--success); font-weight:bold;">In Stock: ${i.receivedDate}</small>`;
+                }
+                // Step 3: Received, Waiting on QC
+                else if (i.status === 'RECEIVED (Pending QA)') {
                     statusBadge = '<span class="badge b-purple">PENDING QA</span>';
-                    actionBtn = `<small style="color:#6b21a8; font-weight:bold;">At QA Inspection</small>`;
-                } else if (i.status === 'PO RAISED') {
+                    actionBtn = `<small style="color:#6b21a8; font-weight:bold;">Awaiting QA Inspection</small>`;
+                }
+                // Step 2: PO Raised, Waiting on Delivery
+                else if (i.status === 'PO RAISED') {
                     statusBadge = '<span class="badge b-blue">PO RAISED</span>';
-                    actionBtn = `<button class="btn btn-success" style="padding: 4px 8px; font-size:11px;" onclick="receiveIndent(${i.id})">📦 Receive to QA</button>`;
-                } else {
+                    actionBtn = `<button class="btn btn-success" style="padding: 4px 8px; font-size:11px;" onclick="receiveIndent(${i.id})">📦 Receive Goods</button>`;
+                }
+                // Step 1: Active Request
+                else {
                     statusBadge = '<span class="badge b-warning">ACTIVE (Awaiting PO)</span>';
-                    actionBtn = `<span style="font-size:11px; color:#666;">Waiting on Buyer</span>`;
+                    actionBtn = `<span style="font-size:11px; color:#666;">Waiting on Purchase</span>`;
                 }
 
                 return `<tr>
@@ -3795,56 +3801,101 @@
             tbody.innerHTML = html;
         }
 
-        // 4. Updated QA Queue Rendering
+
+        // Render QA Queue
         function renderQAQueue() {
             const qaBody = document.getElementById('pendingQaBody');
             if (!qaBody) return;
 
             let pendingEcnItems = ecnList.filter(e => e.status === 'PENDING QA');
-            let pendingConversions = conversionHistory.filter(c => c.status === 'Pending QA');
-            let pendingIncomingPO = indentHistory.filter(i => i.status === 'PENDING QA'); // NEW: Incoming goods
+            let pendingConversions = conversionHistory.filter(c => c.status === 'Pending QA' && c.type !== 'INWARD_PO');
+
+            // NEW: Fetch Incoming POs waiting for QA
+            let pendingInwards = conversionHistory.filter(c => c.status === 'Pending QA' && c.type === 'INWARD_PO');
 
             let html = '';
 
-            // Render ECNs
+            // Show Inward POs
+            pendingInwards.forEach(c => {
+                html += `<tr style="background: #e0f0ff;">
+            <td>${c.date}</td>
+            <td><strong>${c.src}</strong> <span class="badge b-blue">INWARD PO</span></td>
+            <td>Verify against Drawing</td>
+            <td><strong style="font-size: 16px;">${c.qty}</strong></td>
+            <td>${c.op} (Received)</td>
+            <td><button class="btn btn-success" style="padding: 6px 12px; font-size:12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" onclick="approveInwardQA(${c.id})">🔍 Inspect & Approve</button></td>
+        </tr>`;
+            });
+
+            // Show ECNs
             pendingEcnItems.forEach(ecn => {
                 html += `<tr style="background: #fffdf0;">
-            <td>${ecn.date}</td>
-            <td><strong>${ecn.part}</strong> <span class="badge b-red">ECN</span></td>
-            <td>Update: ${ecn.param} to ${ecn.after}</td>
-            <td>1</td>
-            <td>Tool Room</td>
+            <td>${ecn.date}</td><td><strong>${ecn.part}</strong> <span class="badge b-red">ECN</span></td>
+            <td>Update: ${ecn.param} to ${ecn.after}</td><td>1</td><td>Tool Room</td>
             <td><button class="btn btn-success" style="padding: 6px 12px; font-size:12px;" onclick="approveEcnQA(${ecn.id})">Inspect & Approve ✅</button></td>
         </tr>`;
             });
 
-            // Render Conversions
+            // Show Reworks
             pendingConversions.forEach(c => {
                 html += `<tr>
-            <td>${c.date}</td>
-            <td><strong>${c.src}</strong></td>
+            <td>${c.date}</td><td><strong>${c.src}</strong></td>
             <td><strong>${c.tgt}</strong> <span class="badge b-purple">CONV</span></td>
-            <td>${c.qty || 1}</td>
-            <td>${c.op}</td>
+            <td>${c.qty || 1}</td><td>${c.op}</td>
             <td><button class="btn btn-success" style="padding: 6px 12px; font-size:12px;" onclick="approveQA(${c.id})">Inspect ✅</button></td>
-        </tr>`;
-            });
-
-            // Render Incoming POs (New)
-            pendingIncomingPO.forEach(ind => {
-                html += `<tr style="background: #f3e8ff;">
-            <td>${ind.receivedDate}</td>
-            <td><strong>${ind.code}</strong> <span class="badge b-blue">NEW STOCK</span></td>
-            <td>Indent Ref: ${ind.no} (Supplier Delivery)</td>
-            <td>${ind.receivedQty}</td>
-            <td>Supplier / Buyer</td>
-            <td><button class="btn btn-success" style="padding: 6px 12px; font-size:12px;" onclick="approveIncomingQA(${ind.id})">Inspect against Drawing ✅</button></td>
         </tr>`;
             });
 
             if (html === '') html = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#666;">No items pending QA approval.</td></tr>';
             qaBody.innerHTML = html;
         }
+
+        // Final Step: QA Inspects and pushes to Master Stock
+        async function approveInwardQA(id) {
+            let c = conversionHistory.find(x => x.id === id);
+            if (!c) return;
+
+            let op = await customPrompt(`QA Inspector Name for ${c.src}:`, "Inward QA Sign-Off");
+            if (!op) return;
+
+            // 1. Mark QA Approved
+            c.status = 'Approved';
+            c.qaDate = getNow();
+            c.qaOp = op;
+
+            // 2. Update Indent Status
+            let indent = indentHistory.find(i => i.id === c.indentId);
+            if (indent) indent.status = 'QC APPROVED';
+
+            // 3. ADD TO MASTER STOCK (Spares)
+            let invItem = masterInventory.find(t => t.code === c.src);
+            if (invItem) {
+                invItem.spareStock += c.qty;
+                invItem.stock = invItem.rngStock + invItem.spareStock;
+            } else {
+                masterInventory.push({
+                    code: c.src, desc: indent ? indent.desc : "New Inward Tool",
+                    rngStock: 0, spareStock: c.qty, stock: c.qty, min: 5, actualLife: 0, assumedLife: 50000
+                });
+            }
+
+            // 4. Log everything
+            invAdjustmentHistory.unshift({
+                date: getNow(), action: '<span class="badge b-green">QC PASSED INWARD</span>', code: c.src, qty: c.qty, operator: op, reason: `QA Passed Indent Receipt`
+            });
+
+            qaHistory.unshift({
+                date: getNow(), code: c.src, op: op, fid: 'PASS', bid: 'PASS', oal: 'PASS',
+                details: 'Inward PO fully inspected against drawings and approved for Master Stock.'
+            });
+
+            saveAllData(); renderAllTables(); renderQAQueue(); updateDashboards();
+
+            await customAlert(`✅ Inward Goods Approved! Added ${c.qty}x ${c.src} to Spare Stock.`);
+        }
+
+
+
 
         async function approveEcnQA(ecnId) {
             let ecn = ecnList.find(e => e.id === ecnId);
@@ -4102,12 +4153,11 @@
             }
         }
 
-        // 1. Updated Indent Creation
         function generateIndent(e) {
             e.preventDefault();
             let newInd = {
                 id: Date.now(),
-                status: 'Active',
+                status: 'ACTIVE',
                 date: getNow(),
                 no: document.getElementById('indNo').value,
                 machine: document.getElementById('indMachine').value,
@@ -4119,19 +4169,22 @@
             };
 
             indentHistory.unshift(newInd);
-            if (typeof logAudit === 'function') logAudit("CREATED INDENT", `Generated Request ${newInd.no} for ${newInd.qty}x ${newInd.code}`);
+
+            if (typeof logAudit === 'function') {
+                logAudit("CREATED INDENT", `Generated Indent ${newInd.no} for ${newInd.qty}x ${newInd.code}`);
+            }
 
             saveAllData();
             renderAllTables();
 
-            // Clear the form and reset the UI
+            // Clear form
             e.target.reset();
             document.getElementById('indNo').value = getDailyIndentNumber();
             document.getElementById('indDocsDisplay').innerHTML = '<span style="color:#999; font-size:12px;">Type a Tool Code to check for linked documents.</span>';
             updateDashboards();
 
-            // Alert the Tool Room
-            customAlert(`✅ Indent ${newInd.no} created successfully! Sent to Purchase Department.`, "Indent Raised");
+            // Trigger Notifications
+            customAlert(`✅ Indent ${newInd.no} has been successfully sent to the Purchasing Queue!`, "Request Submitted");
         }
         function exportTableToCSV(tid, fn) { let t = document.getElementById(tid); let r = t.querySelectorAll("tr"); let d = []; for (let i = 0; i < r.length; i++) { let c = r[i].querySelectorAll("td, th"); let rd = []; for (let j = 0; j < c.length - 1; j++) rd.push('"' + c[j].innerText.replace(/"/g, '""') + '"'); d.push(rd.join(",")); } let b = new Blob([d.join("\n")], { type: "text/csv" }); let l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = fn; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
 
@@ -4522,29 +4575,40 @@
             saveAllData(); // Trigger background sync
         }
 
-        // 3. Updated Receive Function (Routes to QA instead of Stock)
         async function receiveIndent(id) {
             let indent = indentHistory.find(i => i.id === id);
             if (!indent || indent.status !== 'PO RAISED') return;
 
-            let qtyStr = await customPrompt(`Receiving PO for ${indent.code}.\nOrdered Qty: ${indent.qty}\n\nEnter Actual Quantity Received from Supplier:`, "Receive Goods to QA");
+            let qtyStr = await customPrompt(`Receiving Delivery for ${indent.code}.\nOrdered Qty: ${indent.qty}\n\nEnter Actual Quantity Received:`, "Receive Goods");
             let rQty = parseInt(qtyStr);
             if (!rQty || rQty <= 0) return;
 
-            // Change status to PENDING QA instead of Fulfilled
-            indent.status = 'PENDING QA';
+            // 1. Update Indent Status
+            indent.status = 'RECEIVED (Pending QA)';
             indent.receivedDate = getNow();
             indent.receivedQty = rQty;
 
-            if (typeof logAudit === 'function') logAudit("RECEIVED TO QA", `Tool Room received ${rQty} units of [${indent.code}]. Forwarded to QA.`);
+            // 2. Route to QA Queue (Reusing conversion array as a staging area)
+            conversionHistory.unshift({
+                id: Date.now(),
+                type: 'INWARD_PO', // Special tag so QA knows it's new stock
+                indentId: indent.id,
+                date: getNow(),
+                src: indent.code,
+                tgt: 'Master Stock',
+                qty: rQty,
+                desc: `Inward Receipt for Indent #${indent.no}`,
+                op: currentUserRole || 'System',
+                status: 'Pending QA'
+            });
 
-            saveAllData();
-            renderAllTables();
-            updateDashboards();
-            if (typeof renderQAQueue === 'function') renderQAQueue();
+            logAudit("RECEIVED GOODS", `Received ${rQty} units of [${indent.code}]. Placed in QA Holding.`);
+            saveAllData(); renderAllTables(); updateDashboards(); renderQAQueue();
 
-            await customAlert(`📦 Successfully received ${rQty} units of ${indent.code}. Sent to QA for drawing inspection!`);
+            await customAlert(`📦 Goods Received! ${rQty} units of ${indent.code} have been placed in the QA Holding Queue for inspection. They will not enter Master Stock until QA approves them.`, "Sent to QA");
         }
+
+
 
 
 
