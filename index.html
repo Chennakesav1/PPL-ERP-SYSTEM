@@ -1109,9 +1109,12 @@
                             <table id="pendingIndentsTable">
                                 <thead style="background-color: #17a2b8; color: white;">
                                     <tr>
-                                        <th>Indent No & Date</th>
-                                        <th>Tool Code / Desc</th>
-                                        <th>Machine & Size</th>
+                                        <th>Indent No</th>
+                                        <th>Date</th>
+                                        <th>Tool Code</th>
+                                        <th>Description</th>
+                                        <th>Machine</th>
+                                        <th>Size</th>
                                         <th>Qty Requested</th>
                                         <th>Priority</th>
                                         <th>Action</th>
@@ -1119,7 +1122,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="6" style="text-align: center;">Loading requests...</td>
+                                        <td colspan="9" style="text-align: center;">Loading requests...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1135,8 +1138,12 @@
                                 <thead style="background-color: #6c757d; color: white;">
                                     <tr>
                                         <th>PO Number</th>
+                                        <th>Indent Date</th>
                                         <th>Supplier</th>
                                         <th>Tool Code</th>
+                                        <th>Description</th>
+                                        <th>Machine</th>
+                                        <th>Size</th>
                                         <th>Expected Date</th>
                                         <th>Qty</th>
                                         <th>Status</th>
@@ -1145,7 +1152,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="7" style="text-align: center;">Loading history...</td>
+                                        <td colspan="11" style="text-align: center;">Loading history...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1658,21 +1665,24 @@
                     if (tbody) {
                         tbody.innerHTML = '';
                         if (!window.activePurchaseIndents || window.activePurchaseIndents.length === 0) {
-                            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; font-weight: bold; color: #28a745;">No pending requests from Tool Room!</td></tr>';
+                            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; font-weight: bold; color: #28a745;">No pending requests from Tool Room!</td></tr>';
                         } else {
                             window.activePurchaseIndents.forEach(ind => {
                                 let priorityHtml = ind.priority === 'URGENT' ? '<span style="color:red; font-weight:bold;">🚨 URGENT</span>' : '<span style="color:#666;">Normal</span>';
                                 tbody.innerHTML += `
-                                <tr>
-                                    <td><strong>${ind.no}</strong><br><span style="font-size: 11px; color: #666;">${ind.date}</span></td>
-                                    <td><strong style="color: var(--primary);">${ind.code}</strong><br><span style="font-size: 11px;">${ind.desc}</span></td>
-                                    <td>${ind.machine} | ${ind.partSize}</td>
-                                    <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
-                                    <td>${priorityHtml}</td>
-                                    <td>
-                                        <button onclick="createPOFromIndent('${ind.id}')" style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📝 Convert to PO</button>
-                                    </td>
-                                </tr>`;
+                            <tr>
+                                <td><strong>${ind.no}</strong></td>
+                                <td><span style="font-size: 11px; color: #666;">${ind.date}</span></td>
+                                <td><strong style="color: var(--primary);">${ind.code}</strong></td>
+                                <td><span style="font-size: 12px;">${ind.desc || '-'}</span></td>
+                                <td>${ind.machine || '-'}</td>
+                                <td>${ind.partSize || '-'}</td>
+                                <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
+                                <td>${priorityHtml}</td>
+                                <td>
+                                    <button onclick="createPOFromIndent('${ind.id}')" style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📝 Convert to PO</button>
+                                </td>
+                            </tr>`;
                             });
                         }
                     }
@@ -1760,7 +1770,7 @@
                 if (res.ok) {
                     indent.status = 'PO RAISED';
                     indent.expectedDate = expectedDate;
-                    
+
                     // MUST AWAIT THE SAVE
                     await window.saveAllData();
 
@@ -1769,9 +1779,9 @@
                     loadPOs();
                     showToast(`✅ PO successfully raised for ${indent.code}!`);
                 } else { showToast("❌ Failed to create PO in database.", true); }
-            } catch (err) { showToast("❌ Network Error connecting to database.", true); } 
-            finally { 
-                submitBtn.disabled = false; submitBtn.innerText = ogText; 
+            } catch (err) { showToast("❌ Network Error connecting to database.", true); }
+            finally {
+                submitBtn.disabled = false; submitBtn.innerText = ogText;
                 refreshInterval = setInterval(refreshDashboard, 5000); // Restart refresh
             }
         }
@@ -1788,7 +1798,7 @@
 
                 if (!pos || pos.length === 0) {
                     if (rawTbody) rawTbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px; font-weight: bold; color: #ff9800;">No Raw Material POs found.</td></tr>';
-                    if (indentTbody) indentTbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; font-weight: bold; color: #17a2b8;">No Tool Room POs found.</td></tr>';
+                    if (indentTbody) indentTbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px; font-weight: bold; color: #17a2b8;">No Tool Room POs found.</td></tr>';
                     return;
                 }
 
@@ -1802,16 +1812,26 @@
 
                     if (po.type === 'TOOLING') {
                         let indentNo = po.poNumber.replace('PO-IND-', '');
+                        
+                        // Extract Original Indent Data to show separated fields
+                        let origIndent = (window.indentHistory || []).find(i => i.no === indentNo);
+                        let iDate = origIndent ? origIndent.date : new Date(po.orderDate).toLocaleDateString();
+                        let iDesc = origIndent ? origIndent.desc : '-';
+                        let iMac = origIndent ? origIndent.machine : '-';
+                        let iSize = origIndent ? origIndent.partSize : '-';
+
                         let receiveBtn = isPending ? `<button onclick="receiveIndentPO('${indentNo}', ${po.expectedKg})" style="background:#17a2b8; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">📥 Receive Tooling</button>` : `<span class="badge" style="background:#6f42c1; color:white; padding:4px; border-radius:4px; font-size:10px;">Sent to QA</span>`;
 
                         indentHTML += `<tr>
                             <td><strong>${po.poNumber || 'N/A'}</strong><br><span style="font-size:11px; color:#666;">👤 ${po.orderedBy || po.username || 'System'}</span></td>
+                            <td><span style="font-size:11px; color:#666;">${iDate}</span></td>
                             <td>${po.supplierName || '-'}</td>
                             <td><strong style="color: var(--primary);">${po.materialCode || '-'}</strong></td>
-                            <td><span style="font-size:11px; color:#555;">${po.scope || '-'}</span></td>
+                            <td><span style="font-size:12px;">${iDesc}</span></td>
+                            <td>${iMac}</td>
+                            <td>${iSize}</td>
                             <td><strong style="color: #ff9800;">${expectedDate}</strong></td>
                             <td><strong style="font-size:15px;">${po.expectedKg || 0}</strong></td>
-                            <td>₹${totalCost.toLocaleString()}</td>
                             <td><span style="padding: 4px 8px; border-radius: 4px; font-weight: bold; ${isPending ? 'background:#ffc107; color:#000;' : 'background:#28a745; color:#fff;'}">${status}</span></td>
                             <td>${receiveBtn}</td> </tr>`;
                     } else {
@@ -1830,7 +1850,7 @@
                 });
 
                 if (rawTbody) rawTbody.innerHTML = rawHTML || '<tr><td colspan="9" style="text-align: center; padding: 20px; color: #666;">No Raw Material POs found.</td></tr>';
-                if (indentTbody) indentTbody.innerHTML = indentHTML || '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #666;">No Tool Room POs found.</td></tr>';
+                if (indentTbody) indentTbody.innerHTML = indentHTML || '<tr><td colspan="11" style="text-align: center; padding: 20px; color: #666;">No Tool Room POs found.</td></tr>';
             } catch (error) { console.error("ERROR LOADING POs:", error); }
         }
 
@@ -1858,7 +1878,7 @@
 
             // MUST AWAIT THE SAVE
             await window.saveAllData();
-            
+
             loadPOs();
             loadInwardQAQueue(); // Force QC to update instantly!
             showToast(`📦 Sent to QC! Tool is waiting for inspection.`);
@@ -1968,7 +1988,7 @@
         function openInwardQaModal(qaId) {
             const item = window.conversionHistory.find(c => c.id == qaId);
             if (!item) return;
-            
+
             document.getElementById('inwardQaConvId').value = item.id;
             document.getElementById('inwardQaIndentText').innerText = item.indentNo;
             document.getElementById('inwardQaToolText').innerText = item.src;
@@ -1977,10 +1997,10 @@
 
             // ADDED: Fetch the drawing from the repo for QC Inspection!
             let linkedDocs = window.documentRepo.filter(d => d.part === item.src);
-            let docsHtml = linkedDocs.length > 0 
-                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 5px; font-size: 12px; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download Original Drawing to Verify</a>`).join('') 
+            let docsHtml = linkedDocs.length > 0
+                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 5px; font-size: 12px; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download Original Drawing to Verify</a>`).join('')
                 : '<span style="color:#999; font-style: italic;">No drawing provided</span>';
-            if(document.getElementById('inwardQaDrawingLink')) document.getElementById('inwardQaDrawingLink').innerHTML = docsHtml;
+            if (document.getElementById('inwardQaDrawingLink')) document.getElementById('inwardQaDrawingLink').innerHTML = docsHtml;
 
             document.getElementById('inwardQaDimensions').value = '';
             document.getElementById('inwardQaRemarks').value = '';
@@ -2033,7 +2053,7 @@
 
             // MUST AWAIT THE SAVE
             await window.saveAllData();
-            
+
             closeInwardQaModal();
             loadInwardQAQueue();
             showToast(status === 'APPROVED' ? `✅ Approved! Added ${item.qty} to Master Stock.` : `❌ Tool Rejected.`);
