@@ -1772,22 +1772,27 @@
         function logout() { localStorage.removeItem("warehouseAuth"); window.location.reload(); }
 
         function switchMainTab(cardId, btnId) {
-            document.getElementById('salesCard').style.display = 'none';
-            document.getElementById('productionCard').style.display = 'none';
-            document.getElementById('qcCard').style.display = 'none';
-            document.getElementById('invCard').style.display = 'none';
-            document.getElementById('txCard').style.display = 'none';
-            document.getElementById('rawMaterialCard').style.display = 'none';
-            document.getElementById('poCard').style.display = 'none';
-            document.getElementById('toolroomCard').style.display = 'none'; // <-- FIXED: Now hides the Tool Room iframe!
+            // 1. Safely hide all cards using an array and a null-check
+            const allCards = [
+                'salesCard', 'productionCard', 'qcCard', 'invCard',
+                'txCard', 'rawMaterialCard', 'poCard', 'toolroomCard'
+            ];
 
+            allCards.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = 'none';
+            });
+
+            // 2. Remove active state from all nav buttons
             document.querySelectorAll('#navButtons .tab-btn').forEach(btn => btn.classList.remove('active'));
-            if (cardId === 'salesCard') { loadCustomers(); loadSalesOrders(); }
 
+            // 3. Trigger specific load functions
+            if (cardId === 'salesCard') { loadCustomers(); loadSalesOrders(); }
+            if (cardId === 'qcCard') loadPendingQC();
+
+            // 4. Safely show the requested card and activate the button
             if (document.getElementById(cardId)) document.getElementById(cardId).style.display = 'block';
             if (document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
-
-            if (cardId === 'qcCard') loadPendingQC();
         }
 
         function forceShowPurchaseOrderTab() {
