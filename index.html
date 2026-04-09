@@ -3286,38 +3286,41 @@
         });
 
 
-        // Add this to index.html script
+
+        // Store indents globally so we can access all their data easily
+        window.activePurchaseIndents = [];
+
         async function loadPendingIndentsForPurchase() {
             try {
-                // Assuming your backend exposes the indents here, or you fetch from the /sync state
-                // If your endpoint is different, adjust the URL
                 const res = await fetch(`${API_URL}/sync`);
                 const data = await res.json();
 
                 if (data && data.state && data.state.indentHistory) {
-                    const activeIndents = data.state.indentHistory.filter(i => i.status !== 'Fulfilled');
+                    // Save to global variable
+                    window.activePurchaseIndents = data.state.indentHistory.filter(i => i.status !== 'Fulfilled');
                     const tbody = document.querySelector('#pendingIndentsTable tbody');
                     tbody.innerHTML = '';
 
-                    if (activeIndents.length === 0) {
+                    if (window.activePurchaseIndents.length === 0) {
                         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; font-weight: bold; color: #28a745;">No pending requests from Tool Room!</td></tr>';
                         return;
                     }
 
-                    activeIndents.forEach(ind => {
+                    window.activePurchaseIndents.forEach(ind => {
                         let priorityHtml = ind.priority === 'URGENT'
                             ? '<span style="color:red; font-weight:bold;">🚨 URGENT</span>'
                             : '<span style="color:#666;">Normal</span>';
 
+                        // Notice we only pass the ind.id now, which keeps the HTML clean
                         tbody.innerHTML += `
                     <tr>
                         <td><strong>${ind.no}</strong><br><span style="font-size: 11px; color: #666;">${ind.date}</span></td>
                         <td><strong style="color: var(--primary);">${ind.code}</strong><br><span style="font-size: 11px;">${ind.desc}</span></td>
-                        <td>${ind.machine}</td>
+                        <td>${ind.machine} | ${ind.partSize}</td>
                         <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
                         <td>${priorityHtml}</td>
                         <td>
-                            <button onclick="createPOFromIndent('${ind.no}', '${ind.code}', '${ind.qty}', '${ind.desc}')" 
+                            <button onclick="createPOFromIndent(${ind.id})" 
                                 style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                                 📝 Convert to PO
                             </button>
@@ -3331,27 +3334,35 @@
             }
         }
 
+        // Auto-fills the PO modal using the exact Indent ID to grab all data
+        function createPOFromIndent(indentId) {
+            // 1. Find the exact indent object
+            const indent = window.activePurchaseIndents.find(i => i.id === indentId);
+            if (!indent) return;
 
-        // Auto-fills the PO modal with data from the Tool Room Indent
-        function createPOFromIndent(indentNo, toolCode, qty, desc) {
-            // 1. Open the existing PO Modal
+            // 2. Open the existing PO Modal
             openPOModal();
 
-            // 2. Auto-fill the inputs based on the Tool Room request
-            document.getElementById('poMaterialCode').value = toolCode;
+            // 3. Map the direct fields
+            document.getElementById('poMaterialCode').value = indent.code || '';
+            document.getElementById('poExpectedKg').value = indent.qty || ''; // Placing Qty in the expected amount field
 
-            // Note: If Toolroom asks for 'Qty' but PO uses 'Kg', you might need the Buyer to adjust this manually. 
-            // We will pre-fill it to save time.
-            document.getElementById('poExpectedKg').value = qty;
+            // 4. Build a comprehensive "Scope/Remarks" string with all the extra details
+            // This ensures the Buyer has the Machine, Part Size, Description, and Priority right in the PO
+            let scopeDetails = `[Indent: ${indent.no}] Priority: ${indent.priority}\n`;
+            scopeDetails += `Desc: ${indent.desc}\n`;
+            scopeDetails += `M/C: ${indent.machine} | Size: ${indent.partSize}`;
 
-            // Auto-generate a helpful scope/remarks note linking the PO to the Indent
-            document.getElementById('poScope').value = `Fulfilling Indent ${indentNo} - ${desc}`;
+            document.getElementById('poScope').value = scopeDetails;
 
-            // Focus the supplier field so the Buyer knows what to fill out next
+            // 5. Focus the supplier field for the buyer
             setTimeout(() => document.getElementById('poSupplier').focus(), 100);
 
-            showToast("📋 PO Form pre-filled from Tool Room Request!");
+            showToast("📋 All Indent details auto-filled into PO!");
         }
+
+
+
 
 
 

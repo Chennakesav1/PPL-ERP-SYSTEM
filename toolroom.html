@@ -2679,27 +2679,6 @@
             document.getElementById('inventoryHistoryBody').innerHTML = invAdjustmentHistory.map(h => `<tr><td>${h.date}</td><td>${h.action}</td><td><strong>${h.code}</strong></td><td>${h.qty}</td><td>${h.operator}</td><td>${h.reason}</td></tr>`).join('');
             document.getElementById('issueHistoryBody').innerHTML = issueHistory.map(i => `<tr><td>${i.date}</td><td><strong>${i.code}</strong></td><td>${i.desc}</td><td>${i.machine}</td><td><span class="badge b-blue">${i.qty}</span></td><td>${i.operator}</td></tr>`).join('');
 
-            document.getElementById('indentHistoryBody').innerHTML = indentHistory.map(i => {
-                let statusBadge = i.status === 'Fulfilled' ? '<span class="badge b-green">FULFILLED</span>' : '<span class="badge b-warning">ACTIVE</span>';
-                // Replace the existing actionBtn logic inside indentHistory.map in toolroom.html
-                let actionBtn = i.status === 'Fulfilled'
-                    ? `<small style="color:var(--success); font-weight:bold;">Rcvd: ${i.receivedDate}</small>`
-                    : `<div style="display:flex; gap:5px;">
-        <button class="btn btn-success" style="padding: 4px 8px; font-size:11px;" onclick="receiveIndent(${i.id})">📦 Rcv</button>
-        <button class="btn btn-primary" style="padding: 4px 8px; font-size:11px; background:#ff9800; border:none;" 
-            onclick="parent.postMessage({type: 'CREATE_PO_FROM_INDENT', data: ${JSON.stringify(i).replace(/"/g, '&quot;')}}, '*')">
-            📝 PO
-        </button>
-       </div>`;
-
-                return `<tr>
-            <td>${i.date}</td><td><strong>${i.no}</strong></td><td>${i.machine}</td><td>${i.partSize}</td>
-            <td><strong style="color:var(--accent);">${i.code}</strong></td><td>${i.qty}</td>
-            <td>${i.priority === 'URGENT' ? '<span style="color:red; font-weight:bold;">URGENT</span>' : 'Normal'}</td>
-            <td>${statusBadge}</td><td>${actionBtn}</td>
-        </tr>`;
-            }).join('');
-
             // Render the Audit Trail
             let auditBody = document.getElementById('auditTableBody');
             if (auditBody) {
