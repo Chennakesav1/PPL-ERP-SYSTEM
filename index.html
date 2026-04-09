@@ -860,53 +860,40 @@
                 </div>
             </div>
 
-            <div id="inwardQaModal" class="modal"
-                style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; backdrop-filter: blur(3px);">
-                <div class="modal-content"
-                    style="background-color: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; position: relative;">
-                    <span class="close-btn" onclick="closeInwardQaModal()"
-                        style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888;">×</span>
-                    <h3 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; padding-bottom: 10px; margin-top: 0;">
-                        🔍 Inspect Incoming Tool</h3>
+            <div id="inwardQaModal" class="modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; backdrop-filter: blur(3px);">
+                <div class="modal-content" style="background-color: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; position: relative;">
+                    <span class="close-btn" onclick="closeInwardQaModal()" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888;">×</span>
+                    <h3 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; padding-bottom: 10px; margin-top: 0;">🔍 Inspect Incoming Tool</h3>
 
                     <input type="hidden" id="inwardQaConvId">
 
-                    <div class="form-grid"
-                        style="display: grid; grid-template-columns: 1fr 1fr; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; gap: 10px;">
-                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Indent Ref:</label><br><span
-                                id="inwardQaIndentText" style="font-weight:bold;">--</span></div>
-                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Tool Code:</label><br><span
-                                id="inwardQaToolText"
-                                style="font-weight:bold; color:var(--primary); font-size:16px;">--</span></div>
-                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Rcvd Qty:</label><br><span
-                                id="inwardQaQtyText" style="font-weight:bold; font-size:16px;">--</span></div>
-                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Machine:</label><br><span
-                                id="inwardQaMachineText" style="font-weight:bold;">--</span></div>
+                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; gap: 10px;">
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Indent Ref:</label><br><span id="inwardQaIndentText" style="font-weight:bold;">--</span></div>
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Tool Code:</label><br><span id="inwardQaToolText" style="font-weight:bold; color:var(--primary); font-size:16px;">--</span></div>
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Rcvd Qty:</label><br><span id="inwardQaQtyText" style="font-weight:bold; font-size:16px;">--</span></div>
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Machine:</label><br><span id="inwardQaMachineText" style="font-weight:bold;">--</span></div>
+                    </div>
+
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <label style="font-weight:bold; font-size:13px; color:#555;">Measured Dimensions (per drawing) *</label>
+                        <input type="text" id="inwardQaDimensions" class="prod-input" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;" required placeholder="e.g., Length: 45.2mm, Dia: 12.0mm">
                     </div>
 
                     <div style="text-align: left; margin-bottom: 15px;">
                         <label style="font-weight:bold; font-size:13px; color:#555;">Inspector Remarks *</label>
-                        <input type="text" id="inwardQaRemarks" class="prod-input"
-                            style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
-                            required placeholder="e.g., Dimensions verified OK">
+                        <input type="text" id="inwardQaRemarks" class="prod-input" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;" required placeholder="e.g., Verified OK">
                     </div>
 
                     <div style="text-align: left;">
-                        <label style="font-weight:bold; font-size:13px; color:#555;">Upload Inspection Proof (Image/PDF)
-                            *</label>
-                        <div
-                            style="border: 2px dashed #007bff; padding: 15px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 5px;">
+                        <label style="font-weight:bold; font-size:13px; color:#555;">Upload Inspection Proof (Image/PDF) *</label>
+                        <div style="border: 2px dashed #007bff; padding: 15px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 5px;">
                             <input type="file" id="inwardQaFile" accept="image/*,.pdf" style="width: 100%;">
                         </div>
                     </div>
 
                     <div style="margin-top: 20px; display: flex; gap: 10px;">
-                        <button type="button"
-                            style="background:#dc3545; color:white; padding:12px; flex:1; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
-                            onclick="processInwardQA('REJECTED')">❌ Reject</button>
-                        <button type="button"
-                            style="background:#28a745; color:white; padding:12px; flex:1.5; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
-                            onclick="processInwardQA('APPROVED')">✅ Approve to Stock</button>
+                        <button type="button" style="background:#dc3545; color:white; padding:12px; flex:1; border:none; border-radius:4px; cursor:pointer; font-weight:bold;" onclick="processInwardQA('REJECTED')">❌ Reject</button>
+                        <button type="button" style="background:#28a745; color:white; padding:12px; flex:1.5; border:none; border-radius:4px; cursor:pointer; font-weight:bold;" onclick="processInwardQA('APPROVED')">✅ Approve to Stock</button>
                     </div>
                 </div>
             </div>
@@ -1630,34 +1617,30 @@
         async function receiveIndentPO(indentNo, expectedQty) {
             if (!confirm(`Are you sure you received ${expectedQty} units for Indent ${indentNo}?\nThis will send the items to QA for inspection.`)) return;
 
-            // Find the indent in the global toolroom history
-            let indent;
-            if (typeof indentHistory !== 'undefined') indent = indentHistory.find(i => i.no === indentNo);
-            if (!indent) indent = window.activePurchaseIndents.find(i => i.no === indentNo);
-
-            if (!indent) return showToast("Indent not found!", true);
-
-            // Update Status
-            indent.status = 'RECEIVED (Pending QA)';
-            indent.receivedDate = new Date().toLocaleDateString();
-            indent.receivedQty = expectedQty;
-
-            // Push to a QA Holding Queue (We use conversionHistory array as our global queue tracker)
-            if (typeof conversionHistory !== 'undefined') {
-                conversionHistory.unshift({
-                    id: Date.now(),
-                    type: 'INWARD_PO',
-                    indentNo: indent.no,
-                    date: new Date().toLocaleDateString(),
-                    src: indent.code,
-                    machine: indent.machine,
-                    qty: expectedQty,
-                    op: (typeof currentUserRole !== 'undefined' ? currentUserRole : 'Buyer'),
-                    status: 'Pending QA'
-                });
+            // Safely find the indent
+            let indent = window.activePurchaseIndents.find(i => i.no == indentNo);
+            if (!indent && typeof indentHistory !== 'undefined') {
+                indent = indentHistory.find(i => i.no == indentNo);
             }
+            if (!indent) indent = { no: indentNo, code: 'UNKNOWN-TOOL', machine: 'Unknown', qty: expectedQty };
 
-            // Update the PO status in database
+            indent.status = 'RECEIVED (Pending QA)';
+
+            // Ensure the queue exists and push the tool into it
+            if (typeof conversionHistory === 'undefined') window.conversionHistory = [];
+            conversionHistory.unshift({
+                id: Date.now().toString(), // Force ID to string so the modal finds it
+                type: 'INWARD_PO',
+                indentNo: indent.no,
+                date: new Date().toLocaleDateString(),
+                src: indent.code,
+                machine: indent.machine,
+                qty: expectedQty,
+                op: (currentUser ? currentUser.username : 'Buyer'),
+                status: 'Pending QA'
+            });
+
+            // Update Backend PO
             try {
                 const poData = await fetch(`${API_URL}/purchase-orders`).then(r => r.json());
                 const po = poData.find(p => p.poNumber === `PO-IND-${indentNo}`);
@@ -1667,12 +1650,88 @@
                         body: JSON.stringify({ status: 'RECEIVED', username: 'Buyer' })
                     });
                 }
-            } catch (e) { }
+            } catch (e) { console.log("PO Backend sync skipped"); }
 
-            if (typeof saveAllData === 'function') saveAllData();
-            loadPOs(); // Refresh PO table
-            showToast(`📦 Sent to QC! ${indent.code} is waiting for inspection.`);
+            loadPOs();
+            showToast(`📦 Sent to QC! Tool is waiting for inspection.`);
         }
+
+        // 4. Open/Close Inward QA Modal
+        function openInwardQaModal(qaId) {
+            if (typeof conversionHistory === 'undefined') return;
+            const item = conversionHistory.find(c => c.id === qaId);
+            if (!item) return;
+
+            document.getElementById('inwardQaConvId').value = item.id;
+            document.getElementById('inwardQaIndentText').innerText = item.indentNo;
+            document.getElementById('inwardQaToolText').innerText = item.src;
+            document.getElementById('inwardQaQtyText').innerText = item.qty;
+            document.getElementById('inwardQaMachineText').innerText = item.machine || '-';
+
+            // Reset inputs
+            document.getElementById('inwardQaDimensions').value = '';
+            document.getElementById('inwardQaRemarks').value = '';
+            document.getElementById('inwardQaFile').value = '';
+
+            // FIXED: Using style.display instead of classList
+            document.getElementById('inwardQaModal').style.display = 'flex';
+        }
+
+        function closeInwardQaModal() {
+            document.getElementById('inwardQaModal').style.display = 'none';
+        }
+
+        // 5. Final QA Approval -> Master Stock
+        async function processInwardQA(status) {
+            const qaId = document.getElementById('inwardQaConvId').value;
+            const dimensions = document.getElementById('inwardQaDimensions').value.trim();
+            const remarks = document.getElementById('inwardQaRemarks').value.trim();
+            const fileInput = document.getElementById('inwardQaFile');
+
+            if (!dimensions) return showToast("⚠️ Measured Dimensions are required!", true);
+            if (!remarks) return showToast("⚠️ Inspector Remarks are required!", true);
+            if (status === 'APPROVED' && fileInput.files.length === 0) {
+                return showToast("⚠️ Inspection Proof (Image/PDF) is mandatory for Approval!", true);
+            }
+
+            const item = conversionHistory.find(c => c.id === qaId);
+            if (!item) return;
+
+            item.status = status;
+            item.qaRemarks = remarks;
+            item.qaDimensions = dimensions; // Save the drawing dimensions
+
+            // If Approved, Add to Master Stock
+            if (status === 'APPROVED') {
+                if (typeof masterInventory === 'undefined') window.masterInventory = [];
+                
+                let invItem = masterInventory.find(t => t.code === item.src);
+                if (invItem) {
+                    invItem.spareStock += Number(item.qty);
+                    invItem.stock = invItem.rngStock + invItem.spareStock;
+                } else {
+                    masterInventory.push({
+                        code: item.src, desc: "Inward Tool", machine: item.machine,
+                        rngStock: 0, spareStock: Number(item.qty), stock: Number(item.qty), min: 5, actualLife: 0, assumedLife: 50000
+                    });
+                }
+                
+                // Attempt to send message to Toolroom Iframe to auto-update their side
+                const toolroomFrame = document.getElementById('toolroomFrame');
+                if (toolroomFrame && toolroomFrame.contentWindow) {
+                    toolroomFrame.contentWindow.postMessage({
+                        type: 'QC_APPROVED_TOOL',
+                        data: { code: item.src, qty: Number(item.qty), machine: item.machine }
+                    }, '*');
+                }
+            }
+
+            closeInwardQaModal();
+            loadInwardQAQueue(); // Clear it from the pending screen
+            showToast(status === 'APPROVED' ? `✅ Approved! Added ${item.qty} units to Master Stock.` : `❌ Tool Rejected.`);
+        }
+
+        
 
         // 3. Load QA Inward Queue
         function loadInwardQAQueue() {
