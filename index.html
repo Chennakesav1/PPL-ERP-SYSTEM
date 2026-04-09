@@ -454,6 +454,45 @@
     <div id="mainDashboard">
         <div class="dashboard-container">
 
+            <div class="card" id="qcCard" style="display: none; margin-bottom: 20px;">
+                <h2 style="color: #17a2b8; border-bottom: 2px solid #17a2b8; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                    <span>🔬 Quality Control Dashboard</span>
+                    <div class="tab-container" style="border: none; margin: 0; padding: 0;">
+                        <button class="tab-btn active" id="tab-qc-pending" onclick="toggleQCView('PENDING'); document.querySelectorAll('#qcCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');" style="background: #17a2b8; color: white;">⏳ Pending Approval</button>
+                        <button class="tab-btn" id="tab-qc-history" onclick="toggleQCView('HISTORY'); document.querySelectorAll('#qcCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">📜 QC History</button>
+                    </div>
+                </h2>
+
+                <div id="qcHistorySearchSection" class="search-container" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #17a2b8; margin-bottom: 15px;">
+                    <span style="font-weight: bold; color: #555; font-size: 14px;">🔍 FILTER HISTORY:</span>
+                    <input type="date" id="filterQCHistoryDate" class="prod-input" onchange="applyQCHistoryFilters()" title="Filter by Date">
+                    <input type="text" id="filterQCHistoryGlobal" class="prod-input" style="flex: 1; min-width: 250px;" placeholder="Search Part No, Machine, Operator..." onkeyup="applyQCHistoryFilters()">
+                    <button onclick="clearQCHistoryFilters()" style="background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">Reset</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table id="qcTable">
+                        <thead style="background-color: #17a2b8; color: white;">
+                            <tr>
+                                <th>Date</th>
+                                <th>Stage</th>
+                                <th>Machine</th>
+                                <th>Part No</th>
+                                <th style="background:#28a745;">Acc Qty</th>
+                                <th style="background:#dc3545;">Rej Qty</th>
+                                <th>Inspector / Logged By</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="8" style="text-align: center;">Loading QC Data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="card" id="productionCard" style="display: none; margin-bottom: 20px;">
                 <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800;">🏭 Production Data Entry (Multi-Stage)
                 </h2>
@@ -1395,59 +1434,6 @@
         </div>
     </div>
 
-
-
-    <div id="inwardQaModal" class="modal-overlay">
-        <div class="modal-box" style="width: 500px;">
-            <h3 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; padding-bottom: 10px; margin-top: 0;">🔍
-                Inspect Incoming Tool</h3>
-            <form id="inwardQaForm">
-                <input type="hidden" id="inwardQaIndentNo">
-
-                <div class="form-grid"
-                    style="grid-template-columns: 1fr 1fr; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; gap: 10px;">
-                    <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666;">Indent
-                            Ref:</label><br><span id="inwardQaIndentText" style="font-weight:bold;">--</span></div>
-                    <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666;">Tool
-                            Code:</label><br><span id="inwardQaToolText"
-                            style="font-weight:bold; color:var(--primary); font-size:16px;">--</span></div>
-                    <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666;">Rcvd
-                            Qty:</label><br><span id="inwardQaQtyText"
-                            style="font-weight:bold; font-size:16px;">--</span></div>
-                    <div class="form-group" style="margin:0;"><label
-                            style="font-size:12px; color:#666;">Machine:</label><br><span id="inwardQaMachineText"
-                            style="font-weight:bold;">--</span></div>
-                </div>
-
-                <div class="form-group" style="text-align: left; margin-bottom: 15px;">
-                    <label style="font-weight:bold; font-size:13px;">Inspector Remarks *</label>
-                    <input type="text" id="inwardQaRemarks" class="prod-input"
-                        style="width: 100%; box-sizing: border-box;" required
-                        placeholder="e.g., Dimensions verified OK, matching drawing.">
-                </div>
-
-                <div class="form-group" style="text-align: left;">
-                    <label style="font-weight:bold; font-size:13px;">Upload Inspection Proof (Image/PDF) *</label>
-                    <div
-                        style="border: 2px dashed #007bff; padding: 15px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 5px;">
-                        <input type="file" id="inwardQaFile" accept="image/*,.pdf" style="width: 100%;">
-                    </div>
-                </div>
-
-                <div class="modal-actions" style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button type="button" class="btn"
-                        style="background:#6c757d; color:white; padding:10px; flex:1; border:none; border-radius:4px; cursor:pointer;"
-                        onclick="closeInwardQaModal()">Cancel</button>
-                    <button type="button" class="btn"
-                        style="background:#dc3545; color:white; padding:10px; flex:1; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
-                        onclick="processInwardQA('REJECTED')">❌ Reject</button>
-                    <button type="button" class="btn"
-                        style="background:#28a745; color:white; padding:10px; flex:1.5; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
-                        onclick="processInwardQA('APPROVED')">✅ Approve to Stock</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
 
 
