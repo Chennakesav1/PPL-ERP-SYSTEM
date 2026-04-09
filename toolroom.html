@@ -2687,17 +2687,18 @@
                 // Step 4: Finished & QC Approved
                 if (i.status === 'QC APPROVED' || i.status === 'Fulfilled') {
                     statusBadge = '<span class="badge b-green">QC APPROVED (In Stock)</span>';
-                    actionBtn = `<small style="color:var(--success); font-weight:bold;">In Stock: ${i.receivedDate}</small>`;
+                    actionBtn = `<small style="color:var(--success); font-weight:bold;">In Stock: ${i.receivedDate || ''}</small>`;
                 }
                 // Step 3: Received, Waiting on QC
                 else if (i.status === 'RECEIVED (Pending QA)') {
                     statusBadge = '<span class="badge b-purple">PENDING QA</span>';
                     actionBtn = `<small style="color:#6b21a8; font-weight:bold;">Awaiting QA Inspection</small>`;
                 }
-                // Step 2: PO Raised, Waiting on Delivery
+                // Step 2: PO Raised, Waiting on Deliver
                 else if (i.status === 'PO RAISED') {
                     statusBadge = '<span class="badge b-blue">PO RAISED</span>';
-                    actionBtn = `<button class="btn btn-success" style="padding: 4px 8px; font-size:11px;" onclick="receiveIndent(${i.id})">📦 Receive Goods</button>`;
+                    // FIXED: Removed the 'Receive Goods' button. Only the Purchase Dept can receive!
+                    actionBtn = `<span style="font-size:11px; color:#666;">Waiting on Purchase Dept to Receive</span>`;
                 }
                 // Step 1: Active Request
                 else {
@@ -3802,7 +3803,6 @@
         }
 
 
-        // Render QA Queue
         function renderQAQueue() {
             const qaBody = document.getElementById('pendingQaBody');
             if (!qaBody) return;
@@ -3810,22 +3810,7 @@
             let pendingEcnItems = ecnList.filter(e => e.status === 'PENDING QA');
             let pendingConversions = conversionHistory.filter(c => c.status === 'Pending QA' && c.type !== 'INWARD_PO');
 
-            // NEW: Fetch Incoming POs waiting for QA
-            let pendingInwards = conversionHistory.filter(c => c.status === 'Pending QA' && c.type === 'INWARD_PO');
-
             let html = '';
-
-            // Show Inward POs
-            pendingInwards.forEach(c => {
-                html += `<tr style="background: #e0f0ff;">
-            <td>${c.date}</td>
-            <td><strong>${c.src}</strong> <span class="badge b-blue">INWARD PO</span></td>
-            <td>Verify against Drawing</td>
-            <td><strong style="font-size: 16px;">${c.qty}</strong></td>
-            <td>${c.op} (Received)</td>
-            <td><button class="btn btn-success" style="padding: 6px 12px; font-size:12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" onclick="approveInwardQA(${c.id})">🔍 Inspect & Approve</button></td>
-        </tr>`;
-            });
 
             // Show ECNs
             pendingEcnItems.forEach(ecn => {
@@ -3849,6 +3834,9 @@
             if (html === '') html = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#666;">No items pending QA approval.</td></tr>';
             qaBody.innerHTML = html;
         }
+
+
+        
 
         // Final Step: QA Inspects and pushes to Master Stock
         async function approveInwardQA(id) {
