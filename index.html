@@ -285,7 +285,8 @@
             border: none;
             background: #eee;
             cursor: pointer;
-            border-radius: 6px; /* CHANGED: Now all 4 corners are rounded */
+            border-radius: 6px;
+            /* CHANGED: Now all 4 corners are rounded */
             font-weight: bold;
             margin-right: 2px;
             font-size: 13px;
@@ -407,33 +408,47 @@
         </div>
     </div>
 
-    <div id="topNav" style="background: #212529; padding: 0 20px; display: none; align-items: stretch; color: white; height: 55px;">
-        
-        <div style="display: flex; align-items: center; font-weight: bold; font-size: 16px; color: #ff9800; white-space: nowrap; width: 180px;">
+    <div id="topNav"
+        style="background: #212529; padding: 0 20px; display: none; align-items: stretch; color: white; height: 55px;">
+
+        <div
+            style="display: flex; align-items: center; font-weight: bold; font-size: 16px; color: #ff9800; white-space: nowrap; width: 180px;">
             🏭 PPL ERP
         </div>
-        
-        <div id="navButtons" style="display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; flex: 1; align-items: center; justify-content: center; margin-bottom: 0;">
-            <button class="tab-btn active" id="nav-prod" onclick="switchMainTab('productionCard', 'nav-prod')">Production</button>
-            <button class="tab-btn" id="nav-qc" onclick="switchMainTab('qcCard', 'nav-qc')" style="display: none; background: #17a2b8; color: white;">QC</button>
-            <button class="tab-btn" id="nav-inv" onclick="switchMainTab('invCard', 'nav-inv')" style="display: none;">Inventory</button>
-            <button class="tab-btn" id="nav-tx" onclick="switchMainTab('txCard', 'nav-tx')" style="display: none;">Movements</button>
-            <button class="tab-btn" id="nav-rm" onclick="switchMainTab('rawMaterialCard', 'nav-rm')" style="display: none;">Raw Materials</button>
-            <button class="tab-btn" id="nav-po" onclick="switchMainTab('poCard', 'nav-po')" style="display: none;">POs</button>
-            <button class="tab-btn" id="nav-sales" onclick="switchMainTab('salesCard', 'nav-sales')" style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
-            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')" style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
+
+        <div id="navButtons"
+            style="display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; flex: 1; align-items: center; justify-content: center; margin-bottom: 0;">
+            <button class="tab-btn active" id="nav-prod"
+                onclick="switchMainTab('productionCard', 'nav-prod')">Production</button>
+            <button class="tab-btn" id="nav-qc" onclick="switchMainTab('qcCard', 'nav-qc')"
+                style="display: none; background: #17a2b8; color: white;">QC</button>
+            <button class="tab-btn" id="nav-inv" onclick="switchMainTab('invCard', 'nav-inv')"
+                style="display: none;">Inventory</button>
+            <button class="tab-btn" id="nav-tx" onclick="switchMainTab('txCard', 'nav-tx')"
+                style="display: none;">Movements</button>
+            <button class="tab-btn" id="nav-rm" onclick="switchMainTab('rawMaterialCard', 'nav-rm')"
+                style="display: none;">Raw Materials</button>
+            <button class="tab-btn" id="nav-po" onclick="switchMainTab('poCard', 'nav-po')"
+                style="display: none;">POs</button>
+            <button class="tab-btn" id="nav-sales" onclick="switchMainTab('salesCard', 'nav-sales')"
+                style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
+            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')"
+                style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: flex-end; font-size: 13px; white-space: nowrap; width: 180px;">
-            <span id="roleDisplay" class="role-badge" style="padding: 4px 10px; font-size: 12px; text-align: center;"></span>
-            <a href="#" onclick="logout()" style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 15px;">Logout</a>
+        <div
+            style="display: flex; align-items: center; justify-content: flex-end; font-size: 13px; white-space: nowrap; width: 180px;">
+            <span id="roleDisplay" class="role-badge"
+                style="padding: 4px 10px; font-size: 12px; text-align: center;"></span>
+            <a href="#" onclick="logout()"
+                style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 15px;">Logout</a>
         </div>
-        
+
     </div>
 
 
-   
-   
+
+
 
 
     <div id="mainDashboard">
@@ -1125,6 +1140,7 @@
 
             <div class="card" id="poCard" style="display: none;">
                 <h2>Purchase Orders
+                    <span id="indentCountBadge" style="background: #dc3545; color: white; font-size: 12px; padding: 2px 8px; border-radius: 10px; display: none; margin-left: 10px;">0 Toolroom Requests</span>
                     <div class="search-container">
                         <input type="text" id="searchPOInput" class="search-box" style="width: 200px;"
                             onkeyup="filterPOs()" placeholder="🔍 Search POs...">
@@ -3212,6 +3228,37 @@
                 }
             }
         }
+
+
+
+
+        function openPOFromToolroom(indent) {
+            // 1. Switch to the PO tab so the user sees what's happening
+            switchMainTab('poCard', 'nav-po');
+
+            // 2. Open the PO Modal
+            openPOModal();
+
+            // 3. Fill the fields automatically from the Indent data
+            document.getElementById('poMaterialCode').value = indent.code || '';
+            document.getElementById('poExpectedKg').value = indent.qty || '';
+            document.getElementById('poScope').value = `Auto-generated from Toolroom Indent #${indent.no}. Machine: ${indent.machine}`;
+
+            // Note: Since Indents use Tool Codes and POs usually use Steel Codes/Weight, 
+            // I've mapped Indent Qty to Expected Kg. 
+
+            showToast("📋 PO Form pre-filled from Toolroom Indent!");
+        }
+
+
+
+
+        window.addEventListener('message', function (event) {
+            if (event.data.type === 'CREATE_PO_FROM_INDENT') {
+                const indentData = event.data.data;
+                openPOFromToolroom(indentData);
+            }
+        });
 
 
 

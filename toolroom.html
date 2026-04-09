@@ -2681,7 +2681,16 @@
 
             document.getElementById('indentHistoryBody').innerHTML = indentHistory.map(i => {
                 let statusBadge = i.status === 'Fulfilled' ? '<span class="badge b-green">FULFILLED</span>' : '<span class="badge b-warning">ACTIVE</span>';
-                let actionBtn = i.status === 'Fulfilled' ? `<small style="color:var(--success); font-weight:bold;">Rcvd: ${i.receivedDate}</small>` : `<button class="btn btn-success" style="padding: 4px 8px; font-size:11px;" onclick="receiveIndent(${i.id})">📦 Receive</button>`;
+                // Replace the existing actionBtn logic inside indentHistory.map in toolroom.html
+                let actionBtn = i.status === 'Fulfilled'
+                    ? `<small style="color:var(--success); font-weight:bold;">Rcvd: ${i.receivedDate}</small>`
+                    : `<div style="display:flex; gap:5px;">
+        <button class="btn btn-success" style="padding: 4px 8px; font-size:11px;" onclick="receiveIndent(${i.id})">📦 Rcv</button>
+        <button class="btn btn-primary" style="padding: 4px 8px; font-size:11px; background:#ff9800; border:none;" 
+            onclick="parent.postMessage({type: 'CREATE_PO_FROM_INDENT', data: ${JSON.stringify(i).replace(/"/g, '&quot;')}}, '*')">
+            📝 PO
+        </button>
+       </div>`;
 
                 return `<tr>
             <td>${i.date}</td><td><strong>${i.no}</strong></td><td>${i.machine}</td><td>${i.partSize}</td>
@@ -2746,7 +2755,7 @@
 
             let pendTR = ecnList.filter(e => e.status === 'PENDING TOOL ROOM').length;
             let pendQA = conversionHistory.filter(c => c.status === 'Pending QA').length + ecnList.filter(e => e.status === 'PENDING QA').length;
-            
+
             // Unified Admin Queue Count
             let pendAdmin = conversionHistory.filter(c => c.status === 'Pending Admin').length +
                 ecnList.filter(e => e.status === 'PENDING ADMIN').length +
@@ -2780,14 +2789,14 @@
                         alertCount++; // Found a tool that needs maintenance!
                         let isCritical = pct >= 100;
                         let badge = isCritical ? '<span class="badge b-red" style="font-size:12px;">CRITICAL (>100%)</span>' : '<span class="badge b-warning" style="font-size:12px; color:black;">WARNING (>85%)</span>';
-                        
+
                         // NEW: Build the Location and Stock string
-                        let locStr = `<small>R: ${t.rngLoc||'-'} <strong>(${t.rngStock||0})</strong><br>S: ${t.spareLoc||'-'} <strong>(${t.spareStock||0})</strong></small>`;
+                        let locStr = `<small>R: ${t.rngLoc || '-'} <strong>(${t.rngStock || 0})</strong><br>S: ${t.spareLoc || '-'} <strong>(${t.spareStock || 0})</strong></small>`;
 
                         // Check Indent Status for this specific tool
                         let toolIndents = indentHistory.filter(i => i.code === t.code);
                         let actionHtml = '';
-                        
+
                         if (toolIndents.length > 0 && toolIndents[0].status !== 'Fulfilled') {
                             actionHtml = `<span class="badge b-yellow" style="color:black; padding: 6px;">⏳ Indent Active</span><br>`;
                         } else if (toolIndents.length > 0 && toolIndents[0].status === 'Fulfilled') {
@@ -2812,10 +2821,10 @@
                     }
                 }
             });
-            
+
             let pmBody = document.getElementById('pmWidgetBody');
             let pmContainer = document.getElementById('global-pm-container');
-            
+
             if (alertCount > 0) {
                 if (pmBody) pmBody.innerHTML = pmHtml;
                 if (pmContainer) pmContainer.style.display = 'block';
@@ -2830,7 +2839,7 @@
 
         async function markToolBroken(code) {
             if (currentUserRole !== 'admin' && currentUserRole !== 'toolroom') return await customAlert("Access Denied. Only Admin and Tool Room can scrap tools.", "Security");
-            
+
             let item = masterInventory.find(t => t.code === code);
             if (!item) return await customAlert("Tool not found in inventory.");
             if (item.stock <= 0) return await customAlert(`Cannot scrap ${code}. The current stock is already 0.`);
@@ -2863,14 +2872,14 @@
             invAdjustmentHistory.unshift({
                 date: getNow(), action: '<span class="badge b-red">SCRAPPED</span>', code: code, qty: qty, operator: op, reason: reason
             });
-            
+
             // Log to Master Audit Trail
             logAudit("SCRAP TOOL", `${op} scrapped ${qty}x [${code}]. Reason: ${reason}. Stock reduced to ${item.stock}.`);
 
             saveAllData();
             renderAllTables();
             updateDashboards();
-            
+
             await customAlert(`✅ Successfully scrapped ${qty} units of ${code}. Stock updated and life counter reset.`);
         }
 
