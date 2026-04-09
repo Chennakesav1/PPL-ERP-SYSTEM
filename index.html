@@ -787,50 +787,81 @@
 
             <div class="card" id="qcCard" style="display: none; margin-bottom: 20px;">
                 <h2
-                    style="color: #17a2b8; border-bottom: 2px solid #17a2b8; display: flex; justify-content: space-between; align-items: center;">
-                    <span>🔬 Quality Control Gatekeeper</span>
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="toggleQCView('PENDING')" id="btnShowPending"
-                            style="background: #17a2b8; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold;">📥
-                            Pending Approvals</button>
-                        <button onclick="toggleQCView('HISTORY')" id="btnShowHistory"
-                            style="background: #eee; color: #555; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold;">📜
-                            History / Search</button>
+                    style="color: #17a2b8; border-bottom: 2px solid #17a2b8; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <span>🔬 Quality Control Dashboard</span>
+                    <div class="tab-container" style="border: none; margin: 0; padding: 0;">
+                        <button class="tab-btn active" id="tab-qc-prod" onclick="switchQCTab('prod')"
+                            style="background: #17a2b8; color: white;">🏭 Production QC</button>
+                        <button class="tab-btn" id="tab-qc-inward" onclick="switchQCTab('inward')">🛠️ Incoming Tools
+                            (PO)</button>
                     </div>
                 </h2>
 
-                <div id="qcHistorySearchSection"
-                    style="display: none; background: #f1f8f9; padding: 12px; border-radius: 6px; margin-bottom: 15px; gap: 10px; align-items: center; border: 1px solid #d1e7e9;">
-                    <span style="font-weight: bold; color: #17a2b8; font-size: 13px;">🔍 SEARCH HISTORY:</span>
-                    <input type="date" id="filterQCHistoryDate" class="prod-input" onchange="applyQCHistoryFilters()"
-                        title="Filter by Approval Date">
-                    <input type="text" id="filterQCHistoryGlobal" class="prod-input" style="flex: 1;"
-                        placeholder="Search Part No, Machine, Inspector, or Remarks..."
-                        onkeyup="applyQCHistoryFilters()">
-                    <button onclick="clearQCHistoryFilters()"
-                        style="background: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Reset</button>
+                <div id="qcProdSection">
+                    <div style="display: flex; gap: 10px; margin: 15px 0;">
+                        <button onclick="toggleQCView('PENDING')" id="btnShowPending" class="btn"
+                            style="background: #17a2b8; color: white; padding: 6px 15px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">📥
+                            Pending Approvals</button>
+                        <button onclick="toggleQCView('HISTORY')" id="btnShowHistory" class="btn"
+                            style="background: #eee; color: #555; padding: 6px 15px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">📜
+                            History / Search</button>
+                    </div>
+
+                    <div id="qcHistorySearchSection"
+                        style="display: none; background: #f1f8f9; padding: 12px; border-radius: 6px; margin-bottom: 15px; gap: 10px; align-items: center; border: 1px solid #d1e7e9;">
+                        <span style="font-weight: bold; color: #17a2b8; font-size: 13px;">🔍 SEARCH HISTORY:</span>
+                        <input type="date" id="filterQCHistoryDate" class="prod-input"
+                            onchange="applyQCHistoryFilters()">
+                        <input type="text" id="filterQCHistoryGlobal" class="prod-input" style="flex: 1;"
+                            placeholder="Search Part No, Machine..." onkeyup="applyQCHistoryFilters()">
+                        <button onclick="clearQCHistoryFilters()"
+                            style="background: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Reset</button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="qcTable">
+                            <thead style="background-color: #17a2b8; color: white;">
+                                <tr>
+                                    <th>Date Logged</th>
+                                    <th>Stage</th>
+                                    <th>Machine</th>
+                                    <th>Part No</th>
+                                    <th>Acc Qty</th>
+                                    <th>Rej Qty</th>
+                                    <th>Logged By</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" style="text-align: center;">Loading pending batches...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div class="table-wrapper">
-                    <table id="qcTable">
-                        <thead style="background-color: #17a2b8; color: white;">
-                            <tr>
-                                <th>Date Logged</th>
-                                <th>Stage</th>
-                                <th>Machine</th>
-                                <th>Part No</th>
-                                <th>Acc Qty</th>
-                                <th>Rej Qty</th>
-                                <th>Logged By</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="8" style="text-align: center;">Loading pending batches...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="qcInwardSection" style="display: none; margin-top: 15px;">
+                    <div class="table-wrapper">
+                        <table id="inwardQaTable">
+                            <thead style="background-color: #6f42c1; color: white;">
+                                <tr>
+                                    <th>Received Date</th>
+                                    <th>Indent Ref</th>
+                                    <th>Tool Code</th>
+                                    <th>Machine / Size</th>
+                                    <th>Received Qty</th>
+                                    <th>Received By</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7" style="text-align: center;">Loading incoming tools...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -1407,6 +1438,60 @@
 
 
 
+    <div id="inwardQaModal" class="modal-overlay">
+        <div class="modal-box" style="width: 500px;">
+            <h3 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; padding-bottom: 10px; margin-top: 0;">🔍
+                Inspect Incoming Tool</h3>
+            <form id="inwardQaForm">
+                <input type="hidden" id="inwardQaIndentNo">
+
+                <div class="form-grid"
+                    style="grid-template-columns: 1fr 1fr; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; gap: 10px;">
+                    <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666;">Indent
+                            Ref:</label><br><span id="inwardQaIndentText" style="font-weight:bold;">--</span></div>
+                    <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666;">Tool
+                            Code:</label><br><span id="inwardQaToolText"
+                            style="font-weight:bold; color:var(--primary); font-size:16px;">--</span></div>
+                    <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666;">Rcvd
+                            Qty:</label><br><span id="inwardQaQtyText"
+                            style="font-weight:bold; font-size:16px;">--</span></div>
+                    <div class="form-group" style="margin:0;"><label
+                            style="font-size:12px; color:#666;">Machine:</label><br><span id="inwardQaMachineText"
+                            style="font-weight:bold;">--</span></div>
+                </div>
+
+                <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+                    <label style="font-weight:bold; font-size:13px;">Inspector Remarks *</label>
+                    <input type="text" id="inwardQaRemarks" class="prod-input"
+                        style="width: 100%; box-sizing: border-box;" required
+                        placeholder="e.g., Dimensions verified OK, matching drawing.">
+                </div>
+
+                <div class="form-group" style="text-align: left;">
+                    <label style="font-weight:bold; font-size:13px;">Upload Inspection Proof (Image/PDF) *</label>
+                    <div
+                        style="border: 2px dashed #007bff; padding: 15px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 5px;">
+                        <input type="file" id="inwardQaFile" accept="image/*,.pdf" style="width: 100%;">
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button type="button" class="btn"
+                        style="background:#6c757d; color:white; padding:10px; flex:1; border:none; border-radius:4px; cursor:pointer;"
+                        onclick="closeInwardQaModal()">Cancel</button>
+                    <button type="button" class="btn"
+                        style="background:#dc3545; color:white; padding:10px; flex:1; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
+                        onclick="processInwardQA('REJECTED')">❌ Reject</button>
+                    <button type="button" class="btn"
+                        style="background:#28a745; color:white; padding:10px; flex:1.5; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
+                        onclick="processInwardQA('APPROVED')">✅ Approve to Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
 
 
 
@@ -1539,6 +1624,190 @@
 
             if (refreshInterval) clearInterval(refreshInterval);
             refreshInterval = setInterval(refreshDashboard, 5000);
+        }
+
+
+
+        // 1. QC Tab Switcher
+        function switchQCTab(tab) {
+            document.getElementById('qcProdSection').style.display = tab === 'prod' ? 'block' : 'none';
+            document.getElementById('qcInwardSection').style.display = tab === 'inward' ? 'block' : 'none';
+
+            document.getElementById('tab-qc-prod').style.background = tab === 'prod' ? '#17a2b8' : '#eee';
+            document.getElementById('tab-qc-prod').style.color = tab === 'prod' ? 'white' : '#555';
+
+            document.getElementById('tab-qc-inward').style.background = tab === 'inward' ? '#6f42c1' : '#eee';
+            document.getElementById('tab-qc-inward').style.color = tab === 'inward' ? 'white' : '#555';
+
+            if (tab === 'inward') loadInwardQAQueue();
+        }
+
+        // 2. Buyer "Receives" Indent PO -> Sends to QA
+        async function receiveIndentPO(indentNo, expectedQty) {
+            if (!confirm(`Are you sure you received ${expectedQty} units for Indent ${indentNo}?\nThis will send the items to QA for inspection.`)) return;
+
+            // Find the indent in the global toolroom history
+            let indent;
+            if (typeof indentHistory !== 'undefined') indent = indentHistory.find(i => i.no === indentNo);
+            if (!indent) indent = window.activePurchaseIndents.find(i => i.no === indentNo);
+
+            if (!indent) return showToast("Indent not found!", true);
+
+            // Update Status
+            indent.status = 'RECEIVED (Pending QA)';
+            indent.receivedDate = new Date().toLocaleDateString();
+            indent.receivedQty = expectedQty;
+
+            // Push to a QA Holding Queue (We use conversionHistory array as our global queue tracker)
+            if (typeof conversionHistory !== 'undefined') {
+                conversionHistory.unshift({
+                    id: Date.now(),
+                    type: 'INWARD_PO',
+                    indentNo: indent.no,
+                    date: new Date().toLocaleDateString(),
+                    src: indent.code,
+                    machine: indent.machine,
+                    qty: expectedQty,
+                    op: (typeof currentUserRole !== 'undefined' ? currentUserRole : 'Buyer'),
+                    status: 'Pending QA'
+                });
+            }
+
+            // Update the PO status in database
+            try {
+                const poData = await fetch(`${API_URL}/purchase-orders`).then(r => r.json());
+                const po = poData.find(p => p.poNumber === `PO-IND-${indentNo}`);
+                if (po) {
+                    await fetch(`${API_URL}/purchase-orders/${po._id}/status`, {
+                        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'RECEIVED', username: 'Buyer' })
+                    });
+                }
+            } catch (e) { }
+
+            if (typeof saveAllData === 'function') saveAllData();
+            loadPOs(); // Refresh PO table
+            showToast(`📦 Sent to QC! ${indent.code} is waiting for inspection.`);
+        }
+
+        // 3. Load QA Inward Queue
+        function loadInwardQAQueue() {
+            const tbody = document.querySelector('#inwardQaTable tbody');
+            if (!tbody || typeof conversionHistory === 'undefined') return;
+
+            const pendingInwards = conversionHistory.filter(c => c.type === 'INWARD_PO' && c.status === 'Pending QA');
+
+            if (pendingInwards.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #28a745; font-weight: bold; padding: 20px;">All incoming tools have been inspected!</td></tr>';
+                return;
+            }
+
+            let html = '';
+            pendingInwards.forEach(c => {
+                html += `
+            <tr style="background: #f8f9fa;">
+                <td>${c.date}</td>
+                <td><strong>${c.indentNo}</strong></td>
+                <td><strong style="color: var(--primary);">${c.src}</strong></td>
+                <td>${c.machine || '-'}</td>
+                <td><strong style="font-size: 16px;">${c.qty}</strong></td>
+                <td><span style="font-size: 11px; color:#666;">👤 ${c.op}</span></td>
+                <td>
+                    <button class="btn" style="background:#6f42c1; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;" 
+                        onclick="openInwardQaModal('${c.id}')">🔍 Inspect & Upload</button>
+                </td>
+            </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // 4. Open Inward QA Modal
+        function openInwardQaModal(qaId) {
+            const item = conversionHistory.find(c => c.id == qaId);
+            if (!item) return;
+
+            document.getElementById('inwardQaConvId').value = item.id;
+            document.getElementById('inwardQaIndentText').innerText = item.indentNo;
+            document.getElementById('inwardQaToolText').innerText = item.src;
+            document.getElementById('inwardQaQtyText').innerText = item.qty;
+            document.getElementById('inwardQaMachineText').innerText = item.machine || '-';
+
+            document.getElementById('inwardQaRemarks').value = '';
+            document.getElementById('inwardQaFile').value = '';
+
+            document.getElementById('inwardQaModal').classList.add('active');
+        }
+
+        function closeInwardQaModal() {
+            document.getElementById('inwardQaModal').classList.remove('active');
+        }
+
+        // 5. Final QA Approval -> Master Stock
+        async function processInwardQA(status) {
+            const qaId = document.getElementById('inwardQaConvId').value;
+            const remarks = document.getElementById('inwardQaRemarks').value.trim();
+            const fileInput = document.getElementById('inwardQaFile');
+
+            if (!remarks) return showToast("⚠️ Inspector Remarks are required!", true);
+            if (status === 'APPROVED' && fileInput.files.length === 0) {
+                return showToast("⚠️ Inspection Proof (Image/PDF) is mandatory for Approval!", true);
+            }
+
+            const item = conversionHistory.find(c => c.id == qaId);
+            if (!item) return;
+
+            // Find corresponding Indent
+            let indent;
+            if (typeof indentHistory !== 'undefined') indent = indentHistory.find(i => i.no === item.indentNo);
+
+            // Process File Upload to Base64
+            let fileBase64 = null;
+            let fileName = null;
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileName = file.name;
+                fileBase64 = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+
+                // Save to document repo
+                if (typeof documentRepo !== 'undefined') {
+                    documentRepo.unshift({ date: new Date().toLocaleDateString(), part: item.src, type: `QA Proof (${status})`, filename: fileName, dataUrl: fileBase64 });
+                }
+            }
+
+            // Update statuses
+            item.status = status;
+            item.qaRemarks = remarks;
+            if (indent) indent.status = status === 'APPROVED' ? 'QC APPROVED' : 'QC REJECTED';
+
+            // If Approved, add to Master Stock (Spare Stock)
+            if (status === 'APPROVED' && typeof masterInventory !== 'undefined') {
+                let invItem = masterInventory.find(t => t.code === item.src);
+                if (invItem) {
+                    invItem.spareStock += item.qty;
+                    invItem.stock = invItem.rngStock + invItem.spareStock;
+                } else {
+                    // Create new entry if it doesn't exist
+                    masterInventory.push({
+                        code: item.src, desc: "Inward Tool", machine: item.machine,
+                        rngStock: 0, spareStock: item.qty, stock: item.qty, min: 5, actualLife: 0, assumedLife: 50000
+                    });
+                }
+
+                if (typeof invAdjustmentHistory !== 'undefined') {
+                    invAdjustmentHistory.unshift({
+                        date: new Date().toLocaleDateString(), action: '<span class="badge b-green">QC PASSED INWARD</span>', code: item.src, qty: item.qty, operator: (typeof currentUserRole !== 'undefined' ? currentUserRole : 'QA'), reason: remarks
+                    });
+                }
+            }
+
+            if (typeof saveAllData === 'function') saveAllData();
+            closeInwardQaModal();
+            loadInwardQAQueue();
+            showToast(status === 'APPROVED' ? `✅ Approved! Added ${item.qty} units to Master Stock.` : `❌ Tool Rejected.`);
         }
 
         function logout() { localStorage.removeItem("warehouseAuth"); window.location.reload(); }
@@ -2277,8 +2546,15 @@
                     const expectedDate = po.expectedDeliveryDate ? new Date(po.expectedDeliveryDate).toLocaleDateString() : 'N/A';
 
                     // Split logic based on PO Type
+                    // Inside loadPOs() ...
                     if (po.type === 'TOOLING') {
-                        // Sent to Tool Room History Table (No receive button, Tool Room handles that)
+                        let indentNo = po.poNumber.replace('PO-IND-', '');
+
+                        // Add the Receive Button for Buyers
+                        let receiveBtn = isPending
+                            ? `<button onclick="receiveIndentPO('${indentNo}', ${po.expectedKg})" style="background:#17a2b8; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">📥 Receive Tooling</button>`
+                            : `<span class="badge b-purple" style="font-size:10px;">Sent to QA</span>`;
+
                         indentHTML += `
                 <tr>
                     <td><strong>${po.poNumber || 'N/A'}</strong><br><span style="font-size:11px; color:#666;">👤 ${po.orderedBy || po.username || 'System'}</span></td>
@@ -2289,7 +2565,7 @@
                     <td><strong style="font-size:15px;">${po.expectedKg || 0}</strong></td>
                     <td>₹${totalCost.toLocaleString()}</td>
                     <td><span class="badge ${isPending ? 'b-yellow' : 'b-green'}" style="padding: 4px 8px; border-radius: 4px; font-weight: bold; ${isPending ? 'background:#ffc107; color:#000;' : 'background:#28a745; color:#fff;'}">${status}</span></td>
-                </tr>`;
+                    <td>${receiveBtn}</td> </tr>`;
                     } else {
                         // Sent to Raw Material Table (Buyer/Admin handles receiving here)
                         const actionBtn = isPending
@@ -3463,7 +3739,7 @@
             }
         }
 
-       
+
 
         // Submit PO
         async function submitIndentPO(e) {
@@ -3651,7 +3927,7 @@
             }
         }
 
-        
+
 
 
 
