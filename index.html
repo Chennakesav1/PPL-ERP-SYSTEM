@@ -785,82 +785,53 @@
                 </div>
             </div>
 
-            <div class="card" id="qcCard" style="display: none; margin-bottom: 20px;">
-                <h2
-                    style="color: #17a2b8; border-bottom: 2px solid #17a2b8; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <span>🔬 Quality Control Dashboard</span>
-                    <div class="tab-container" style="border: none; margin: 0; padding: 0;">
-                        <button class="tab-btn active" id="tab-qc-prod" onclick="switchQCTab('prod')"
-                            style="background: #17a2b8; color: white;">🏭 Production QC</button>
-                        <button class="tab-btn" id="tab-qc-inward" onclick="switchQCTab('inward')">🛠️ Incoming Tools
-                            (PO)</button>
-                    </div>
-                </h2>
+            <div id="inwardQaModal" class="modal"
+                style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; backdrop-filter: blur(3px);">
+                <div class="modal-content"
+                    style="background-color: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; position: relative;">
+                    <span class="close-btn" onclick="closeInwardQaModal()"
+                        style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888;">×</span>
+                    <h3 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; padding-bottom: 10px; margin-top: 0;">
+                        🔍 Inspect Incoming Tool</h3>
 
-                <div id="qcProdSection">
-                    <div style="display: flex; gap: 10px; margin: 15px 0;">
-                        <button onclick="toggleQCView('PENDING')" id="btnShowPending" class="btn"
-                            style="background: #17a2b8; color: white; padding: 6px 15px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">📥
-                            Pending Approvals</button>
-                        <button onclick="toggleQCView('HISTORY')" id="btnShowHistory" class="btn"
-                            style="background: #eee; color: #555; padding: 6px 15px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">📜
-                            History / Search</button>
-                    </div>
+                    <input type="hidden" id="inwardQaConvId">
 
-                    <div id="qcHistorySearchSection"
-                        style="display: none; background: #f1f8f9; padding: 12px; border-radius: 6px; margin-bottom: 15px; gap: 10px; align-items: center; border: 1px solid #d1e7e9;">
-                        <span style="font-weight: bold; color: #17a2b8; font-size: 13px;">🔍 SEARCH HISTORY:</span>
-                        <input type="date" id="filterQCHistoryDate" class="prod-input"
-                            onchange="applyQCHistoryFilters()">
-                        <input type="text" id="filterQCHistoryGlobal" class="prod-input" style="flex: 1;"
-                            placeholder="Search Part No, Machine..." onkeyup="applyQCHistoryFilters()">
-                        <button onclick="clearQCHistoryFilters()"
-                            style="background: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Reset</button>
+                    <div class="form-grid"
+                        style="display: grid; grid-template-columns: 1fr 1fr; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; gap: 10px;">
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Indent Ref:</label><br><span
+                                id="inwardQaIndentText" style="font-weight:bold;">--</span></div>
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Tool Code:</label><br><span
+                                id="inwardQaToolText"
+                                style="font-weight:bold; color:var(--primary); font-size:16px;">--</span></div>
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Rcvd Qty:</label><br><span
+                                id="inwardQaQtyText" style="font-weight:bold; font-size:16px;">--</span></div>
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Machine:</label><br><span
+                                id="inwardQaMachineText" style="font-weight:bold;">--</span></div>
                     </div>
 
-                    <div class="table-wrapper">
-                        <table id="qcTable">
-                            <thead style="background-color: #17a2b8; color: white;">
-                                <tr>
-                                    <th>Date Logged</th>
-                                    <th>Stage</th>
-                                    <th>Machine</th>
-                                    <th>Part No</th>
-                                    <th>Acc Qty</th>
-                                    <th>Rej Qty</th>
-                                    <th>Logged By</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="8" style="text-align: center;">Loading pending batches...</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <label style="font-weight:bold; font-size:13px; color:#555;">Inspector Remarks *</label>
+                        <input type="text" id="inwardQaRemarks" class="prod-input"
+                            style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                            required placeholder="e.g., Dimensions verified OK">
                     </div>
-                </div>
 
-                <div id="qcInwardSection" style="display: none; margin-top: 15px;">
-                    <div class="table-wrapper">
-                        <table id="inwardQaTable">
-                            <thead style="background-color: #6f42c1; color: white;">
-                                <tr>
-                                    <th>Received Date</th>
-                                    <th>Indent Ref</th>
-                                    <th>Tool Code</th>
-                                    <th>Machine / Size</th>
-                                    <th>Received Qty</th>
-                                    <th>Received By</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="7" style="text-align: center;">Loading incoming tools...</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div style="text-align: left;">
+                        <label style="font-weight:bold; font-size:13px; color:#555;">Upload Inspection Proof (Image/PDF)
+                            *</label>
+                        <div
+                            style="border: 2px dashed #007bff; padding: 15px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 5px;">
+                            <input type="file" id="inwardQaFile" accept="image/*,.pdf" style="width: 100%;">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button type="button"
+                            style="background:#dc3545; color:white; padding:12px; flex:1; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
+                            onclick="processInwardQA('REJECTED')">❌ Reject</button>
+                        <button type="button"
+                            style="background:#28a745; color:white; padding:12px; flex:1.5; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
+                            onclick="processInwardQA('APPROVED')">✅ Approve to Stock</button>
                     </div>
                 </div>
             </div>
@@ -1195,10 +1166,7 @@
                                     <th>PO Number</th>
                                     <th>Supplier</th>
                                     <th>Material</th>
-                                    <th>Grade</th>
-                                    <th>Scope</th>
                                     <th>Qty (Kg)</th>
-                                    <th>Total Cost (₹)</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -1211,12 +1179,12 @@
                 <div id="poIndentsSection" style="display: none; margin-top: 15px;">
 
                     <div id="pendingRequestsTableSection">
-                        <div class="table-wrapper" style="max-height: 350px; margin-bottom: 20px;">
+                        <div class="table-wrapper" style="max-height: 400px; margin-bottom: 20px;">
                             <table id="pendingIndentsTable">
                                 <thead style="background-color: #17a2b8; color: white;">
                                     <tr>
                                         <th>Indent No & Date</th>
-                                        <th>Tool Code / Material</th>
+                                        <th>Tool Code / Desc</th>
                                         <th>Machine & Size</th>
                                         <th>Qty Requested</th>
                                         <th>Priority</th>
@@ -1230,16 +1198,40 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <h3
+                            style="color: #6c757d; border-bottom: 2px solid #6c757d; padding-bottom: 5px; margin-top: 20px;">
+                            📜 Tool Room PO History</h3>
+                        <div class="table-wrapper" style="max-height: 400px;">
+                            <table id="indentPoHistoryTable">
+                                <thead style="background-color: #6c757d; color: white;">
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>Supplier</th>
+                                        <th>Tool Code</th>
+                                        <th>Expected Date</th>
+                                        <th>Qty</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" style="text-align: center;">Loading history...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div id="indentPoFormSection"
-                        style="display: none; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        style="display: none; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff9800; margin-bottom: 15px; padding-bottom: 10px;">
                             <h3 style="color: #ff9800; margin: 0;">🛒 Raise PO for Tool Room</h3>
                             <button class="btn" onclick="cancelIndentPO()"
                                 style="background: #6c757d; color: white; padding: 8px 15px; border:none; border-radius: 4px; cursor: pointer;">🔙
-                                Back to List</button>
+                                Cancel</button>
                         </div>
 
                         <form id="indentPoForm" onsubmit="submitIndentPO(event)">
@@ -1247,35 +1239,33 @@
 
                             <div class="form-grid"
                                 style="grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #17a2b8;">
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; color:#666; font-weight: bold;">Indent Ref.</label>
-                                    <input type="text" id="indPoRef" readonly class="prod-input"
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Indent Ref.</label><input
+                                        type="text" id="indPoRef" readonly class="prod-input"
                                         style="background: transparent; border: none; font-weight: bold; font-size: 16px; padding: 0; color: #333; width: 100%;">
                                 </div>
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; color:#666; font-weight: bold;">Priority</label>
-                                    <input type="text" id="indPoPriority" readonly class="prod-input"
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Priority</label><input
+                                        type="text" id="indPoPriority" readonly class="prod-input"
                                         style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;">
                                 </div>
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; color:#666; font-weight: bold;">Tool Code</label>
-                                    <input type="text" id="indPoToolCode" readonly class="prod-input"
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Tool Code</label><input
+                                        type="text" id="indPoToolCode" readonly class="prod-input"
                                         style="background: transparent; border: none; font-weight: bold; color: var(--primary); padding: 0; font-size: 15px; width: 100%;">
                                 </div>
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; color:#666; font-weight: bold;">Machine / Size</label>
-                                    <input type="text" id="indPoMachine" readonly class="prod-input"
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Machine /
+                                        Size</label><input type="text" id="indPoMachine" readonly class="prod-input"
                                         style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;">
                                 </div>
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; color:#666; font-weight: bold;">Tool
-                                        Description</label>
-                                    <input type="text" id="indPoDesc" readonly class="prod-input"
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Tool
+                                        Description</label><input type="text" id="indPoDesc" readonly class="prod-input"
                                         style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;">
                                 </div>
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; color:#666; font-weight: bold;">Linked Drawings /
-                                        Docs</label>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Linked Drawings</label>
                                     <div id="indPoDocs" style="font-size: 14px; font-weight: bold; padding: 5px 0;">--
                                     </div>
                                 </div>
@@ -1285,67 +1275,36 @@
                                 style="color: var(--primary); margin-bottom: 10px; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px;">
                                 Supplier & Delivery Details</h4>
                             <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px;">
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; font-weight:bold; color:#555;">Supplier Name *</label>
-                                    <input type="text" id="indPoSupplier" class="prod-input" required
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; font-weight:bold; color:#555;">Supplier Name
+                                        *</label><input type="text" id="indPoSupplier" class="prod-input" required
                                         placeholder="Enter Supplier"
                                         style="border-color: #ff9800; border-width: 2px; width: 100%; box-sizing: border-box;">
                                 </div>
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; font-weight:bold; color:#555;">Order Qty (Nos)
-                                        *</label>
-                                    <input type="number" id="indPoQty" class="prod-input" required min="1"
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; font-weight:bold; color:#555;">Order Qty (Nos)
+                                        *</label><input type="number" id="indPoQty" class="prod-input" required min="1"
                                         style="border-color: #ff9800; border-width: 2px; font-weight: bold; width: 100%; box-sizing: border-box;">
                                 </div>
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; font-weight:bold; color:#555;">Unit Price (₹)
-                                        *</label>
-                                    <input type="number" id="indPoPrice" class="prod-input" required min="0.01"
-                                        step="0.01"
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; font-weight:bold; color:#555;">Unit Price (₹)
+                                        *</label><input type="number" id="indPoPrice" class="prod-input" required
+                                        min="0.01" step="0.01"
                                         style="border-color: #ff9800; border-width: 2px; font-weight: bold; width: 100%; box-sizing: border-box;">
                                 </div>
-                                <div class="form-group" style="margin:0;">
-                                    <label style="font-size:12px; font-weight:bold; color:#555;">Expected Delivery
-                                        *</label>
-                                    <input type="date" id="indPoExpectedDate" class="prod-input" required
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; font-weight:bold; color:#555;">Expected Delivery
+                                        *</label><input type="date" id="indPoExpectedDate" class="prod-input" required
                                         style="border-color: #ff9800; border-width: 2px; font-weight: bold; cursor: pointer; width: 100%; box-sizing: border-box;">
                                 </div>
                             </div>
 
                             <div style="margin-top: 25px; text-align: right;">
                                 <button type="submit" class="save-btn"
-                                    style="background-color: #28a745; display: inline-block; width: auto; padding: 12px 30px; font-size: 16px; margin: 0; border: none; border-radius: 4px; color: white; cursor: pointer;">
-                                    ✅ Generate PO & Notify Tool Room
-                                </button>
+                                    style="background-color: #28a745; display: inline-block; width: auto; padding: 12px 30px; font-size: 16px; margin: 0; border: none; border-radius: 4px; color: white; cursor: pointer;">✅
+                                    Generate PO & Notify Tool Room</button>
                             </div>
                         </form>
-                    </div>
-
-                    <div id="indentPoHistorySection" style="margin-top: 20px;">
-                        <h3
-                            style="color: #6c757d; border-bottom: 2px solid #6c757d; padding-bottom: 5px; margin-top: 0;">
-                            📜 Tool Room PO History</h3>
-                        <div class="table-wrapper" style="max-height: 400px;">
-                            <table id="indentPoHistoryTable">
-                                <thead style="background-color: #6c757d; color: white;">
-                                    <tr>
-                                        <th>PO Number</th>
-                                        <th>Supplier</th>
-                                        <th>Tool Code / Material</th>
-                                        <th>Scope / Ref</th>
-                                        <th>Expected Date</th>
-                                        <th>Qty</th>
-                                        <th>Total Cost</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="8" style="text-align: center;">Loading history...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
 
                 </div>
