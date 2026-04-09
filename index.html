@@ -3592,6 +3592,188 @@
         }
 
 
+        // ==========================================
+        // PURCHASING DASHBOARD LOGIC (INDEX.HTML)
+        // ==========================================
+
+        // Store data globally
+        window.activePurchaseIndents = [];
+        window.documentRepo = [];
+
+        // 1. Tab Switching Logic
+        function switchPOTab(tab) {
+            document.getElementById('poRawSection').style.display = tab === 'raw' ? 'block' : 'none';
+            document.getElementById('poIndentsSection').style.display = tab === 'indents' ? 'block' : 'none';
+
+            document.getElementById('tab-po-raw').style.background = tab === 'raw' ? '#ff9800' : '#eee';
+            document.getElementById('tab-po-raw').style.color = tab === 'raw' ? 'white' : '#555';
+
+            document.getElementById('tab-po-indents').style.background = tab === 'indents' ? '#17a2b8' : '#eee';
+            document.getElementById('tab-po-indents').style.color = tab === 'indents' ? 'white' : '#555';
+
+            // Always reset the Tool Room view to the table when clicking the tab
+            if (tab === 'indents') {
+                cancelIndentPO();
+            }
+        }
+
+        // 2. Load the Pending Requests
+        async function loadPendingIndentsForPurchase() {
+            try {
+                const res = await fetch(`${API_URL}/sync`);
+                const data = await res.json();
+
+                if (data && data.state) {
+                    if (data.state.indentHistory) {
+                        window.activePurchaseIndents = data.state.indentHistory.filter(i => i.status !== 'Fulfilled');
+                    }
+                    if (data.state.documentRepo) {
+                        window.documentRepo = data.state.documentRepo;
+                    }
+
+                    const tbody = document.querySelector('#pendingIndentsTable tbody');
+                    if (!tbody) return; // Failsafe
+
+                    tbody.innerHTML = '';
+
+                    if (window.activePurchaseIndents.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; font-weight: bold; color: #28a745;">No pending requests from Tool Room!</td></tr>';
+                        return;
+                    }
+
+                    window.activePurchaseIndents.forEach(ind => {
+                        let priorityHtml = ind.priority === 'URGENT'
+                            ? '<span style="color:red; font-weight:bold;">🚨 URGENT</span>'
+                            : '<span style="color:#666;">Normal</span>';
+
+                        tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${ind.no}</strong><br><span style="font-size: 11px; color: #666;">${ind.date}</span></td>
+                        <td><strong style="color: var(--primary);">${ind.code}</strong><br><span style="font-size: 11px;">${ind.desc}</span></td>
+                        <td>${ind.machine} | ${ind.partSize}</td>
+                        <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
+                        <td>${priorityHtml}</td>
+                        <td>
+                            <button onclick="createPOFromIndent(${ind.id})" 
+                                style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                📝 Convert to PO
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to load indents for Purchase Dept:", err);
+            }
+        }
+
+        // 3. Open Form & Auto-Fill
+        function createPOFromIndent(indentId) {
+            const indent = window.activePurchaseIndents.find(i => i.id === indentId);
+            if (!indent) return;
+
+            document.getElementById('pendingRequestsTableSection').style.display = 'none';
+            document.getElementById('indentPoFormSection').style.display = 'block';
+
+            document.getElementById('indPoIndentId').value = indent.id;
+            document.getElementById('indPoRef').value = indent.no;
+            document.getElementById('indPoPriority').value = indent.priority;
+            document.getElementById('indPoPriority').style.color = indent.priority === 'URGENT' ? 'red' : '#333';
+            document.getElementById('indPoToolCode').value = indent.code;
+            document.getElementById('indPoMachine').value = `${indent.machine} | ${indent.partSize}`;
+            document.getElementById('indPoDesc').value = indent.desc;
+
+            // Search for linked documents/drawings based on the tool code
+            let linkedDocs = window.documentRepo.filter(d => d.part === indent.code);
+            let docsHtml = linkedDocs.length > 0
+                ? linkedDocs.map(d => `<a href="${d.dataUrl}" target="_blank" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 3px 6px; border-radius: 4px;">📄 ${d.type}</a>`).join(' ')
+                : '<span style="color:#999; font-style: italic;">No drawings linked</span>';
+            document.getElementById('indPoDocs').innerHTML = docsHtml;
+
+            // Auto-fill requested quantity & clear supplier/price/date
+            document.getElementById('indPoQty').value = indent.qty;
+            document.getElementById('indPoSupplier').value = '';
+            document.getElementById('indPoPrice').value = '';
+            document.getElementById('indPoExpectedDate').value = '';
+
+            setTimeout(() => document.getElementById('indPoSupplier').focus(), 100);
+        }
+
+        // 4. Cancel / Back to List
+        function cancelIndentPO() {
+            document.getElementById('indentPoFormSection').style.display = 'none';
+            document.getElementById('pendingRequestsTableSection').style.display = 'block';
+            document.getElementById('indentPoForm').reset();
+        }
+
+        // 5. Submit PO
+        async function submitIndentPO(e) {
+            e.preventDefault();
+            const indentId = parseInt(document.getElementById('indPoIndentId').value);
+
+            let indent;
+            if (typeof indentHistory !== 'undefined') {
+                indent = indentHistory.find(i => i.id === indentId);
+            }
+            if (!indent) indent = window.activePurchaseIndents.find(i => i.id === indentId);
+
+            if (!indent) return showToast("Indent not found!", true);
+
+            const supplier = document.getElementById('indPoSupplier').value.trim();
+            const qty = parseInt(document.getElementById('indPoQty').value);
+            const price = parseFloat(document.getElementById('indPoPrice').value);
+            const expectedDate = document.getElementById('indPoExpectedDate').value;
+            const total = qty * price;
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const ogText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = "⏳ Generating...";
+
+            try {
+                const res = await fetch(`${API_URL}/purchase-orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        poNumber: `PO-IND-${indent.no}`,
+                        supplierName: supplier,
+                        materialCode: indent.code,
+                        grade: 'Tooling',
+                        scope: `Indent Ref: ${indent.no} | Desc: ${indent.desc}`,
+                        expectedKg: qty,
+                        costPerKg: price,
+                        totalCost: total,
+                        type: 'TOOLING',
+                        expectedDeliveryDate: expectedDate,
+                        username: (typeof currentUserRole !== 'undefined' ? currentUserRole : 'buyer')
+                    })
+                });
+
+                if (res.ok) {
+                    indent.status = 'PO RAISED';
+                    indent.expectedDate = expectedDate;
+
+                    if (typeof logAudit === 'function') {
+                        logAudit("PO RAISED", `Raised PO for Indent ${indent.no}. Supplier: ${supplier}, Expected: ${expectedDate}`);
+                    }
+                    if (typeof saveAllData === 'function') saveAllData();
+
+                    cancelIndentPO();
+                    loadPendingIndentsForPurchase();
+                    showToast(`✅ PO successfully raised for ${indent.code}!`);
+                } else {
+                    showToast("❌ Failed to create PO in database.", true);
+                }
+            } catch (err) {
+                showToast("❌ Network Error connecting to database.", true);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = ogText;
+            }
+        }
+
+
 
 
         window.addEventListener('message', function (event) {
