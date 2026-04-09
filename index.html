@@ -1479,6 +1479,31 @@
         let masterInventory = [];
         let indentHistory = [];
 
+
+
+        // NEW: Global Sync Function to send Toolroom updates to the Database
+        window.saveAllData = async function() {
+            try {
+                const res = await fetch(`${API_URL}/sync`);
+                const data = await res.json();
+                let state = data.state || {};
+                
+                // Merge local modifications into the server state
+                if (window.indentHistory && window.indentHistory.length > 0) state.indentHistory = window.indentHistory;
+                if (window.conversionHistory && window.conversionHistory.length > 0) state.conversionHistory = window.conversionHistory;
+                if (window.masterInventory && window.masterInventory.length > 0) state.masterInventory = window.masterInventory;
+                if (window.documentRepo && window.documentRepo.length > 0) state.documentRepo = window.documentRepo;
+
+                await fetch(`${API_URL}/sync`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(state)
+                });
+            } catch (err) {
+                console.error("Failed to save sync state:", err);
+            }
+        };
+
         function showToast(message, isError = false) {
             const toast = document.getElementById("toastNotification");
             toast.innerText = message;
@@ -1651,6 +1676,9 @@
                     });
                 }
             } catch (e) { console.log("PO Backend sync skipped"); }
+
+            // NEW: Save the update so QC can see it instantly
+            if (typeof saveAllData === 'function') saveAllData();
 
             loadPOs();
             showToast(`📦 Sent to QC! Tool is waiting for inspection.`);
@@ -1933,12 +1961,14 @@
             if (currentUser && (currentUser.role === 'QC' || currentUser.role === 'ADMIN')) {
                 if (currentQCView === 'PENDING') loadPendingQC();
                 else loadQCHistory();
+                
+                loadPendingIndentsForPurchase(); // <-- NEW: Makes sure QC gets live toolroom updates!
             }
 
             if (currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'PURCHASE')) {
                 loadRawMaterials();
                 loadPOs();
-                loadPendingIndentsForPurchase(); // <--- ADD THIS LINE HERE
+                loadPendingIndentsForPurchase();
             }
         }
 
@@ -3738,54 +3768,65 @@
         window.activePurchaseIndents = [];
         window.documentRepo = []; // NEW: Store documents
 
+
+
         async function loadPendingIndentsForPurchase() {
             try {
                 const res = await fetch(`${API_URL}/sync`);
                 const data = await res.json();
 
                 if (data && data.state) {
-                    // Save to global variables
+                    // 1. Sync global variables correctly
                     if (data.state.indentHistory) {
+                        window.indentHistory = data.state.indentHistory;
                         window.activePurchaseIndents = data.state.indentHistory.filter(i => i.status !== 'Fulfilled');
                     }
-                    if (data.state.documentRepo) {
-                        window.documentRepo = data.state.documentRepo; // Fetch drawings/documents
-                    }
+                    if (data.state.documentRepo) window.documentRepo = data.state.documentRepo;
+                    if (data.state.conversionHistory) window.conversionHistory = data.state.conversionHistory;
+                    if (data.state.masterInventory) window.masterInventory = data.state.masterInventory;
 
+                    // 2. Render Purchase Indents Table
                     const tbody = document.querySelector('#pendingIndentsTable tbody');
-                    tbody.innerHTML = '';
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        if (!window.activePurchaseIndents || window.activePurchaseIndents.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; font-weight: bold; color: #28a745;">No pending requests from Tool Room!</td></tr>';
+                        } else {
+                            window.activePurchaseIndents.forEach(ind => {
+                                let priorityHtml = ind.priority === 'URGENT'
+                                    ? '<span style="color:red; font-weight:bold;">🚨 URGENT</span>'
+                                    : '<span style="color:#666;">Normal</span>';
 
-                    if (window.activePurchaseIndents.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; font-weight: bold; color: #28a745;">No pending requests from Tool Room!</td></tr>';
-                        return;
+                                tbody.innerHTML += `
+                                <tr>
+                                    <td><strong>${ind.no}</strong><br><span style="font-size: 11px; color: #666;">${ind.date}</span></td>
+                                    <td><strong style="color: var(--primary);">${ind.code}</strong><br><span style="font-size: 11px;">${ind.desc}</span></td>
+                                    <td>${ind.machine} | ${ind.partSize}</td>
+                                    <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
+                                    <td>${priorityHtml}</td>
+                                    <td>
+                                        <button onclick="createPOFromIndent(${ind.id})" 
+                                            style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                            📝 Convert to PO
+                                        </button>
+                                    </td>
+                                </tr>
+                                `;
+                            });
+                        }
                     }
 
-                    window.activePurchaseIndents.forEach(ind => {
-                        let priorityHtml = ind.priority === 'URGENT'
-                            ? '<span style="color:red; font-weight:bold;">🚨 URGENT</span>'
-                            : '<span style="color:#666;">Normal</span>';
-
-                        tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${ind.no}</strong><br><span style="font-size: 11px; color: #666;">${ind.date}</span></td>
-                        <td><strong style="color: var(--primary);">${ind.code}</strong><br><span style="font-size: 11px;">${ind.desc}</span></td>
-                        <td>${ind.machine} | ${ind.partSize}</td>
-                        <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
-                        <td>${priorityHtml}</td>
-                        <td>
-                            <button onclick="createPOFromIndent(${ind.id})" 
-                                style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                📝 Convert to PO
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                    });
+                    // 3. Render QC Inward Queue if visible
+                    const qcInwardSection = document.getElementById('qcInwardSection');
+                    if (qcInwardSection && qcInwardSection.style.display !== 'none') {
+                        loadInwardQAQueue();
+                    }
                 }
             } catch (err) {
-                console.error("Failed to load indents for Purchase Dept:", err);
+                console.error("Failed to load Toolroom Sync Data:", err);
             }
         }
+
 
 
 
