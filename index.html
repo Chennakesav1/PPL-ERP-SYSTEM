@@ -500,33 +500,58 @@
                 </div>
 
                 <div id="qcInwardSection" style="display: none;">
-                    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #6f42c1; margin-bottom: 15px;">
-                        <h4 style="margin-top:0; color:#6f42c1;">📥 Pending Incoming Tools for Inspection</h4>
-                        <p style="font-size: 13px; color: #555; margin-bottom: 0;">Tools received from Purchase must be inspected here before being added to Master Stock.</p>
+                    <div class="tab-container" style="margin-bottom: 15px; border-bottom: 2px solid #eee;">
+                        <button class="tab-btn active" id="tab-inward-pending" onclick="toggleInwardQCView('PENDING')" style="background: #6f42c1; color: white;">⏳ Pending Inspection</button>
+                        <button class="tab-btn" id="tab-inward-history" onclick="toggleInwardQCView('HISTORY')">📜 Inspected History</button>
                     </div>
-                    
-                    <div class="table-wrapper">
-                        <table id="inwardQaTable">
-                            <thead style="background-color: #6f42c1; color: white;">
-                                <tr>
-                                    <th>Received Date</th>
-                                    <th>Indent Ref</th>
-                                    <th>Tool Code</th>
-                                    <th>Machine</th>
-                                    <th>Received Qty</th>
-                                    <th>Buyer</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="7" style="text-align: center;">Loading incoming indents...</td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                    <div id="inwardPendingContainer">
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #6f42c1; margin-bottom: 15px;">
+                            <h4 style="margin-top:0; color:#6f42c1;">📥 Pending Incoming Tools for Inspection</h4>
+                            <p style="font-size: 13px; color: #555; margin-bottom: 0;">Tools received from Purchase must be inspected here before being added to Master Stock.</p>
+                        </div>
+                        
+                        <div class="table-wrapper">
+                            <table id="inwardQaTable">
+                                <thead style="background-color: #6f42c1; color: white;">
+                                    <tr>
+                                        <th>Received Date</th>
+                                        <th>Indent Ref</th>
+                                        <th>Tool Code</th>
+                                        <th>Machine</th>
+                                        <th>Received Qty</th>
+                                        <th>Buyer</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="7" style="text-align: center;">Loading incoming indents...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="inwardHistoryContainer" style="display: none;">
+                        <div class="table-wrapper">
+                            <table id="inwardQaHistoryTable">
+                                <thead style="background-color: #6c757d; color: white;">
+                                    <tr>
+                                        <th>Inspection Date</th>
+                                        <th>Indent Ref</th>
+                                        <th>Tool Code</th>
+                                        <th>Machine</th>
+                                        <th>Received Qty</th>
+                                        <th>QC Status</th>
+                                        <th>Inspector Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="7" style="text-align: center;">Loading history...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
 
             <div class="card" id="productionCard" style="display: none; margin-bottom: 20px;">
@@ -1254,14 +1279,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td colspan="6" style="text-align: center;">Loading requests...</td>
-                                    </tr>
+                                    <tr><td colspan="6" style="text-align: center;">Loading requests...</td></tr>
                                 </tbody>
                             </table>
                         </div>
+                    </div>
 
-                        <div id="indentPoHistorySection">
+                    <div id="indentPoHistorySection">
                         <h3 style="color: #6c757d; border-bottom: 2px solid #6c757d; padding-bottom: 5px; margin-top: 20px;">
                             📜 Tool Room PO History</h3>
                         <div class="table-wrapper" style="max-height: 400px;">
@@ -1278,9 +1302,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td colspan="7" style="text-align: center;">Loading history...</td>
-                                    </tr>
+                                    <tr><td colspan="7" style="text-align: center;">Loading history...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -3805,7 +3827,7 @@
                                     <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
                                     <td>${priorityHtml}</td>
                                     <td>
-                                        <button onclick="createPOFromIndent(${ind.id})" 
+                                        <button onclick="createPOFromIndent('${ind.id})" 
                                             style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                                             📝 Convert to PO
                                         </button>
@@ -3924,17 +3946,15 @@
             }
         }
 
-        // Open Form
         function createPOFromIndent(indentId) {
-            const indent = window.activePurchaseIndents.find(i => i.id === indentId);
+            // Using == instead of === fixes type mismatches between string and number
+            const indent = window.activePurchaseIndents.find(i => i.id == indentId); 
             if (!indent) return;
 
-            // Hide tables, show form
             document.getElementById('pendingRequestsTableSection').style.display = 'none';
-            document.getElementById('indentPoHistorySection').style.display = 'none'; // Hide history while editing
+            document.getElementById('indentPoHistorySection').style.display = 'none'; 
             document.getElementById('indentPoFormSection').style.display = 'block';
 
-            // ... (Rest of your auto-fill logic remains exactly the same) ...
             document.getElementById('indPoIndentId').value = indent.id;
             document.getElementById('indPoRef').value = indent.no;
             document.getElementById('indPoPriority').value = indent.priority;
@@ -3957,6 +3977,63 @@
             setTimeout(() => document.getElementById('indPoSupplier').focus(), 100);
         }
 
+
+
+
+
+        function toggleInwardQCView(view) {
+            document.getElementById('tab-inward-pending').classList.remove('active');
+            document.getElementById('tab-inward-history').classList.remove('active');
+            document.getElementById('tab-inward-pending').style.background = '#eee';
+            document.getElementById('tab-inward-history').style.background = '#eee';
+            document.getElementById('tab-inward-pending').style.color = '#555';
+            document.getElementById('tab-inward-history').style.color = '#555';
+            
+            if (view === 'PENDING') {
+                document.getElementById('tab-inward-pending').classList.add('active');
+                document.getElementById('tab-inward-pending').style.background = '#6f42c1';
+                document.getElementById('tab-inward-pending').style.color = 'white';
+                document.getElementById('inwardPendingContainer').style.display = 'block';
+                document.getElementById('inwardHistoryContainer').style.display = 'none';
+                loadInwardQAQueue();
+            } else {
+                document.getElementById('tab-inward-history').classList.add('active');
+                document.getElementById('tab-inward-history').style.background = '#6c757d';
+                document.getElementById('tab-inward-history').style.color = 'white';
+                document.getElementById('inwardPendingContainer').style.display = 'none';
+                document.getElementById('inwardHistoryContainer').style.display = 'block';
+                loadInwardQAHistory();
+            }
+        }
+
+        function loadInwardQAHistory() {
+            const tbody = document.querySelector('#inwardQaHistoryTable tbody');
+            if (!tbody || typeof conversionHistory === 'undefined') return;
+
+            // Get everything that is NOT pending
+            const historyInwards = conversionHistory.filter(c => c.type === 'INWARD_PO' && c.status !== 'Pending QA');
+
+            if (historyInwards.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No history records found.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            historyInwards.forEach(c => {
+                let statusColor = c.status === 'APPROVED' ? '#28a745' : '#dc3545';
+                html += `
+                <tr style="background: #f8f9fa;">
+                    <td>${c.date}</td>
+                    <td><strong>${c.indentNo}</strong></td>
+                    <td><strong style="color: var(--primary);">${c.src}</strong></td>
+                    <td>${c.machine || '-'}</td>
+                    <td><strong style="font-size: 16px;">${c.qty}</strong></td>
+                    <td><span style="background:${statusColor}; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:11px;">${c.status}</span></td>
+                    <td>${c.qaRemarks || '-'}</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
         // Back to List
         function cancelIndentPO() {
             document.getElementById('indentPoFormSection').style.display = 'none';
