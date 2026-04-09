@@ -10,49 +10,355 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
-        #splashScreen, #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
-        #splashScreen { background-color: #ffffff; }
-        #loginOverlay { background-color: #2c3e50; display: none; }
-        .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); text-align: center; width: 90%; max-width: 300px; }
-        .login-box input { width: 90%; padding: 10px; margin: 10px 0; border: 2px solid #ddd; border-radius: 5px; font-size: 16px; }
-        .login-box button { background-color: #007bff; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
-        #mainDashboard { display: none; margin-top: 20px; }
-        .role-badge { font-size: 14px; background: #28a745; color: white; padding: 5px 10px; border-radius: 20px; vertical-align: middle; margin-left: 10px; }
-        .dashboard-container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1500px; margin: 0 auto; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); flex: 1 1 100%; }
-        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; color: #444; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .search-container { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .search-box { padding: 8px 12px; font-size: 14px; border: 2px solid #007bff; border-radius: 6px; outline: none; }
-        .export-btn, .add-btn { color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
-        .export-btn { background-color: #28a745; }
-        .add-btn { background-color: #007bff; }
-        .table-wrapper { max-height: 700px; overflow-y: auto; overflow-x: auto; width: 100%; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 600px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; white-space: nowrap; }
-        th { background-color: #007bff; color: white; position: sticky; top: 0; z-index: 1; }
-        .low-stock { background-color: #ffebee !important; }
-        .low-stock-text { color: #d32f2f !important; }
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; }
-        .modal-content { background-color: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 400px; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); max-height: 90vh; overflow-y: auto; }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888; font-weight: bold; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .form-grid input { padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
-        .full-width { grid-column: 1 / -1; }
-        .save-btn { background-color: #007bff; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 20px; width: 100%; font-size: 16px; }
-        .prod-input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
-        .prod-input:focus { border-color: #ff9800; }
-        .form-section { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #007bff; }
-        .tab-btn { padding: 8px 12px; border: none; background: #eee; cursor: pointer; border-radius: 6px; font-weight: bold; margin-right: 2px; font-size: 13px; color: #555; white-space: nowrap; }
-        .tab-btn.active { background: #ff9800 !important; color: white !important; }
-        .form-section-title { font-size: 13px; font-weight: bold; color: #007bff; margin-bottom: 10px; text-transform: uppercase; }
-        .form-grid-multi { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
-        .downtime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545; }
-        .downtime-grid div { display: flex; flex-direction: column; }
-        .downtime-grid label { font-size: 11px; font-weight: bold; color: #dc3545; margin-bottom: 3px; }
-        .tab-container { border-bottom: 3px solid #ff9800; display: flex; margin-top: 15px; }
-        .toast { visibility: hidden; min-width: 250px; background-color: #28a745; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; transform: translateX(-50%); bottom: 30px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
-        .toast.show { visibility: visible; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        #splashScreen,
+        #loginOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #splashScreen {
+            background-color: #ffffff;
+        }
+
+        #loginOverlay {
+            background-color: #2c3e50;
+            display: none;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 300px;
+        }
+
+        .login-box input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .login-box button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #mainDashboard {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .role-badge {
+            font-size: 14px;
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+
+        .dashboard-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex: 1 1 100%;
+        }
+
+        h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 2px solid #007bff;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .export-btn,
+        .add-btn {
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .export-btn {
+            background-color: #28a745;
+        }
+
+        .add-btn {
+            background-color: #007bff;
+        }
+
+        .table-wrapper {
+            max-height: 700px;
+            overflow-y: auto;
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .low-stock {
+            background-color: #ffebee !important;
+        }
+
+        .low-stock-text {
+            color: #d32f2f !important;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+            font-weight: bold;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .form-grid input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .save-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .prod-input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .prod-input:focus {
+            border-color: #ff9800;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #007bff;
+        }
+
+        .tab-btn {
+            padding: 8px 12px;
+            border: none;
+            background: #eee;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-right: 2px;
+            font-size: 13px;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: #ff9800 !important;
+            color: white !important;
+        }
+
+        .form-section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .form-grid-multi {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .downtime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .downtime-grid div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .downtime-grid label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 3px;
+        }
+
+        .tab-container {
+            border-bottom: 3px solid #ff9800;
+            display: flex;
+            margin-top: 15px;
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #28a745;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 3000;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.show {
+            visibility: visible;
+        }
     </style>
 </head>
 
@@ -71,27 +377,42 @@
             <input type="text" id="usernameInput" placeholder="Enter Username" autocapitalize="none">
             <input type="password" id="passwordInput" placeholder="Enter Password">
             <button onclick="attemptLogin()">Log In</button>
-            <p id="loginError" style="color: red; display: none; font-size: 14px; margin-top: 10px;">Incorrect Credentials</p>
+            <p id="loginError" style="color: red; display: none; font-size: 14px; margin-top: 10px;">Incorrect
+                Credentials</p>
         </div>
     </div>
 
-    <div id="topNav" style="background: #212529; padding: 0 20px; display: none; align-items: stretch; color: white; height: 55px;">
-        <div style="display: flex; align-items: center; font-weight: bold; font-size: 16px; color: #ff9800; white-space: nowrap; width: 180px;">
+    <div id="topNav"
+        style="background: #212529; padding: 0 20px; display: none; align-items: stretch; color: white; height: 55px;">
+        <div
+            style="display: flex; align-items: center; font-weight: bold; font-size: 16px; color: #ff9800; white-space: nowrap; width: 180px;">
             🏭 PPL ERP
         </div>
-        <div id="navButtons" style="display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; flex: 1; align-items: center; justify-content: center; margin-bottom: 0;">
-            <button class="tab-btn active" id="nav-prod" onclick="switchMainTab('productionCard', 'nav-prod')">Production</button>
-            <button class="tab-btn" id="nav-qc" onclick="switchMainTab('qcCard', 'nav-qc')" style="display: none; background: #17a2b8; color: white;">QC</button>
-            <button class="tab-btn" id="nav-inv" onclick="switchMainTab('invCard', 'nav-inv')" style="display: none;">Inventory</button>
-            <button class="tab-btn" id="nav-tx" onclick="switchMainTab('txCard', 'nav-tx')" style="display: none;">Movements</button>
-            <button class="tab-btn" id="nav-rm" onclick="switchMainTab('rawMaterialCard', 'nav-rm')" style="display: none;">Raw Materials</button>
-            <button class="tab-btn" id="nav-po" onclick="switchMainTab('poCard', 'nav-po')" style="display: none;">POs</button>
-            <button class="tab-btn" id="nav-sales" onclick="switchMainTab('salesCard', 'nav-sales')" style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
-            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')" style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
+        <div id="navButtons"
+            style="display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; flex: 1; align-items: center; justify-content: center; margin-bottom: 0;">
+            <button class="tab-btn active" id="nav-prod"
+                onclick="switchMainTab('productionCard', 'nav-prod')">Production</button>
+            <button class="tab-btn" id="nav-qc" onclick="switchMainTab('qcCard', 'nav-qc')"
+                style="display: none; background: #17a2b8; color: white;">QC</button>
+            <button class="tab-btn" id="nav-inv" onclick="switchMainTab('invCard', 'nav-inv')"
+                style="display: none;">Inventory</button>
+            <button class="tab-btn" id="nav-tx" onclick="switchMainTab('txCard', 'nav-tx')"
+                style="display: none;">Movements</button>
+            <button class="tab-btn" id="nav-rm" onclick="switchMainTab('rawMaterialCard', 'nav-rm')"
+                style="display: none;">Raw Materials</button>
+            <button class="tab-btn" id="nav-po" onclick="switchMainTab('poCard', 'nav-po')"
+                style="display: none;">POs</button>
+            <button class="tab-btn" id="nav-sales" onclick="switchMainTab('salesCard', 'nav-sales')"
+                style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
+            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')"
+                style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
         </div>
-        <div style="display: flex; align-items: center; justify-content: flex-end; font-size: 13px; white-space: nowrap; width: 180px;">
-            <span id="roleDisplay" class="role-badge" style="padding: 4px 10px; font-size: 12px; text-align: center;"></span>
-            <a href="#" onclick="logout()" style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 15px;">Logout</a>
+        <div
+            style="display: flex; align-items: center; justify-content: flex-end; font-size: 13px; white-space: nowrap; width: 180px;">
+            <span id="roleDisplay" class="role-badge"
+                style="padding: 4px 10px; font-size: 12px; text-align: center;"></span>
+            <a href="#" onclick="logout()"
+                style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 15px;">Logout</a>
         </div>
     </div>
 
@@ -99,56 +420,95 @@
         <div class="dashboard-container">
 
             <div class="card" id="qcCard" style="display: none; margin-bottom: 20px;">
-                <h2 style="color: #17a2b8; border-bottom: 2px solid #17a2b8; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <h2
+                    style="color: #17a2b8; border-bottom: 2px solid #17a2b8; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                     <span>🔬 Quality Control Dashboard</span>
                     <div class="tab-container" style="border: none; margin: 0; padding: 0;">
-                        <button class="tab-btn active" id="tab-qc-prod" onclick="switchQCTab('prod')" style="background: #17a2b8; color: white;">🏭 Production QC</button>
-                        <button class="tab-btn" id="tab-qc-inward" onclick="switchQCTab('inward')">📦 Incoming Indents (Tools)</button>
+                        <button class="tab-btn active" id="tab-qc-prod" onclick="switchQCTab('prod')"
+                            style="background: #17a2b8; color: white;">🏭 Production QC</button>
+                        <button class="tab-btn" id="tab-qc-inward" onclick="switchQCTab('inward')">📦 Incoming Indents
+                            (Tools)</button>
                     </div>
                 </h2>
 
                 <div id="qcProdSection">
                     <div class="tab-container" style="margin-bottom: 15px; border-bottom: 2px solid #eee;">
-                        <button class="tab-btn active" onclick="toggleQCView('PENDING'); document.querySelectorAll('#qcProdSection .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');" style="background: #ffc107; color: black;">⏳ Pending Approval</button>
-                        <button class="tab-btn" onclick="toggleQCView('HISTORY'); document.querySelectorAll('#qcProdSection .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">📜 Production QC History</button>
+                        <button class="tab-btn active"
+                            onclick="toggleQCView('PENDING'); document.querySelectorAll('#qcProdSection .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');"
+                            style="background: #ffc107; color: black;">⏳ Pending Approval</button>
+                        <button class="tab-btn"
+                            onclick="toggleQCView('HISTORY'); document.querySelectorAll('#qcProdSection .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">📜
+                            Production QC History</button>
                     </div>
 
-                    <div id="qcHistorySearchSection" class="search-container" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #17a2b8; margin-bottom: 15px;">
+                    <div id="qcHistorySearchSection" class="search-container"
+                        style="display: none; background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #17a2b8; margin-bottom: 15px;">
                         <span style="font-weight: bold; color: #555; font-size: 14px;">🔍 FILTER HISTORY:</span>
-                        <input type="date" id="filterQCHistoryDate" class="prod-input" onchange="applyQCHistoryFilters()" title="Filter by Date">
-                        <input type="text" id="filterQCHistoryGlobal" class="prod-input" style="flex: 1; min-width: 250px;" placeholder="Search Part No, Machine, Operator..." onkeyup="applyQCHistoryFilters()">
-                        <button onclick="clearQCHistoryFilters()" style="background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">Reset</button>
+                        <input type="date" id="filterQCHistoryDate" class="prod-input"
+                            onchange="applyQCHistoryFilters()" title="Filter by Date">
+                        <input type="text" id="filterQCHistoryGlobal" class="prod-input"
+                            style="flex: 1; min-width: 250px;" placeholder="Search Part No, Machine, Operator..."
+                            onkeyup="applyQCHistoryFilters()">
+                        <button onclick="clearQCHistoryFilters()"
+                            style="background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">Reset</button>
                     </div>
 
                     <div class="table-wrapper">
                         <table id="qcTable">
                             <thead style="background-color: #17a2b8; color: white;">
                                 <tr>
-                                    <th>Date</th><th>Stage</th><th>Machine</th><th>Part No</th><th style="background:#28a745;">Acc Qty</th><th style="background:#dc3545;">Rej Qty</th><th>Inspector / Logged By</th><th>Action</th>
+                                    <th>Date</th>
+                                    <th>Stage</th>
+                                    <th>Machine</th>
+                                    <th>Part No</th>
+                                    <th style="background:#28a745;">Acc Qty</th>
+                                    <th style="background:#dc3545;">Rej Qty</th>
+                                    <th>Inspector / Logged By</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody><tr><td colspan="8" style="text-align: center;">Loading QC Data...</td></tr></tbody>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" style="text-align: center;">Loading QC Data...</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
 
                 <div id="qcInwardSection" style="display: none;">
                     <div class="tab-container" style="margin-bottom: 15px; border-bottom: 2px solid #eee;">
-                        <button class="tab-btn active" id="tab-inward-pending" onclick="toggleInwardQCView('PENDING')" style="background: #6f42c1; color: white;">⏳ Pending Inspection</button>
-                        <button class="tab-btn" id="tab-inward-history" onclick="toggleInwardQCView('HISTORY')">📜 Inspected History</button>
+                        <button class="tab-btn active" id="tab-inward-pending" onclick="toggleInwardQCView('PENDING')"
+                            style="background: #6f42c1; color: white;">⏳ Pending Inspection</button>
+                        <button class="tab-btn" id="tab-inward-history" onclick="toggleInwardQCView('HISTORY')">📜
+                            Inspected History</button>
                     </div>
 
                     <div id="inwardPendingContainer">
-                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #6f42c1; margin-bottom: 15px;">
+                        <div
+                            style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #6f42c1; margin-bottom: 15px;">
                             <h4 style="margin-top:0; color:#6f42c1;">📥 Pending Incoming Tools for Inspection</h4>
-                            <p style="font-size: 13px; color: #555; margin-bottom: 0;">Tools received from Purchase must be inspected here before being added to Master Stock.</p>
+                            <p style="font-size: 13px; color: #555; margin-bottom: 0;">Tools received from Purchase must
+                                be inspected here before being added to Master Stock.</p>
                         </div>
                         <div class="table-wrapper">
                             <table id="inwardQaTable">
                                 <thead style="background-color: #6f42c1; color: white;">
-                                    <tr><th>Received Date</th><th>Indent Ref</th><th>Tool Code</th><th>Machine</th><th>Received Qty</th><th>Buyer</th><th>Action</th></tr>
+                                    <tr>
+                                        <th>Received Date</th>
+                                        <th>Indent Ref</th>
+                                        <th>Tool Code</th>
+                                        <th>Machine</th>
+                                        <th>Received Qty</th>
+                                        <th>Buyer</th>
+                                        <th>Action</th>
+                                    </tr>
                                 </thead>
-                                <tbody><tr><td colspan="7" style="text-align: center;">Loading incoming indents...</td></tr></tbody>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" style="text-align: center;">Loading incoming indents...</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -157,9 +517,21 @@
                         <div class="table-wrapper">
                             <table id="inwardQaHistoryTable">
                                 <thead style="background-color: #6c757d; color: white;">
-                                    <tr><th>Inspection Date</th><th>Indent Ref</th><th>Tool Code</th><th>Machine</th><th>Received Qty</th><th>QC Status</th><th>Inspector Remarks</th></tr>
+                                    <tr>
+                                        <th>Inspection Date</th>
+                                        <th>Indent Ref</th>
+                                        <th>Tool Code</th>
+                                        <th>Machine</th>
+                                        <th>Received Qty</th>
+                                        <th>QC Status</th>
+                                        <th>Inspector Remarks</th>
+                                    </tr>
                                 </thead>
-                                <tbody><tr><td colspan="7" style="text-align: center;">Loading history...</td></tr></tbody>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" style="text-align: center;">Loading history...</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -167,21 +539,66 @@
             </div>
 
             <div class="card" id="productionCard" style="display: none; margin-bottom: 20px;">
-                <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800;">🏭 Production Data Entry (Multi-Stage)</h2>
-                <div id="masterAnalyticsDashboard" style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; align-items: stretch; min-height: 140px;">
+                <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800;">🏭 Production Data Entry (Multi-Stage)
+                </h2>
+                <div id="masterAnalyticsDashboard"
+                    style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; align-items: stretch; min-height: 140px;">
                     <div style="flex: 0 0 320px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <div style="background: #343a40; color: white; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);"><div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #adb5bd;">Overall OEE</div><div id="oeeTotal" style="font-size: 26px; font-weight: bold; color: #ffc107; margin-top: 2px;">0%</div></div>
-                        <div style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;"><div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">Availability</div><div id="oeeAvail" style="font-size: 18px; font-weight: bold; color: #007bff; margin-top: 2px;">0%</div><div id="oeeDowntimeText" style="font-size: 10px; color: #dc3545;">0 hrs down</div></div>
-                        <div style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;"><div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">Performance</div><div id="oeePerf" style="font-size: 18px; font-weight: bold; color: #17a2b8; margin-top: 2px;">0%</div><div id="oeeSpeedText" style="font-size: 10px; color: #28a745;">0 / 0 Target</div></div>
-                        <div style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;"><div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">Quality</div><div id="oeeQual" style="font-size: 18px; font-weight: bold; color: #28a745; margin-top: 2px;">0%</div><div id="oeeRejText" style="font-size: 10px; color: #dc3545;">0 rejected</div></div>
+                        <div
+                            style="background: #343a40; color: white; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);">
+                            <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #adb5bd;">
+                                Overall OEE</div>
+                            <div id="oeeTotal"
+                                style="font-size: 26px; font-weight: bold; color: #ffc107; margin-top: 2px;">0%</div>
+                        </div>
+                        <div
+                            style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">
+                                Availability</div>
+                            <div id="oeeAvail"
+                                style="font-size: 18px; font-weight: bold; color: #007bff; margin-top: 2px;">0%</div>
+                            <div id="oeeDowntimeText" style="font-size: 10px; color: #dc3545;">0 hrs down</div>
+                        </div>
+                        <div
+                            style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">
+                                Performance</div>
+                            <div id="oeePerf"
+                                style="font-size: 18px; font-weight: bold; color: #17a2b8; margin-top: 2px;">0%</div>
+                            <div id="oeeSpeedText" style="font-size: 10px; color: #28a745;">0 / 0 Target</div>
+                        </div>
+                        <div
+                            style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">
+                                Quality</div>
+                            <div id="oeeQual"
+                                style="font-size: 18px; font-weight: bold; color: #28a745; margin-top: 2px;">0%</div>
+                            <div id="oeeRejText" style="font-size: 10px; color: #dc3545;">0 rejected</div>
+                        </div>
                     </div>
-                    <div style="flex: 1; min-width: 300px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"><div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #495057; text-align: center; margin-bottom: 5px;">Today's Output by Machine</div><div style="position: relative; flex-grow: 1; min-height: 120px;"><canvas id="machineChart"></canvas></div></div>
-                    <div style="flex: 0 0 220px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"><div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #495057; text-align: center; margin-bottom: 5px;">Quality Ratio</div><div style="position: relative; flex-grow: 1; min-height: 120px;"><canvas id="qualityChart"></canvas></div></div>
+                    <div
+                        style="flex: 1; min-width: 300px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <div
+                            style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #495057; text-align: center; margin-bottom: 5px;">
+                            Today's Output by Machine</div>
+                        <div style="position: relative; flex-grow: 1; min-height: 120px;"><canvas
+                                id="machineChart"></canvas></div>
+                    </div>
+                    <div
+                        style="flex: 0 0 220px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <div
+                            style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #495057; text-align: center; margin-bottom: 5px;">
+                            Quality Ratio</div>
+                        <div style="position: relative; flex-grow: 1; min-height: 120px;"><canvas
+                                id="qualityChart"></canvas></div>
+                    </div>
                 </div>
 
                 <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
                     <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                        <select id="prodStage" class="prod-input" style="flex: 1; font-weight: bold; border: 2px solid #ff9800; font-size: 16px;" onchange="toggleStageFields()">
+                        <select id="prodStage" class="prod-input"
+                            style="flex: 1; font-weight: bold; border: 2px solid #ff9800; font-size: 16px;"
+                            onchange="toggleStageFields()">
                             <option value="FORGING">1. FORGING (Raw to WIP)</option>
                             <option value="ROLLING">2. ROLLING (WIP to WIP)</option>
                             <option value="HEAT_TREAT">3. HEAT TREATMENT (WIP to WIP)</option>
@@ -194,19 +611,61 @@
                     <div class="form-section">
                         <div class="form-section-title">1. Shift & Machine Details</div>
                         <div class="form-grid-multi">
-                            <select id="prodShift" class="prod-input"><option value="">- Select Shift -</option><option value="A">A Shift</option><option value="B">B Shift</option><option value="G">G Shift (General)</option><option value="S2">S2 Shift</option></select>
-                            <select id="prodMachine" class="prod-input" onchange="toggleOtherInput('prodMachine', 'prodMachineOther')"><option value="">- Select Machine -</option><option value="CH5">CH5</option><option value="TK250">TK250</option><option value="64S">64S</option><option value="84S">84S</option><option value="6L4S">6L4S</option><option value="164S">164S</option><option value="254LL">254LL</option><option value="Lathe">Lathe</option><option value="OVEN-1">Oven-1</option><option value="POLISHER-A">Polisher A</option><option value="OTHER">Other...</option></select>
-                            <input type="text" id="prodMachineOther" class="prod-input" placeholder="Enter Machine Name" style="display: none; border-color: #007bff;">
+                            <select id="prodShift" class="prod-input">
+                                <option value="">- Select Shift -</option>
+                                <option value="A">A Shift</option>
+                                <option value="B">B Shift</option>
+                                <option value="G">G Shift (General)</option>
+                                <option value="S2">S2 Shift</option>
+                            </select>
+                            <select id="prodMachine" class="prod-input"
+                                onchange="toggleOtherInput('prodMachine', 'prodMachineOther')">
+                                <option value="">- Select Machine -</option>
+                                <option value="CH5">CH5</option>
+                                <option value="TK250">TK250</option>
+                                <option value="64S">64S</option>
+                                <option value="84S">84S</option>
+                                <option value="6L4S">6L4S</option>
+                                <option value="164S">164S</option>
+                                <option value="254LL">254LL</option>
+                                <option value="Lathe">Lathe</option>
+                                <option value="OVEN-1">Oven-1</option>
+                                <option value="POLISHER-A">Polisher A</option>
+                                <option value="OTHER">Other...</option>
+                            </select>
+                            <input type="text" id="prodMachineOther" class="prod-input" placeholder="Enter Machine Name"
+                                style="display: none; border-color: #007bff;">
                             <input type="text" id="prodOperator" class="prod-input" placeholder="Operator Name">
-                            <select id="prodOperation" class="prod-input"><option value="">- Select Process -</option><option value="COLD FORGING" class="dyn-f">Cold Forging</option><option value="THREAD ROLLING" class="dyn-fr">Thread Rolling</option><option value="HEATING" class="dyn-s">Heating / Baking</option><option value="POLISH" class="dyn-s">Polishing</option><option value="TURNNING" class="dyn-s">Turning</option><option value="DRILLING" class="dyn-s">Drilling</option></select>
+                            <select id="prodOperation" class="prod-input">
+                                <option value="">- Select Process -</option>
+                                <option value="COLD FORGING" class="dyn-f">Cold Forging</option>
+                                <option value="THREAD ROLLING" class="dyn-fr">Thread Rolling</option>
+                                <option value="HEATING" class="dyn-s">Heating / Baking</option>
+                                <option value="POLISH" class="dyn-s">Polishing</option>
+                                <option value="TURNNING" class="dyn-s">Turning</option>
+                                <option value="DRILLING" class="dyn-s">Drilling</option>
+                            </select>
                         </div>
                         <div class="form-section-title" style="margin-top: 15px;">2. Part Details</div>
                         <div class="form-grid-multi">
-                            <select id="prodWO" class="prod-input" style="border-color: #007bff; font-weight: bold;" onchange="autoFillFromWO()"><option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option></select>
-                            <input type="text" id="prodWOOther" class="prod-input" placeholder="Enter WO Manually" style="display: none; border-color: #007bff;">
+                            <select id="prodWO" class="prod-input" style="border-color: #007bff; font-weight: bold;"
+                                onchange="autoFillFromWO()">
+                                <option value="">- Select Active WO -</option>
+                                <option value="OTHER">Manual Entry...</option>
+                            </select>
+                            <input type="text" id="prodWOOther" class="prod-input" placeholder="Enter WO Manually"
+                                style="display: none; border-color: #007bff;">
                             <input type="text" id="prodPartNo" class="prod-input" placeholder="Part No (Barcode)">
-                            <select id="prodPartName" class="prod-input" onchange="toggleOtherInput('prodPartName', 'prodPartNameOther')"><option value="">- Part Name -</option><option value="FLG">FLG</option><option value="HEX">HEX</option><option value="SOC">SOC</option><option value="OTHER">Other...</option></select>
-                            <input type="text" id="prodPartNameOther" class="prod-input" placeholder="Enter Part Name" style="display: none; border-color: #007bff;">
+                            <select id="prodPartName" class="prod-input"
+                                onchange="toggleOtherInput('prodPartName', 'prodPartNameOther')">
+                                <option value="">- Part Name -</option>
+                                <option value="FLG">FLG</option>
+                                <option value="HEX">HEX</option>
+                                <option value="SOC">SOC</option>
+                                <option value="OTHER">Other...</option>
+                            </select>
+                            <input type="text" id="prodPartNameOther" class="prod-input" placeholder="Enter Part Name"
+                                style="display: none; border-color: #007bff;">
                             <input type="text" id="prodSize" class="prod-input" placeholder="Size (e.g., M10)">
                             <input type="text" id="prodPitch" class="prod-input" placeholder="Pitch (e.g., 1.25)">
                             <input type="number" id="prodLength" class="prod-input" placeholder="Length (mm)">
@@ -218,13 +677,18 @@
                     <div class="form-section" id="planningSection">
                         <div class="form-section-title">3. Material & Planning</div>
                         <div class="form-grid-multi">
-                            <input type="text" id="prodRMCode" class="prod-input dyn-f" placeholder="* Exact Raw Material Code" style="border-color: #007bff; font-weight: bold;">
+                            <input type="text" id="prodRMCode" class="prod-input dyn-f"
+                                placeholder="* Exact Raw Material Code"
+                                style="border-color: #007bff; font-weight: bold;">
                             <input type="text" id="prodHeatNo" class="prod-input dyn-fr" placeholder="Heat No.">
                             <input type="number" id="prodRMKg" class="prod-input dyn-f" placeholder="RM Consumed (Kg)">
-                            <input type="number" step="0.001" id="prodPieceWt" class="prod-input dyn-fr" placeholder="Piece Weight (KG)">
+                            <input type="number" step="0.001" id="prodPieceWt" class="prod-input dyn-fr"
+                                placeholder="Piece Weight (KG)">
                             <input type="number" id="prodSchHrs" class="prod-input" placeholder="Schedule Hours">
-                            <input type="number" id="prodJcHrs" class="prod-input dyn-fr" placeholder="Job Change Hours">
-                            <input type="number" id="prodPlannedHrs" class="prod-input dyn-fr" placeholder="Prod Planned Hours">
+                            <input type="number" id="prodJcHrs" class="prod-input dyn-fr"
+                                placeholder="Job Change Hours">
+                            <input type="number" id="prodPlannedHrs" class="prod-input dyn-fr"
+                                placeholder="Prod Planned Hours">
                             <input type="number" id="prodSpeed" class="prod-input dyn-fr" placeholder="Speed (RPM)">
                             <input type="number" id="prodTarget" class="prod-input" placeholder="Shift Target Qty">
                         </div>
@@ -233,38 +697,51 @@
                     <div class="form-section" style="border-left-color: #28a745;">
                         <div class="form-section-title" style="color: #28a745;">4. Production Output</div>
                         <div class="form-grid-multi">
-                            <input type="number" id="prodAccepted" class="prod-input" placeholder="✅ Accepted Qty (Nos)" style="border-color: #28a745; font-weight: bold;">
-                            <input type="number" id="prodRejected" class="prod-input" placeholder="❌ Rejection Qty (PCS)" style="border-color: #dc3545;">
-                            <input type="number" step="0.01" id="prodRejKg" class="prod-input dyn-fr" placeholder="Process/Set Rej (KGS)" style="border-color: #dc3545;">
-                            <input type="text" id="prodRejReason" class="prod-input dyn-s" placeholder="Rejection Reason">
+                            <input type="number" id="prodAccepted" class="prod-input" placeholder="✅ Accepted Qty (Nos)"
+                                style="border-color: #28a745; font-weight: bold;">
+                            <input type="number" id="prodRejected" class="prod-input"
+                                placeholder="❌ Rejection Qty (PCS)" style="border-color: #dc3545;">
+                            <input type="number" step="0.01" id="prodRejKg" class="prod-input dyn-fr"
+                                placeholder="Process/Set Rej (KGS)" style="border-color: #dc3545;">
+                            <input type="text" id="prodRejReason" class="prod-input dyn-s"
+                                placeholder="Rejection Reason">
                             <input type="text" id="prodRemarks" class="prod-input" placeholder="Remarks / Notes">
                         </div>
                     </div>
 
                     <div class="downtime-grid dyn-fr">
-                        <div style="grid-column: 1 / -1; font-size: 13px; font-weight: bold; color: #dc3545; margin-bottom: 5px;">5. DOWNTIME LOSSES (ENTER MINUTES)</div>
+                        <div
+                            style="grid-column: 1 / -1; font-size: 13px; font-weight: bold; color: #dc3545; margin-bottom: 5px;">
+                            5. DOWNTIME LOSSES (ENTER MINUTES)</div>
                         <div><label>Major J/C (1)</label><input type="number" id="l_MajorJC" class="prod-input"></div>
                         <div><label>Minor J/C (2)</label><input type="number" id="l_MinorJC" class="prod-input"></div>
-                        <div><label>Tool Setting (3)</label><input type="number" id="l_Setting" class="prod-input"></div>
+                        <div><label>Tool Setting (3)</label><input type="number" id="l_Setting" class="prod-input">
+                        </div>
                         <div><label>M/C Clean</label><input type="number" id="l_McClean" class="prod-input"></div>
-                        <div><label>Tool Rework (5)</label><input type="number" id="l_ToolRework" class="prod-input"></div>
+                        <div><label>Tool Rework (5)</label><input type="number" id="l_ToolRework" class="prod-input">
+                        </div>
                         <div><label>No Tool (6)</label><input type="number" id="l_NoTool" class="prod-input"></div>
                         <div><label>No Load</label><input type="number" id="l_NoLoad" class="prod-input"></div>
-                        <div><label>No Operator (7)</label><input type="number" id="l_NoOperator" class="prod-input"></div>
+                        <div><label>No Operator (7)</label><input type="number" id="l_NoOperator" class="prod-input">
+                        </div>
                         <div><label>M/MNT (8)</label><input type="number" id="l_MMnt" class="prod-input"></div>
                         <div><label>E/MNT (9)</label><input type="number" id="l_EMnt" class="prod-input"></div>
                         <div><label>No Power (10)</label><input type="number" id="l_NoPower" class="prod-input"></div>
-                        <div><label>No Air/Oil (11)</label><input type="number" id="l_NoAirOil" class="prod-input"></div>
+                        <div><label>No Air/Oil (11)</label><input type="number" id="l_NoAirOil" class="prod-input">
+                        </div>
                         <div><label>No RM (12)</label><input type="number" id="l_NoRm" class="prod-input"></div>
                         <div><label>RM Loading</label><input type="number" id="l_RmLoading" class="prod-input"></div>
                         <div><label>QA Approval</label><input type="number" id="l_QaApproval" class="prod-input"></div>
-                        <div><label>Coil Change (13)</label><input type="number" id="l_CoilChange" class="prod-input dyn-f"></div>
+                        <div><label>Coil Change (13)</label><input type="number" id="l_CoilChange"
+                                class="prod-input dyn-f"></div>
                         <div><label>No Plan (14)</label><input type="number" id="l_NoPlan" class="prod-input"></div>
                         <div><label>NPD Team (9F)</label><input type="number" id="l_NpdTeam" class="prod-input"></div>
                         <div><label>Unknown</label><input type="number" id="l_Unknown" class="prod-input"></div>
                     </div>
 
-                    <button onclick="submitProductionForm()" style="background: #ff9800; color: white; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border: none; border-radius: 8px; margin-top: 20px; cursor: pointer;">💾 Save Full Production Log</button>
+                    <button onclick="submitProductionForm()"
+                        style="background: #ff9800; color: white; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border: none; border-radius: 8px; margin-top: 20px; cursor: pointer;">💾
+                        Save Full Production Log</button>
                 </div>
 
                 <div class="tab-container">
@@ -273,33 +750,109 @@
                     <button class="tab-btn" id="tab-ROLLING" onclick="filterLogs('ROLLING')">Rolling</button>
                     <button class="tab-btn" id="tab-HEAT_TREAT" onclick="filterLogs('HEAT_TREAT')">Heat Treat</button>
                     <button class="tab-btn" id="tab-POLISHING" onclick="filterLogs('POLISHING')">Polishing</button>
-                    <button class="tab-btn" id="tab-COMPLETED" onclick="filterLogs('COMPLETED')" style="margin-left: 20px; border-left: 2px solid #ccc; color: #28a745;">✅ Completed Logs</button>
+                    <button class="tab-btn" id="tab-COMPLETED" onclick="filterLogs('COMPLETED')"
+                        style="margin-left: 20px; border-left: 2px solid #ccc; color: #28a745;">✅ Completed
+                        Logs</button>
                 </div>
 
-                <div class="search-container" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800; margin-bottom: 15px;">
+                <div class="search-container"
+                    style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800; margin-bottom: 15px;">
                     <span style="font-weight: bold; color: #555; font-size: 14px;">🔍 FILTER LOGS:</span>
-                    <input type="date" id="filterProdDate" class="prod-input" onchange="applyProductionFilters()" title="Filter by Date">
-                    <select id="filterProdShift" class="prod-input" onchange="applyProductionFilters()"><option value="">-- All Shifts --</option><option value="A">A Shift</option><option value="B">B Shift</option><option value="G">G Shift</option><option value="S2">S2 Shift</option></select>
-                    <input type="text" id="filterProdGlobal" class="prod-input" style="flex: 1; min-width: 250px;" placeholder="Search Operator, Machine, Part No, Remarks..." onkeyup="applyProductionFilters()">
-                    <button onclick="clearProductionFilters()" style="background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">Reset</button>
+                    <input type="date" id="filterProdDate" class="prod-input" onchange="applyProductionFilters()"
+                        title="Filter by Date">
+                    <select id="filterProdShift" class="prod-input" onchange="applyProductionFilters()">
+                        <option value="">-- All Shifts --</option>
+                        <option value="A">A Shift</option>
+                        <option value="B">B Shift</option>
+                        <option value="G">G Shift</option>
+                        <option value="S2">S2 Shift</option>
+                    </select>
+                    <input type="text" id="filterProdGlobal" class="prod-input" style="flex: 1; min-width: 250px;"
+                        placeholder="Search Operator, Machine, Part No, Remarks..." onkeyup="applyProductionFilters()">
+                    <button onclick="clearProductionFilters()"
+                        style="background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">Reset</button>
                 </div>
 
-                <div id="exportButtonsSection" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: -40px; margin-bottom: 10px;">
-                    <button onclick="generateDailyPDF()" style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📄 Download PDF</button>
-                    <button class="export-btn" onclick="exportTableToCSV('productionTable', 'Full_Production_Report.csv')">⬇️ Export Full Excel</button>
+                <div id="exportButtonsSection"
+                    style="display: flex; justify-content: flex-end; gap: 10px; margin-top: -40px; margin-bottom: 10px;">
+                    <button onclick="generateDailyPDF()"
+                        style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📄
+                        Download PDF</button>
+                    <button class="export-btn"
+                        onclick="exportTableToCSV('productionTable', 'Full_Production_Report.csv')">⬇️ Export Full
+                        Excel</button>
                 </div>
 
                 <div class="table-wrapper">
                     <table id="productionTable">
                         <thead style="background-color: #ff9800; white-space: nowrap;">
                             <tr>
-                                <th>Date</th><th>Shift</th><th>Stage</th><th>Machine</th><th>Operator</th><th>Process</th><th>WO No</th><th>Part No</th><th>Part Name</th><th style="background:#6f42c1; color:white;">Next Process</th><th style="background:#17a2b8; color:white;">PPC Status</th><th>Size</th><th>Pitch</th><th>Length</th><th>A/F</th><th>Grade</th><th>RM Code</th><th>Heat No</th><th>RM Consumed (Kg)</th><th>Piece Wt (Kg)</th><th>Sch Hrs</th><th>J/C Hrs</th><th>Planned Hrs</th><th>Speed (RPM)</th><th>Target Qty</th><th style="background:#28a745;">Acc Qty</th><th style="background:#dc3545;">Rej Qty</th><th>Rej Kg</th><th>Rej Reason</th><th>Major JC</th><th>Minor JC</th><th>Setting</th><th>M/C Clean</th><th>Tool Rework</th><th>No Tool</th><th>No Load</th><th>No Operator</th><th>M/MNT</th><th>E/MNT</th><th>No Power</th><th>No Air/Oil</th><th>No RM</th><th>RM Loading</th><th>QA Appr</th><th>Coil Chg</th><th>No Plan</th><th>NPD Team</th><th>Unknown Loss</th><th>Remarks</th><th>Logged By</th><th style="background:#17a2b8;">QC Status</th><th style="background:#17a2b8;">QC Remarks</th><th>Action</th>
+                                <th>Date</th>
+                                <th>Shift</th>
+                                <th>Stage</th>
+                                <th>Machine</th>
+                                <th>Operator</th>
+                                <th>Process</th>
+                                <th>WO No</th>
+                                <th>Part No</th>
+                                <th>Part Name</th>
+                                <th style="background:#6f42c1; color:white;">Next Process</th>
+                                <th style="background:#17a2b8; color:white;">PPC Status</th>
+                                <th>Size</th>
+                                <th>Pitch</th>
+                                <th>Length</th>
+                                <th>A/F</th>
+                                <th>Grade</th>
+                                <th>RM Code</th>
+                                <th>Heat No</th>
+                                <th>RM Consumed (Kg)</th>
+                                <th>Piece Wt (Kg)</th>
+                                <th>Sch Hrs</th>
+                                <th>J/C Hrs</th>
+                                <th>Planned Hrs</th>
+                                <th>Speed (RPM)</th>
+                                <th>Target Qty</th>
+                                <th style="background:#28a745;">Acc Qty</th>
+                                <th style="background:#dc3545;">Rej Qty</th>
+                                <th>Rej Kg</th>
+                                <th>Rej Reason</th>
+                                <th>Major JC</th>
+                                <th>Minor JC</th>
+                                <th>Setting</th>
+                                <th>M/C Clean</th>
+                                <th>Tool Rework</th>
+                                <th>No Tool</th>
+                                <th>No Load</th>
+                                <th>No Operator</th>
+                                <th>M/MNT</th>
+                                <th>E/MNT</th>
+                                <th>No Power</th>
+                                <th>No Air/Oil</th>
+                                <th>No RM</th>
+                                <th>RM Loading</th>
+                                <th>QA Appr</th>
+                                <th>Coil Chg</th>
+                                <th>No Plan</th>
+                                <th>NPD Team</th>
+                                <th>Unknown Loss</th>
+                                <th>Remarks</th>
+                                <th>Logged By</th>
+                                <th style="background:#17a2b8;">QC Status</th>
+                                <th style="background:#17a2b8;">QC Remarks</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody><tr><td colspan="53" style="text-align: center;">Loading...</td></tr></tbody>
-                        <tfoot style="background-color: #f8f9fa; font-weight: bold; position: sticky; bottom: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 2;">
+                        <tbody>
                             <tr>
-                                <td colspan="25" style="text-align: right; padding-right: 15px; color: #ff9800; font-size: 16px;">🔍 VISIBLE TOTALS:</td>
+                                <td colspan="53" style="text-align: center;">Loading...</td>
+                            </tr>
+                        </tbody>
+                        <tfoot
+                            style="background-color: #f8f9fa; font-weight: bold; position: sticky; bottom: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 2;">
+                            <tr>
+                                <td colspan="25"
+                                    style="text-align: right; padding-right: 15px; color: #ff9800; font-size: 16px;">🔍
+                                    VISIBLE TOTALS:</td>
                                 <td id="totalAccQty" style="color: green; background: #e8f5e9; font-size: 16px;">0</td>
                                 <td id="totalRejQty" style="color: red; background: #ffebee; font-size: 16px;">0</td>
                                 <td id="totalRejKg" style="font-size: 16px;">0</td>
@@ -313,16 +866,31 @@
             <div class="card inventory-section" id="invCard" style="display: none;">
                 <h2>Finished Goods Stock & WIP
                     <div class="search-container">
-                        <input type="text" id="searchInput" class="search-box" style="width: 220px;" onkeyup="filterInventory()" placeholder="🔍 Search...">
-                        <button class="add-btn" id="addBtnUI" style="display: none;" onclick="openModal()">➕ Add Product</button>
-                        <button class="export-btn" onclick="exportTableToCSV('productsTable', 'Live_Stock_Inventory.csv')">⬇️ Excel</button>
+                        <input type="text" id="searchInput" class="search-box" style="width: 220px;"
+                            onkeyup="filterInventory()" placeholder="🔍 Search...">
+                        <button class="add-btn" id="addBtnUI" style="display: none;" onclick="openModal()">➕ Add
+                            Product</button>
+                        <button class="export-btn"
+                            onclick="exportTableToCSV('productsTable', 'Live_Stock_Inventory.csv')">⬇️ Excel</button>
                     </div>
                 </h2>
                 <div class="table-wrapper">
                     <table id="productsTable">
                         <thead>
                             <tr>
-                                <th>Product Code</th><th>Sector</th><th>Type</th><th>Grade</th><th>Length</th><th>A/F</th><th>Wt/Pc</th><th style="color: #17a2b8;">WIP (Floor)</th><th style="color: #6f42c1;">Prod. Readied</th><th style="color: #ff9800;">FG Check</th><th style="color: #dc3545;">Difference</th><th style="color: #28a745;">Current Stock</th><th class="admin-actions">Actions</th>
+                                <th>Product Code</th>
+                                <th>Sector</th>
+                                <th>Type</th>
+                                <th>Grade</th>
+                                <th>Length</th>
+                                <th>A/F</th>
+                                <th>Wt/Pc</th>
+                                <th style="color: #17a2b8;">WIP (Floor)</th>
+                                <th style="color: #6f42c1;">Prod. Readied</th>
+                                <th style="color: #ff9800;">FG Check</th>
+                                <th style="color: #dc3545;">Difference</th>
+                                <th style="color: #28a745;">Current Stock</th>
+                                <th class="admin-actions">Actions</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -333,110 +901,203 @@
             <div class="card transaction-section" id="txCard" style="display: none;">
                 <h2>Recent Movements
                     <div class="search-container">
-                        <input type="date" id="dateSearchInput" class="search-box" style="width: 130px;" onchange="applyTxFilters()">
-                        <input type="text" id="searchTxInput" class="search-box" style="width: 150px;" onkeyup="applyTxFilters()" placeholder="🔍 Item...">
-                        <button class="export-btn" onclick="exportTableToCSV('transactionsTable', 'Warehouse_Movements.csv')">⬇️ Excel</button>
+                        <input type="date" id="dateSearchInput" class="search-box" style="width: 130px;"
+                            onchange="applyTxFilters()">
+                        <input type="text" id="searchTxInput" class="search-box" style="width: 150px;"
+                            onkeyup="applyTxFilters()" placeholder="🔍 Item...">
+                        <button class="export-btn"
+                            onclick="exportTableToCSV('transactionsTable', 'Warehouse_Movements.csv')">⬇️ Excel</button>
                     </div>
                 </h2>
                 <div class="table-wrapper">
                     <table id="transactionsTable">
-                        <thead><tr><th>Date & Time</th><th>Item Code</th><th>Type & User</th><th>Qty</th><th>Balance</th></tr></thead>
-                        <tbody><tr><td colspan="5">Loading data...</td></tr></tbody>
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Item Code</th>
+                                <th>Type & User</th>
+                                <th>Qty</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5">Loading data...</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="card" id="rawMaterialCard" style="display: none;">
-                <h2>Raw Materials (Steel) <button class="add-btn" onclick="openReceiveModal()">📥 Receive Stock</button></h2>
+                <h2>Raw Materials (Steel) <button class="add-btn" onclick="openReceiveModal()">📥 Receive Stock</button>
+                </h2>
                 <div class="table-wrapper">
                     <table id="rawMaterialsTable">
-                        <thead><tr><th>Material Code</th><th>Name</th><th>Grade</th><th>Stock (Kg)</th><th>Last Supplier</th><th>Last Received By</th><th>Date & Time</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Material Code</th>
+                                <th>Name</th>
+                                <th>Grade</th>
+                                <th>Stock (Kg)</th>
+                                <th>Last Supplier</th>
+                                <th>Last Received By</th>
+                                <th>Date & Time</th>
+                            </tr>
+                        </thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </div>
 
             <div class="card" id="salesCard" style="display: none; margin-bottom: 20px;">
-                <h2 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <h2
+                    style="color: #6f42c1; border-bottom: 2px solid #6f42c1; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                     <span>📈 Sales, CRM & Billing</span>
                     <div class="tab-container" style="border: none; margin: 0; padding: 0;">
-                        <button class="tab-btn active" id="tab-crm" onclick="switchSalesTab('crm')" style="background: #6f42c1; color: white;">👥 CRM</button>
-                        <button class="tab-btn" id="tab-orders" onclick="switchSalesTab('orders')">🛒 Orders & Billing</button>
+                        <button class="tab-btn active" id="tab-crm" onclick="switchSalesTab('crm')"
+                            style="background: #6f42c1; color: white;">👥 CRM</button>
+                        <button class="tab-btn" id="tab-orders" onclick="switchSalesTab('orders')">🛒 Orders &
+                            Billing</button>
                     </div>
                 </h2>
 
                 <div id="crmSection">
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #6f42c1;">
-                        <h4 style="margin-top:0; color:#6f42c1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div
+                        style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #6f42c1;">
+                        <h4
+                            style="margin-top:0; color:#6f42c1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                             <span>➕ Add New Customer / Lead</span>
-                            <button onclick="openMarketingModal()" style="background: #e83e8c; color: white; border: none; padding: 6px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📢 Send Bulk Offers Email</button>
+                            <button onclick="openMarketingModal()"
+                                style="background: #e83e8c; color: white; border: none; padding: 6px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📢
+                                Send Bulk Offers Email</button>
                         </h4>
                         <div class="form-grid-multi">
-                            <input type="text" id="crmName" class="prod-input" placeholder="* Company / Client Name" style="border-color: #6f42c1; font-weight: bold;">
-                            <input type="text" id="crmSector" class="prod-input" placeholder="Sector (e.g., AUTO SECTOR)">
-                            <input type="text" id="crmTransport" class="prod-input" placeholder="Transport Mode (e.g., VRL)">
+                            <input type="text" id="crmName" class="prod-input" placeholder="* Company / Client Name"
+                                style="border-color: #6f42c1; font-weight: bold;">
+                            <input type="text" id="crmSector" class="prod-input"
+                                placeholder="Sector (e.g., AUTO SECTOR)">
+                            <input type="text" id="crmTransport" class="prod-input"
+                                placeholder="Transport Mode (e.g., VRL)">
                             <input type="text" id="crmPhone" class="prod-input" placeholder="Phone Number">
                             <input type="text" id="crmEmail" class="prod-input" placeholder="Email Address">
                             <input type="text" id="crmArea" class="prod-input" placeholder="Area / City">
                             <input type="text" id="crmState" class="prod-input" placeholder="State">
                             <input type="text" id="crmZone" class="prod-input" placeholder="Zone (e.g., SOUTH-1)">
                             <input type="text" id="crmPinCode" class="prod-input" placeholder="Pin Code">
-                            <input type="text" id="crmAddress" class="prod-input" placeholder="Full Street Address" style="grid-column: span 2;">
-                            <button onclick="submitCustomer()" class="add-btn" style="background: #6f42c1; grid-column: 1 / -1; font-size: 16px; padding: 10px;">💾 Save Customer Details</button>
+                            <input type="text" id="crmAddress" class="prod-input" placeholder="Full Street Address"
+                                style="grid-column: span 2;">
+                            <button onclick="submitCustomer()" class="add-btn"
+                                style="background: #6f42c1; grid-column: 1 / -1; font-size: 16px; padding: 10px;">💾
+                                Save Customer Details</button>
                         </div>
                     </div>
                     <div class="table-wrapper">
                         <table id="crmTable">
-                            <thead style="background-color: #6f42c1; color: white;"><tr><th>Customer Name</th><th>Sector & Zone</th><th>Contact Info</th><th>Location</th><th>Transport</th><th>Action</th></tr></thead>
-                            <tbody><tr><td colspan="6" style="text-align:center;">Loading Customers...</td></tr></tbody>
+                            <thead style="background-color: #6f42c1; color: white;">
+                                <tr>
+                                    <th>Customer Name</th>
+                                    <th>Sector & Zone</th>
+                                    <th>Contact Info</th>
+                                    <th>Location</th>
+                                    <th>Transport</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" style="text-align:center;">Loading Customers...</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
 
                 <div id="ordersSection" style="display: none;">
-                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #28a745;">
+                    <div
+                        style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #28a745;">
                         <h4 style="margin-top:0; color:#28a745;">📝 Create Quotation / Order</h4>
                         <div class="form-grid" style="margin-bottom: 15px;">
-                            <select id="soCustomer" class="prod-input"><option value="">- Select Customer -</option></select>
-                            <select id="soType" class="prod-input"><option value="QUOTATION">Draft Quotation</option><option value="CONFIRMED">Confirmed Order (Reserves Stock)</option></select>
+                            <select id="soCustomer" class="prod-input">
+                                <option value="">- Select Customer -</option>
+                            </select>
+                            <select id="soType" class="prod-input">
+                                <option value="QUOTATION">Draft Quotation</option>
+                                <option value="CONFIRMED">Confirmed Order (Reserves Stock)</option>
+                            </select>
                         </div>
                         <h5 style="margin-bottom: 5px; color: #555;">Cart Items:</h5>
                         <div id="soItemsContainer">
-                            <div class="so-item-row" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center; flex-wrap: wrap;">
-                                <input type="text" class="so-product prod-input" placeholder="* Product Code" style="flex: 2; min-width: 150px;">
-                                <input type="number" class="so-qty prod-input" placeholder="* Qty" style="flex: 1; min-width: 80px;">
-                                <input type="number" class="so-price prod-input" placeholder="* Unit Price (₹)" style="flex: 1; min-width: 100px;">
+                            <div class="so-item-row"
+                                style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center; flex-wrap: wrap;">
+                                <input type="text" class="so-product prod-input" placeholder="* Product Code"
+                                    style="flex: 2; min-width: 150px;">
+                                <input type="number" class="so-qty prod-input" placeholder="* Qty"
+                                    style="flex: 1; min-width: 80px;">
+                                <input type="number" class="so-price prod-input" placeholder="* Unit Price (₹)"
+                                    style="flex: 1; min-width: 100px;">
                             </div>
                         </div>
-                        <button onclick="addSOItemRow()" style="background:#17a2b8; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-bottom: 15px; font-weight: bold;">➕ Add Another Item</button>
-                        <button onclick="submitSalesOrder()" class="save-btn" style="background: #28a745; margin-top: 0;">💾 Generate Order</button>
+                        <button onclick="addSOItemRow()"
+                            style="background:#17a2b8; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-bottom: 15px; font-weight: bold;">➕
+                            Add Another Item</button>
+                        <button onclick="submitSalesOrder()" class="save-btn"
+                            style="background: #28a745; margin-top: 0;">💾 Generate Order</button>
                     </div>
                     <div class="table-wrapper">
                         <table id="salesOrderTable">
-                            <thead style="background-color: #28a745; color: white;"><tr><th>Order No</th><th>Customer</th><th>Items Details</th><th>Total Amount</th><th>Status</th><th>Actions & Invoices</th><th>Notify Customer</th></tr></thead>
-                            <tbody><tr><td colspan="6" style="text-align:center;">Loading Orders...</td></tr></tbody>
+                            <thead style="background-color: #28a745; color: white;">
+                                <tr>
+                                    <th>Order No</th>
+                                    <th>Customer</th>
+                                    <th>Items Details</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions & Invoices</th>
+                                    <th>Notify Customer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" style="text-align:center;">Loading Orders...</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
             <div class="card" id="poCard" style="display: none;">
-                <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <h2
+                    style="color: #ff9800; border-bottom: 2px solid #ff9800; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                     <span>🛒 Purchasing Dashboard</span>
                     <div class="tab-container" style="border: none; margin: 0; padding: 0;">
-                        <button class="tab-btn active" id="tab-po-raw" onclick="switchPOTab('raw')" style="background: #ff9800; color: white;">📦 Raw Material POs</button>
-                        <button class="tab-btn" id="tab-po-indents" onclick="switchPOTab('indents')">🔔 Tool Room Requests</button>
+                        <button class="tab-btn active" id="tab-po-raw" onclick="switchPOTab('raw')"
+                            style="background: #ff9800; color: white;">📦 Raw Material POs</button>
+                        <button class="tab-btn" id="tab-po-indents" onclick="switchPOTab('indents')">🔔 Tool Room
+                            Requests</button>
                     </div>
                 </h2>
 
                 <div id="poRawSection">
                     <div class="search-container" style="margin-bottom: 15px; margin-top: 15px;">
-                        <input type="text" id="searchPOInput" class="search-box" style="width: 200px;" onkeyup="filterPOs()" placeholder="🔍 Search POs...">
-                        <button class="add-btn" onclick="openPOModal()" style="background-color: #ff9800;">📝 Create Raw Material PO</button>
+                        <input type="text" id="searchPOInput" class="search-box" style="width: 200px;"
+                            onkeyup="filterPOs()" placeholder="🔍 Search POs...">
+                        <button class="add-btn" onclick="openPOModal()" style="background-color: #ff9800;">📝 Create Raw
+                            Material PO</button>
                     </div>
                     <div class="table-wrapper">
                         <table id="poTable">
-                            <thead style="background-color: #007bff; color: white;"><tr><th>PO Number</th><th>Supplier</th><th>Material</th><th>Qty (Kg)</th><th>Status</th><th>Action</th></tr></thead>
+                            <thead style="background-color: #007bff; color: white;">
+                                <tr>
+                                    <th>PO Number</th>
+                                    <th>Supplier</th>
+                                    <th>Material</th>
+                                    <th>Qty (Kg)</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
                             <tbody></tbody>
                         </table>
                     </div>
@@ -446,105 +1107,219 @@
                     <div id="pendingRequestsTableSection">
                         <div class="table-wrapper" style="max-height: 400px; margin-bottom: 20px;">
                             <table id="pendingIndentsTable">
-                                <thead style="background-color: #17a2b8; color: white;"><tr><th>Indent No & Date</th><th>Tool Code / Desc</th><th>Machine & Size</th><th>Qty Requested</th><th>Priority</th><th>Action</th></tr></thead>
-                                <tbody><tr><td colspan="6" style="text-align: center;">Loading requests...</td></tr></tbody>
+                                <thead style="background-color: #17a2b8; color: white;">
+                                    <tr>
+                                        <th>Indent No & Date</th>
+                                        <th>Tool Code / Desc</th>
+                                        <th>Machine & Size</th>
+                                        <th>Qty Requested</th>
+                                        <th>Priority</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="6" style="text-align: center;">Loading requests...</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
 
                     <div id="indentPoHistorySection">
-                        <h3 style="color: #6c757d; border-bottom: 2px solid #6c757d; padding-bottom: 5px; margin-top: 20px;">📜 Tool Room PO History</h3>
+                        <h3
+                            style="color: #6c757d; border-bottom: 2px solid #6c757d; padding-bottom: 5px; margin-top: 20px;">
+                            📜 Tool Room PO History</h3>
                         <div class="table-wrapper" style="max-height: 400px;">
                             <table id="indentPoHistoryTable">
-                                <thead style="background-color: #6c757d; color: white;"><tr><th>PO Number</th><th>Supplier</th><th>Tool Code</th><th>Expected Date</th><th>Qty</th><th>Status</th><th>Action</th></tr></thead>
-                                <tbody><tr><td colspan="7" style="text-align: center;">Loading history...</td></tr></tbody>
+                                <thead style="background-color: #6c757d; color: white;">
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>Supplier</th>
+                                        <th>Tool Code</th>
+                                        <th>Expected Date</th>
+                                        <th>Qty</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" style="text-align: center;">Loading history...</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
-                    </div> 
+                    </div>
 
-                    <div id="indentPoFormSection" style="display: none; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff9800; margin-bottom: 15px; padding-bottom: 10px;">
+                    <div id="indentPoFormSection"
+                        style="display: none; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff9800; margin-bottom: 15px; padding-bottom: 10px;">
                             <h3 style="color: #ff9800; margin: 0;">🛒 Raise PO for Tool Room</h3>
-                            <button class="btn" onclick="cancelIndentPO()" style="background: #6c757d; color: white; padding: 8px 15px; border:none; border-radius: 4px; cursor: pointer;">🔙 Cancel</button>
+                            <button class="btn" onclick="cancelIndentPO()"
+                                style="background: #6c757d; color: white; padding: 8px 15px; border:none; border-radius: 4px; cursor: pointer;">🔙
+                                Cancel</button>
                         </div>
                         <form id="indentPoForm" onsubmit="submitIndentPO(event)">
                             <input type="hidden" id="indPoIndentId">
-                            <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #17a2b8;">
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666; font-weight: bold;">Indent Ref.</label><input type="text" id="indPoRef" readonly class="prod-input" style="background: transparent; border: none; font-weight: bold; font-size: 16px; padding: 0; color: #333; width: 100%;"></div>
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666; font-weight: bold;">Priority</label><input type="text" id="indPoPriority" readonly class="prod-input" style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;"></div>
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666; font-weight: bold;">Tool Code</label><input type="text" id="indPoToolCode" readonly class="prod-input" style="background: transparent; border: none; font-weight: bold; color: var(--primary); padding: 0; font-size: 15px; width: 100%;"></div>
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666; font-weight: bold;">Machine / Size</label><input type="text" id="indPoMachine" readonly class="prod-input" style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;"></div>
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666; font-weight: bold;">Tool Description</label><input type="text" id="indPoDesc" readonly class="prod-input" style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;"></div>
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; color:#666; font-weight: bold;">Linked Drawings</label><div id="indPoDocs" style="font-size: 14px; font-weight: bold; padding: 5px 0;">--</div></div>
+                            <div class="form-grid"
+                                style="grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #17a2b8;">
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Indent Ref.</label><input
+                                        type="text" id="indPoRef" readonly class="prod-input"
+                                        style="background: transparent; border: none; font-weight: bold; font-size: 16px; padding: 0; color: #333; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Priority</label><input
+                                        type="text" id="indPoPriority" readonly class="prod-input"
+                                        style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Tool Code</label><input
+                                        type="text" id="indPoToolCode" readonly class="prod-input"
+                                        style="background: transparent; border: none; font-weight: bold; color: var(--primary); padding: 0; font-size: 15px; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Machine /
+                                        Size</label><input type="text" id="indPoMachine" readonly class="prod-input"
+                                        style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Tool
+                                        Description</label><input type="text" id="indPoDesc" readonly class="prod-input"
+                                        style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; color:#666; font-weight: bold;">Linked Drawings</label>
+                                    <div id="indPoDocs" style="font-size: 14px; font-weight: bold; padding: 5px 0;">--
+                                    </div>
+                                </div>
                             </div>
-                            <h4 style="color: var(--primary); margin-bottom: 10px; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Supplier & Delivery Details</h4>
+                            <h4
+                                style="color: var(--primary); margin-bottom: 10px; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px;">
+                                Supplier & Delivery Details</h4>
                             <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px;">
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; font-weight:bold; color:#555;">Supplier Name *</label><input type="text" id="indPoSupplier" class="prod-input" required placeholder="Enter Supplier" style="border-color: #ff9800; border-width: 2px; width: 100%; box-sizing: border-box;"></div>
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; font-weight:bold; color:#555;">Order Qty (Nos) *</label><input type="number" id="indPoQty" class="prod-input" required min="1" style="border-color: #ff9800; border-width: 2px; font-weight: bold; width: 100%; box-sizing: border-box;"></div>
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; font-weight:bold; color:#555;">Unit Price (₹) *</label><input type="number" id="indPoPrice" class="prod-input" required min="0.01" step="0.01" style="border-color: #ff9800; border-width: 2px; font-weight: bold; width: 100%; box-sizing: border-box;"></div>
-                                <div class="form-group" style="margin:0;"><label style="font-size:12px; font-weight:bold; color:#555;">Expected Delivery *</label><input type="date" id="indPoExpectedDate" class="prod-input" required style="border-color: #ff9800; border-width: 2px; font-weight: bold; cursor: pointer; width: 100%; box-sizing: border-box;"></div>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; font-weight:bold; color:#555;">Supplier Name
+                                        *</label><input type="text" id="indPoSupplier" class="prod-input" required
+                                        placeholder="Enter Supplier"
+                                        style="border-color: #ff9800; border-width: 2px; width: 100%; box-sizing: border-box;">
+                                </div>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; font-weight:bold; color:#555;">Order Qty (Nos)
+                                        *</label><input type="number" id="indPoQty" class="prod-input" required min="1"
+                                        style="border-color: #ff9800; border-width: 2px; font-weight: bold; width: 100%; box-sizing: border-box;">
+                                </div>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; font-weight:bold; color:#555;">Unit Price (₹)
+                                        *</label><input type="number" id="indPoPrice" class="prod-input" required
+                                        min="0.01" step="0.01"
+                                        style="border-color: #ff9800; border-width: 2px; font-weight: bold; width: 100%; box-sizing: border-box;">
+                                </div>
+                                <div class="form-group" style="margin:0;"><label
+                                        style="font-size:12px; font-weight:bold; color:#555;">Expected Delivery
+                                        *</label><input type="date" id="indPoExpectedDate" class="prod-input" required
+                                        style="border-color: #ff9800; border-width: 2px; font-weight: bold; cursor: pointer; width: 100%; box-sizing: border-box;">
+                                </div>
                             </div>
-                            <div style="margin-top: 25px; text-align: right;"><button type="submit" class="save-btn" style="background-color: #28a745; display: inline-block; width: auto; padding: 12px 30px; font-size: 16px; margin: 0; border: none; border-radius: 4px; color: white; cursor: pointer;">✅ Generate PO & Notify Tool Room</button></div>
+                            <div style="margin-top: 25px; text-align: right;"><button type="submit" class="save-btn"
+                                    style="background-color: #28a745; display: inline-block; width: auto; padding: 12px 30px; font-size: 16px; margin: 0; border: none; border-radius: 4px; color: white; cursor: pointer;">✅
+                                    Generate PO & Notify Tool Room</button></div>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <div id="toolroomCard" class="card" style="display: none; height: 88vh; padding: 0; overflow: hidden; border-radius: 8px;">
+            <div id="toolroomCard" class="card"
+                style="display: none; height: 88vh; padding: 0; overflow: hidden; border-radius: 8px;">
                 <iframe id="toolroomFrame" style="width: 100%; height: 100%; border: none;"></iframe>
             </div>
 
         </div>
     </div>
 
-    <div id="qcModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
-        <div style="background: white; width: 95%; max-width: 1000px; height: 90vh; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-            <div style="background: #17a2b8; color: white; padding: 15px 20px; font-weight: bold; font-size: 18px; display: flex; justify-content: space-between; align-items: center;">
+    <div id="qcModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+        <div
+            style="background: white; width: 95%; max-width: 1000px; height: 90vh; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <div
+                style="background: #17a2b8; color: white; padding: 15px 20px; font-weight: bold; font-size: 18px; display: flex; justify-content: space-between; align-items: center;">
                 <span>🔍 Comprehensive QC Inspection</span>
-                <button style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;" onclick="document.getElementById('qcModal').style.display='none'">✖</button>
+                <button style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;"
+                    onclick="document.getElementById('qcModal').style.display='none'">✖</button>
             </div>
-            <div id="qcModalContent" style="padding: 20px; overflow-y: auto; flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 14px; background: #f4f6f9;"></div>
-            <div style="background: #fff; padding: 15px 20px; border-top: 2px solid #dee2e6; display: flex; gap: 15px; align-items: center;">
-                <input type="text" id="qcRemarksInput" class="prod-input" placeholder="Enter Official QC Remarks (Required for Rejection)" style="flex-grow: 1; margin: 0; font-size: 15px; padding: 10px;">
-                <button id="btnQcReject" style="background: #dc3545; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 15px;">❌ Reject Batch</button>
-                <button id="btnQcApprove" style="background: #28a745; color: white; border: none; padding: 12px 35px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 15px;">✅ APPROVE & PROCEED</button>
+            <div id="qcModalContent"
+                style="padding: 20px; overflow-y: auto; flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 14px; background: #f4f6f9;">
+            </div>
+            <div
+                style="background: #fff; padding: 15px 20px; border-top: 2px solid #dee2e6; display: flex; gap: 15px; align-items: center;">
+                <input type="text" id="qcRemarksInput" class="prod-input"
+                    placeholder="Enter Official QC Remarks (Required for Rejection)"
+                    style="flex-grow: 1; margin: 0; font-size: 15px; padding: 10px;">
+                <button id="btnQcReject"
+                    style="background: #dc3545; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 15px;">❌
+                    Reject Batch</button>
+                <button id="btnQcApprove"
+                    style="background: #28a745; color: white; border: none; padding: 12px 35px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 15px;">✅
+                    APPROVE & PROCEED</button>
             </div>
         </div>
     </div>
 
-    <div id="inwardQaModal" class="modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; backdrop-filter: blur(3px);">
-        <div class="modal-content" style="background-color: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; position: relative;">
-            <span class="close-btn" onclick="closeInwardQaModal()" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888;">×</span>
-            <h3 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; padding-bottom: 10px; margin-top: 0;">🔍 Inspect Incoming Tool</h3>
+    <div id="inwardQaModal" class="modal"
+        style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; backdrop-filter: blur(3px);">
+        <div class="modal-content"
+            style="background-color: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; position: relative;">
+            <span class="close-btn" onclick="closeInwardQaModal()"
+                style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888;">×</span>
+            <h3 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; padding-bottom: 10px; margin-top: 0;">🔍
+                Inspect Incoming Tool</h3>
             <input type="hidden" id="inwardQaConvId">
-           <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; gap: 10px;">
-                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Indent Ref:</label><br><span id="inwardQaIndentText" style="font-weight:bold;">--</span></div>
-                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Tool Code:</label><br><span id="inwardQaToolText" style="font-weight:bold; color:var(--primary); font-size:16px;">--</span></div>
-                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Rcvd Qty:</label><br><span id="inwardQaQtyText" style="font-weight:bold; font-size:16px;">--</span></div>
-                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Machine:</label><br><span id="inwardQaMachineText" style="font-weight:bold;">--</span></div>
-                        
-                        <div style="margin:0; grid-column: span 2;">
-                            <label style="font-size:12px; color:#666;">Reference Drawing from Tool Room:</label><br>
-                            <div id="inwardQaDrawingLink" style="font-weight:bold; padding-top: 5px;">--</div>
-                        </div>
-                    </div>
+            <div class="form-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; gap: 10px;">
+                <div style="margin:0;"><label style="font-size:12px; color:#666;">Indent Ref:</label><br><span
+                        id="inwardQaIndentText" style="font-weight:bold;">--</span></div>
+                <div style="margin:0;"><label style="font-size:12px; color:#666;">Tool Code:</label><br><span
+                        id="inwardQaToolText" style="font-weight:bold; color:var(--primary); font-size:16px;">--</span>
+                </div>
+                <div style="margin:0;"><label style="font-size:12px; color:#666;">Rcvd Qty:</label><br><span
+                        id="inwardQaQtyText" style="font-weight:bold; font-size:16px;">--</span></div>
+                <div style="margin:0;"><label style="font-size:12px; color:#666;">Machine:</label><br><span
+                        id="inwardQaMachineText" style="font-weight:bold;">--</span></div>
+
+                <div style="margin:0; grid-column: span 2;">
+                    <label style="font-size:12px; color:#666;">Reference Drawing from Tool Room:</label><br>
+                    <div id="inwardQaDrawingLink" style="font-weight:bold; padding-top: 5px;">--</div>
+                </div>
+            </div>
             <div style="text-align: left; margin-bottom: 15px;">
                 <label style="font-weight:bold; font-size:13px; color:#555;">Measured Dimensions (per drawing) *</label>
-                <input type="text" id="inwardQaDimensions" class="prod-input" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;" required placeholder="e.g., Length: 45.2mm, Dia: 12.0mm">
+                <input type="text" id="inwardQaDimensions" class="prod-input"
+                    style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;"
+                    required placeholder="e.g., Length: 45.2mm, Dia: 12.0mm">
             </div>
             <div style="text-align: left; margin-bottom: 15px;">
                 <label style="font-weight:bold; font-size:13px; color:#555;">Inspector Remarks *</label>
-                <input type="text" id="inwardQaRemarks" class="prod-input" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;" required placeholder="e.g., Verified OK">
+                <input type="text" id="inwardQaRemarks" class="prod-input"
+                    style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;"
+                    required placeholder="e.g., Verified OK">
             </div>
             <div style="text-align: left;">
-                <label style="font-weight:bold; font-size:13px; color:#555;">Upload Inspection Proof (Image/PDF) *</label>
-                <div style="border: 2px dashed #007bff; padding: 15px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 5px;">
+                <label style="font-weight:bold; font-size:13px; color:#555;">Upload Inspection Proof (Image/PDF)
+                    *</label>
+                <div
+                    style="border: 2px dashed #007bff; padding: 15px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 5px;">
                     <input type="file" id="inwardQaFile" accept="image/*,.pdf" style="width: 100%;">
                 </div>
             </div>
             <div style="margin-top: 20px; display: flex; gap: 10px;">
-                <button type="button" style="background:#dc3545; color:white; padding:12px; flex:1; border:none; border-radius:4px; cursor:pointer; font-weight:bold;" onclick="processInwardQA('REJECTED')">❌ Reject</button>
-                <button type="button" style="background:#28a745; color:white; padding:12px; flex:1.5; border:none; border-radius:4px; cursor:pointer; font-weight:bold;" onclick="processInwardQA('APPROVED')">✅ Approve to Stock</button>
+                <button type="button"
+                    style="background:#dc3545; color:white; padding:12px; flex:1; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
+                    onclick="processInwardQA('REJECTED')">❌ Reject</button>
+                <button type="button"
+                    style="background:#28a745; color:white; padding:12px; flex:1.5; border:none; border-radius:4px; cursor:pointer; font-weight:bold;"
+                    onclick="processInwardQA('APPROVED')">✅ Approve to Stock</button>
             </div>
         </div>
     </div>
@@ -554,9 +1329,12 @@
             <h2 style="color: #007bff; margin-bottom: 0;">Add Product</h2>
             <div class="form-grid">
                 <input type="text" id="newProdCode" class="full-width" placeholder="* Product Code" required>
-                <input type="text" id="newSector" placeholder="Sector"><input type="text" id="newType" placeholder="Type">
-                <input type="text" id="newGrade" placeholder="Grade"><input type="number" id="newLength" placeholder="Length">
-                <input type="number" id="newAF" placeholder="A/F"><input type="number" id="newWeight" placeholder="Wt/Piece">
+                <input type="text" id="newSector" placeholder="Sector"><input type="text" id="newType"
+                    placeholder="Type">
+                <input type="text" id="newGrade" placeholder="Grade"><input type="number" id="newLength"
+                    placeholder="Length">
+                <input type="number" id="newAF" placeholder="A/F"><input type="number" id="newWeight"
+                    placeholder="Wt/Piece">
                 <input type="number" id="newStock" class="full-width" placeholder="Initial Stock">
             </div>
             <button class="save-btn" onclick="submitNewProduct()">Save</button>
@@ -589,7 +1367,8 @@
                 <input type="number" id="poCostPerKg" placeholder="* Cost per Kg" required>
                 <input type="text" id="poScope" class="full-width" placeholder="Scope / Remarks">
             </div>
-            <button class="save-btn" style="background-color: #ff9800;" id="poSubmitBtn" onclick="submitPO()">Generate PO</button>
+            <button class="save-btn" style="background-color: #ff9800;" id="poSubmitBtn" onclick="submitPO()">Generate
+                PO</button>
         </div>
     </div>
 
@@ -599,21 +1378,31 @@
             <h2 style="color: #e83e8c; margin-bottom: 10px;">📧 Send Offers via Email</h2>
             <div class="form-grid" style="grid-template-columns: 1fr;">
                 <label style="font-size:12px; font-weight:bold; color:#555;">1. Target Audience:</label>
-                <select id="promoFilter" class="full-width prod-input" style="border-color: #e83e8c; font-weight: bold;" onchange="toggleSpecificEmail()">
+                <select id="promoFilter" class="full-width prod-input" style="border-color: #e83e8c; font-weight: bold;"
+                    onchange="toggleSpecificEmail()">
                     <option value="all">Blast to ALL Customers</option>
                     <option value="single">Send to a Specific Customer Only</option>
                 </select>
-                <input type="email" id="promoSpecificEmail" class="full-width prod-input" placeholder="Enter Exact Email Address..." style="display:none; border-color: #007bff;">
+                <input type="email" id="promoSpecificEmail" class="full-width prod-input"
+                    placeholder="Enter Exact Email Address..." style="display:none; border-color: #007bff;">
                 <label style="font-size:12px; font-weight:bold; color:#555; margin-top: 10px;">2. Email Content:</label>
-                <input type="text" id="promoSubject" class="full-width prod-input" placeholder="* Email Subject Line" required>
-                <textarea id="promoBody" class="full-width prod-input" rows="6" placeholder="* Type your message here... (Line breaks will be saved)" style="resize: vertical;" required></textarea>
-                <input type="url" id="promoLink" class="full-width prod-input" placeholder="Include a Web Link (Optional, e.g., https://yourwebsite.com)">
-                <label style="font-size:12px; font-weight:bold; color:#555; margin-top: 10px;">3. Upload Attachment (Optional):</label>
-                <div style="border: 2px dashed #007bff; padding: 15px; text-align: center; background: #f8f9fa; border-radius: 8px;">
-                    <input type="file" id="promoBulkFile" class="full-width prod-input" accept=".jpg,.png,.pdf,.xlsx,.csv" style="border: none; background: transparent;">
+                <input type="text" id="promoSubject" class="full-width prod-input" placeholder="* Email Subject Line"
+                    required>
+                <textarea id="promoBody" class="full-width prod-input" rows="6"
+                    placeholder="* Type your message here... (Line breaks will be saved)" style="resize: vertical;"
+                    required></textarea>
+                <input type="url" id="promoLink" class="full-width prod-input"
+                    placeholder="Include a Web Link (Optional, e.g., https://yourwebsite.com)">
+                <label style="font-size:12px; font-weight:bold; color:#555; margin-top: 10px;">3. Upload Attachment
+                    (Optional):</label>
+                <div
+                    style="border: 2px dashed #007bff; padding: 15px; text-align: center; background: #f8f9fa; border-radius: 8px;">
+                    <input type="file" id="promoBulkFile" class="full-width prod-input"
+                        accept=".jpg,.png,.pdf,.xlsx,.csv" style="border: none; background: transparent;">
                 </div>
             </div>
-            <button class="save-btn" style="background-color: #e83e8c; margin-top: 20px; font-size: 18px;" id="promoSubmitBtn" onclick="executeBulkEmail()">🚀 Send Emails Now</button>
+            <button class="save-btn" style="background-color: #e83e8c; margin-top: 20px; font-size: 18px;"
+                id="promoSubmitBtn" onclick="executeBulkEmail()">🚀 Send Emails Now</button>
         </div>
     </div>
 
@@ -623,27 +1412,37 @@
             <h2 id="promoModalTitle" style="color: #6f42c1; margin-bottom: 15px;">Send Promotion</h2>
             <div id="promoTextSection" style="display: none;">
                 <label style="font-size:12px; font-weight:bold; color:#555;">Type instructions for the AI:</label>
-                <textarea id="promoTextInput" class="full-width prod-input" rows="3" placeholder="E.g., Diwali sale, marigold flowers, shiny bolts on a red background"></textarea>
-                <button class="save-btn" style="background-color: #17a2b8; margin-top: 10px;" id="generateAiBtn" onclick="fetchAIImage()">🎨 Generate Free AI Image</button>
-                <p style="font-size:12px; font-weight:bold; color:#555; margin-top: 15px; margin-bottom: 5px;">AI Image Preview:</p>
-                <div style="border: 2px dashed #ccc; padding: 10px; text-align: center; background: #f8f9fa; border-radius: 8px;">
-                    <img id="aiGeneratedImage" src="" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: none;">
-                    <span id="aiLoadingText" style="display:none; color: #e83e8c; font-weight: bold;">⏳ AI is dreaming... (takes 10-20 sec)</span>
+                <textarea id="promoTextInput" class="full-width prod-input" rows="3"
+                    placeholder="E.g., Diwali sale, marigold flowers, shiny bolts on a red background"></textarea>
+                <button class="save-btn" style="background-color: #17a2b8; margin-top: 10px;" id="generateAiBtn"
+                    onclick="fetchAIImage()">🎨 Generate Free AI Image</button>
+                <p style="font-size:12px; font-weight:bold; color:#555; margin-top: 15px; margin-bottom: 5px;">AI Image
+                    Preview:</p>
+                <div
+                    style="border: 2px dashed #ccc; padding: 10px; text-align: center; background: #f8f9fa; border-radius: 8px;">
+                    <img id="aiGeneratedImage" src=""
+                        style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: none;">
+                    <span id="aiLoadingText" style="display:none; color: #e83e8c; font-weight: bold;">⏳ AI is
+                        dreaming... (takes 10-20 sec)</span>
                 </div>
             </div>
             <div id="promoFileSection" style="display: none;">
-                <label style="font-size:12px; font-weight:bold; color:#555;">Upload Discount File (PDF or Image):</label>
-                <div style="border: 2px dashed #007bff; padding: 30px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 10px;">
-                    <input type="file" id="discountFileInput" accept=".pdf, .jpg, .jpeg, .png" style="font-size: 16px; width: 100%;">
+                <label style="font-size:12px; font-weight:bold; color:#555;">Upload Discount File (PDF or
+                    Image):</label>
+                <div
+                    style="border: 2px dashed #007bff; padding: 30px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 10px;">
+                    <input type="file" id="discountFileInput" accept=".pdf, .jpg, .jpeg, .png"
+                        style="font-size: 16px; width: 100%;">
                 </div>
             </div>
-            <button class="save-btn" style="background-color: #6f42c1; margin-top: 20px;" id="sendPromoBtn" onclick="executeSendPromotion()">🚀 Send to Customer</button>
+            <button class="save-btn" style="background-color: #6f42c1; margin-top: 20px;" id="sendPromoBtn"
+                onclick="executeSendPromotion()">🚀 Send to Customer</button>
         </div>
     </div>
 
 
     <script>
-        const API_URL = 'https://ppl-erp-system.onrender.com/api'; 
+        const API_URL = 'https://ppl-erp-system.onrender.com/api';
         let currentUser = null;
         let currentLogFilter = 'ALL';
         let refreshInterval;
@@ -652,21 +1451,21 @@
         let pendingQCBatches = [];
         let qcHistoryBatches = [];
         let currentQCView = 'PENDING';
-        
+
         // Data Stores
         window.activePurchaseIndents = [];
         window.documentRepo = [];
-        window.conversionHistory = []; 
+        window.conversionHistory = [];
         window.masterInventory = [];
         window.indentHistory = [];
 
         // Global Sync Function
-        window.saveAllData = async function() {
+        window.saveAllData = async function () {
             try {
                 const res = await fetch(`${API_URL}/sync`);
                 const data = await res.json();
                 let state = data.state || {};
-                
+
                 if (window.indentHistory && window.indentHistory.length > 0) state.indentHistory = window.indentHistory;
                 if (window.conversionHistory && window.conversionHistory.length > 0) state.conversionHistory = window.conversionHistory;
                 if (window.masterInventory && window.masterInventory.length > 0) state.masterInventory = window.masterInventory;
@@ -834,9 +1633,9 @@
                 const pendReqTable = document.getElementById('pendingRequestsTableSection');
                 const histSec = document.getElementById('indentPoHistorySection');
                 const formSec = document.getElementById('indentPoFormSection');
-                
+
                 if (pendReqTable) pendReqTable.style.display = 'block';
-                if (histSec) histSec.style.display = 'block'; 
+                if (histSec) histSec.style.display = 'block';
                 if (formSec) formSec.style.display = 'none';
             }
         }
@@ -884,46 +1683,53 @@
             } catch (err) { console.error("Failed to load Toolroom Sync Data:", err); }
         }
 
-        function createPOFromIndent(indentId) {
-            const indent = window.activePurchaseIndents.find(i => i.id == indentId); 
+        function createPOFromIndent(indentData) {
+            let indent;
+            if (typeof indentData === 'object') {
+                indent = indentData; // Data came directly from the Toolroom iframe
+            } else {
+                indent = window.activePurchaseIndents.find(i => i.id == indentData); // Clicked manually
+            }
             if (!indent) return;
 
             const pendReqTable = document.getElementById('pendingRequestsTableSection');
             const histSec = document.getElementById('indentPoHistorySection');
             const formSec = document.getElementById('indentPoFormSection');
 
-            if(pendReqTable) pendReqTable.style.display = 'none';
-            if(histSec) histSec.style.display = 'none'; 
-            if(formSec) formSec.style.display = 'block';
+            if (pendReqTable) pendReqTable.style.display = 'none';
+            if (histSec) histSec.style.display = 'none';
+            if (formSec) formSec.style.display = 'block';
 
-            if(document.getElementById('indPoIndentId')) document.getElementById('indPoIndentId').value = indent.id;
-            if(document.getElementById('indPoRef')) document.getElementById('indPoRef').value = indent.no;
-            if(document.getElementById('indPoPriority')) {
-                document.getElementById('indPoPriority').value = indent.priority;
+            if (document.getElementById('indPoIndentId')) document.getElementById('indPoIndentId').value = indent.id;
+            if (document.getElementById('indPoRef')) document.getElementById('indPoRef').value = indent.no;
+            if (document.getElementById('indPoPriority')) {
+                document.getElementById('indPoPriority').value = indent.priority || 'NORMAL';
                 document.getElementById('indPoPriority').style.color = indent.priority === 'URGENT' ? 'red' : '#333';
             }
-            if(document.getElementById('indPoToolCode')) document.getElementById('indPoToolCode').value = indent.code;
-            if(document.getElementById('indPoMachine')) document.getElementById('indPoMachine').value = `${indent.machine} | ${indent.partSize}`;
-            if(document.getElementById('indPoDesc')) document.getElementById('indPoDesc').value = indent.desc;
+            if (document.getElementById('indPoToolCode')) document.getElementById('indPoToolCode').value = indent.code;
+            if (document.getElementById('indPoMachine')) document.getElementById('indPoMachine').value = `${indent.machine || ''} | ${indent.partSize || ''}`;
+            if (document.getElementById('indPoDesc')) document.getElementById('indPoDesc').value = indent.desc || '';
 
-            // REPLACE the old docsHtml logic with this safe download logic:
+            // FIXED: Force secure download instead of opening in a new tab
             let linkedDocs = window.documentRepo.filter(d => d.part === indent.code);
-            let docsHtml = linkedDocs.length > 0 
-                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download ${d.type}</a>`).join(' ') 
+            let docsHtml = linkedDocs.length > 0
+                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 5px; font-size: 12px; border: 1px solid #b8daff;">⬇️ Download ${d.type}</a>`).join('')
                 : '<span style="color:#999; font-style: italic;">No drawings linked</span>';
-            if(document.getElementById('indPoDocs')) document.getElementById('indPoDocs').innerHTML = docsHtml;
+            if (document.getElementById('indPoDocs')) document.getElementById('indPoDocs').innerHTML = docsHtml;
 
-            if(document.getElementById('indPoQty')) document.getElementById('indPoQty').value = indent.qty;
-            if(document.getElementById('indPoSupplier')) document.getElementById('indPoSupplier').value = '';
-            if(document.getElementById('indPoPrice')) document.getElementById('indPoPrice').value = '';
-            if(document.getElementById('indPoExpectedDate')) document.getElementById('indPoExpectedDate').value = '';
+            if (document.getElementById('indPoQty')) document.getElementById('indPoQty').value = indent.qty;
+            if (document.getElementById('indPoSupplier')) document.getElementById('indPoSupplier').value = '';
+            if (document.getElementById('indPoPrice')) document.getElementById('indPoPrice').value = '';
+            if (document.getElementById('indPoExpectedDate')) document.getElementById('indPoExpectedDate').value = '';
+
+            setTimeout(() => { if (document.getElementById('indPoSupplier')) document.getElementById('indPoSupplier').focus(); }, 100);
         }
 
         function cancelIndentPO() {
-            if(document.getElementById('indentPoFormSection')) document.getElementById('indentPoFormSection').style.display = 'none';
-            if(document.getElementById('pendingRequestsTableSection')) document.getElementById('pendingRequestsTableSection').style.display = 'block';
-            if(document.getElementById('indentPoHistorySection')) document.getElementById('indentPoHistorySection').style.display = 'block'; 
-            if(document.getElementById('indentPoForm')) document.getElementById('indentPoForm').reset();
+            if (document.getElementById('indentPoFormSection')) document.getElementById('indentPoFormSection').style.display = 'none';
+            if (document.getElementById('pendingRequestsTableSection')) document.getElementById('pendingRequestsTableSection').style.display = 'block';
+            if (document.getElementById('indentPoHistorySection')) document.getElementById('indentPoHistorySection').style.display = 'block';
+            if (document.getElementById('indentPoForm')) document.getElementById('indentPoForm').reset();
         }
 
         async function submitIndentPO(e) {
@@ -931,7 +1737,7 @@
             // REMOVED parseInt() - This fixes the bug where Toolroom doesn't get notified!
             const indentId = document.getElementById('indPoIndentId').value;
             let indent = window.activePurchaseIndents.find(i => i.id == indentId) || window.indentHistory.find(i => i.id == indentId);
-            
+
             if (!indent) return showToast("Indent not found!", true);
 
             const supplier = document.getElementById('indPoSupplier').value.trim();
@@ -960,7 +1766,7 @@
                     loadPOs();
                     showToast(`✅ PO successfully raised for ${indent.code}!`);
                 } else { showToast("❌ Failed to create PO in database.", true); }
-            } catch (err) { showToast("❌ Network Error connecting to database.", true); } 
+            } catch (err) { showToast("❌ Network Error connecting to database.", true); }
             finally { submitBtn.disabled = false; submitBtn.innerText = ogText; }
         }
 
@@ -1094,7 +1900,7 @@
             btnPending.classList.remove('active'); btnHistory.classList.remove('active');
             btnPending.style.background = '#eee'; btnHistory.style.background = '#eee';
             btnPending.style.color = '#555'; btnHistory.style.color = '#555';
-            
+
             if (view === 'PENDING') {
                 btnPending.classList.add('active'); btnPending.style.background = '#6f42c1'; btnPending.style.color = 'white';
                 document.getElementById('inwardPendingContainer').style.display = 'block';
@@ -1147,20 +1953,20 @@
         function openInwardQaModal(qaId) {
             const item = window.conversionHistory.find(c => c.id == qaId);
             if (!item) return;
+            
             document.getElementById('inwardQaConvId').value = item.id;
             document.getElementById('inwardQaIndentText').innerText = item.indentNo;
             document.getElementById('inwardQaToolText').innerText = item.src;
             document.getElementById('inwardQaQtyText').innerText = item.qty;
             document.getElementById('inwardQaMachineText').innerText = item.machine || '-';
-            
-            // ADD THIS NEW BLOCK: Fetch the drawing from the repo for QC!
+
+            // ADDED: Fetch the drawing from the repo for QC Inspection!
             let linkedDocs = window.documentRepo.filter(d => d.part === item.src);
             let docsHtml = linkedDocs.length > 0 
-                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download Original Drawing to Verify</a>`).join(' ') 
+                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 5px; font-size: 12px; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download Original Drawing to Verify</a>`).join('') 
                 : '<span style="color:#999; font-style: italic;">No drawing provided</span>';
             if(document.getElementById('inwardQaDrawingLink')) document.getElementById('inwardQaDrawingLink').innerHTML = docsHtml;
 
-            // Clear inputs and open
             document.getElementById('inwardQaDimensions').value = '';
             document.getElementById('inwardQaRemarks').value = '';
             document.getElementById('inwardQaFile').value = '';
@@ -1227,7 +2033,7 @@
                         <td><button onclick="openQCInspection('${b._id}')" style="background:#007bff; color:white; border:none; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">🔍 Full Inspect</button></td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (err) {}
+            } catch (err) { }
         }
 
         function openQCInspection(batchId, isHistoryMode = false) {
@@ -1292,7 +2098,7 @@
                     showToast(`✅ Batch ${status} successfully!`); document.getElementById('qcModal').style.display = 'none'; document.getElementById('qcRemarksInput').value = '';
                     loadPendingQC(); if (typeof loadInventory === 'function') loadInventory(); if (typeof loadProductionBatches === 'function') loadProductionBatches();
                 } else alert("Error: " + data.error);
-            } catch (err) {}
+            } catch (err) { }
         }
 
         async function toggleQCView(view) {
@@ -1317,7 +2123,7 @@
                         <td>👤 ${b.qcBy || '-'}</td><td><button onclick="openQCInspection('${b._id}', true)" style="background:#6c757d; color:white; border:none; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">👁️ View Data</button></td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (err) {}
+            } catch (err) { }
         }
 
         function applyQCHistoryFilters() {
@@ -1364,7 +2170,7 @@
                 length: document.getElementById('prodLength').value, af: document.getElementById('prodAF').value, productGrade: document.getElementById('prodGrade').value, rawMaterialCode: document.getElementById('prodRMCode').value,
                 heatNo: document.getElementById('prodHeatNo').value, rawMaterialConsumedKg: document.getElementById('prodRMKg').value, pieceWeightKg: document.getElementById('prodPieceWt').value, scheduleHours: document.getElementById('prodSchHrs').value,
                 jobChangeHours: document.getElementById('prodJcHrs').value, prodPlannedHours: document.getElementById('prodPlannedHrs').value, speedRpm: document.getElementById('prodSpeed').value, shiftTargetQty: document.getElementById('prodTarget').value,
-                acceptedQty: document.getElementById('prodAccepted').value, rejectedQty: document.getElementById('prodRejected').value, rejectionKg: document.getElementById('prodRejKg').value, rejectionReason: document.getElementById('prodRejReason').value, remarks: document.getElementById('prodRemarks').value, 
+                acceptedQty: document.getElementById('prodAccepted').value, rejectedQty: document.getElementById('prodRejected').value, rejectionKg: document.getElementById('prodRejKg').value, rejectionReason: document.getElementById('prodRejReason').value, remarks: document.getElementById('prodRemarks').value,
                 lossMajorJC: document.getElementById('l_MajorJC').value, lossMinorJC: document.getElementById('l_MinorJC').value, lossSetting: document.getElementById('l_Setting').value, lossMcClean: document.getElementById('l_McClean').value, lossToolRework: document.getElementById('l_ToolRework').value, lossNoTool: document.getElementById('l_NoTool').value, lossNoLoad: document.getElementById('l_NoLoad').value, lossNoOperator: document.getElementById('l_NoOperator').value, lossMMnt: document.getElementById('l_MMnt').value, lossEMnt: document.getElementById('l_EMnt').value, lossNoPower: document.getElementById('l_NoPower').value, lossNoAirOil: document.getElementById('l_NoAirOil').value, lossNoRm: document.getElementById('l_NoRm').value, lossRmLoading: document.getElementById('l_RmLoading').value, lossQaApproval: document.getElementById('l_QaApproval').value, lossCoilChange: document.getElementById('l_CoilChange').value, lossNoPlan: document.getElementById('l_NoPlan').value, lossNpdTeam: document.getElementById('l_NpdTeam').value, lossUnknown: document.getElementById('l_Unknown').value,
                 loggedBy: currentUser.username
             };
@@ -1393,8 +2199,8 @@
 
                 batches.forEach(b => {
                     const isFinished = b.nextProcessRoute === 'READY_STOCK' && b.qcStatus === 'APPROVED';
-                    if (currentLogFilter === 'COMPLETED') { if (!isFinished) return; } 
-                    else if (currentLogFilter === 'ALL') { if (isFinished) return; } 
+                    if (currentLogFilter === 'COMPLETED') { if (!isFinished) return; }
+                    else if (currentLogFilter === 'ALL') { if (isFinished) return; }
                     else { if (b.stage !== currentLogFilter || isFinished) return; }
                     count++;
 
@@ -1440,7 +2246,7 @@
 
                 if (count === 0) tbody.innerHTML = '<tr><td colspan="53" style="text-align: center; padding: 20px;">No logs found for this filter.</td></tr>';
                 applyProductionFilters(); calculateLiveOEE(); renderVisualCharts();
-            } catch (error) {}
+            } catch (error) { }
         }
 
         function autoFillNextStage(batchId) {
@@ -1482,7 +2288,7 @@
             try {
                 const response = await fetch(`${API_URL}/ppc/verify/${batchId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: status, nextRoute: nextRoute, remarks: "Approved", username: currentUser.username }) });
                 if ((await response.json()).success) { showToast(`✅ Batch routed to ${nextRoute}`); refreshDashboard(); }
-            } catch (err) {}
+            } catch (err) { }
         }
 
         function filterLogs(stage) { currentLogFilter = stage; document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); document.getElementById('tab-' + stage).classList.add('active'); loadProductionBatches(); }
@@ -1515,7 +2321,7 @@
                     }
                 }
                 if (document.getElementById("totalAccQty")) { document.getElementById("totalAccQty").textContent = totalAcc; document.getElementById("totalRejQty").textContent = totalRej; document.getElementById("totalRejKg").textContent = totalRejKg.toFixed(2); }
-            } catch (error) {}
+            } catch (error) { }
         }
 
         function calculateLiveOEE() {
@@ -1535,7 +2341,7 @@
                 let oee = avail * perf * qual;
 
                 document.getElementById('oeeTotal').textContent = (oee * 100).toFixed(1) + "%"; document.getElementById('oeeAvail').textContent = (avail * 100).toFixed(1) + "%"; document.getElementById('oeeDowntimeText').textContent = dtHrs.toFixed(1) + " hrs down"; document.getElementById('oeePerf').textContent = (perf * 100).toFixed(1) + "%"; document.getElementById('oeeSpeedText').textContent = prod + " / " + target; document.getElementById('oeeQual').textContent = (qual * 100).toFixed(1) + "%"; document.getElementById('oeeRejText').textContent = rej + " rejected";
-            } catch (error) {}
+            } catch (error) { }
         }
 
         let machineChartInstance = null; let qualityChartInstance = null;
@@ -1552,7 +2358,7 @@
                 const ctxQ = document.getElementById('qualityChart').getContext('2d');
                 if (qualityChartInstance) qualityChartInstance.destroy();
                 qualityChartInstance = new Chart(ctxQ, { type: 'doughnut', data: { labels: ['Accepted', 'Rejected'], datasets: [{ data: (totalAcc === 0 && totalRej === 0) ? [1, 0] : [totalAcc, totalRej], backgroundColor: ['#28a745', '#dc3545'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } } });
-            } catch (error) {}
+            } catch (error) { }
         }
 
         function generateDailyPDF() {
@@ -1575,7 +2381,7 @@
                 activeWorkOrders = await res.json();
                 const woDrop = document.getElementById('prodWO'); woDrop.innerHTML = '<option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option>';
                 activeWorkOrders.forEach(wo => { const prog = wo.targetQty ? Math.round((wo.producedQty / wo.targetQty) * 100) : 0; woDrop.innerHTML += `<option value="${wo.woNumber}">${wo.woNumber} (${wo.partNo}) - ${prog}% Done</option>`; });
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function autoFillFromWO() {
@@ -1607,7 +2413,7 @@
                     tbody.appendChild(tr);
                 });
                 filterInventory();
-            } catch (error) {}
+            } catch (error) { }
         }
 
         async function updateStock(productId) {
@@ -1652,7 +2458,7 @@
         }
 
         function openReceiveModal() { document.getElementById('receiveStockModal').style.display = 'flex'; }
-        function closeReceiveModal() { document.getElementById('receiveStockModal').style.display = 'none'; ['rawCodeInput', 'rawNameInput', 'rawGradeInput', 'rawSupplierInput', 'rawScopeInput', 'rawKgInput'].forEach(id => document.getElementById(id).value = ''); }
+        function closeReceiveModal() { document.getElementById('receiveStockModal').style.display = 'none';['rawCodeInput', 'rawNameInput', 'rawGradeInput', 'rawSupplierInput', 'rawScopeInput', 'rawKgInput'].forEach(id => document.getElementById(id).value = ''); }
 
         async function submitRawMaterial() {
             const code = document.getElementById('rawCodeInput').value.trim().toUpperCase(); const kg = document.getElementById('rawKgInput').value;
@@ -1716,7 +2522,7 @@
             const name = document.getElementById('crmName').value; if (!name) return showToast("Customer Name is required!", true);
             try {
                 const res = await fetch(`${API_URL}/customers`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, sector: document.getElementById('crmSector').value, transportMode: document.getElementById('crmTransport').value, phone: document.getElementById('crmPhone').value, email: document.getElementById('crmEmail').value, address: document.getElementById('crmAddress').value, area: document.getElementById('crmArea').value, state: document.getElementById('crmState').value, zone: document.getElementById('crmZone').value, pinCode: document.getElementById('crmPinCode').value }) });
-                if (res.ok) { showToast("👥 Customer Added!"); ['crmName', 'crmSector', 'crmTransport', 'crmPhone', 'crmEmail', 'crmAddress', 'crmArea', 'crmState', 'crmZone', 'crmPinCode'].forEach(id => document.getElementById(id).value = ''); loadCustomers(); }
+                if (res.ok) { showToast("👥 Customer Added!");['crmName', 'crmSector', 'crmTransport', 'crmPhone', 'crmEmail', 'crmAddress', 'crmArea', 'crmState', 'crmZone', 'crmPinCode'].forEach(id => document.getElementById(id).value = ''); loadCustomers(); }
             } catch (err) { }
         }
 
@@ -1738,7 +2544,7 @@
 
                     tbody.innerHTML += `<tr><td><strong>${o.orderNo}</strong><br><span style="font-size:10px; color:#888;">${new Date(o.orderDate).toLocaleDateString()}</span></td><td><strong>${o.customerName || 'Walk-in'}</strong></td><td style="min-width: 200px;">${scrollableItemsHtml}</td><td><strong>₹${o.grandTotal.toLocaleString()}</strong></td><td><span style="background:${statusColor}; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:11px;">${o.status}</span></td><td style="min-width: 150px;">${actionButtons}</td><td style="min-width: 100px;"><button onclick="sendManualNotification('${o._id}', 'whatsapp')" style="background:#25D366; color:white; border:none; padding:6px; border-radius:4px; cursor:pointer; width:100%; margin-bottom:5px; font-weight:bold;">💬 WhatsApp</button><button onclick="sendManualNotification('${o._id}', 'email')" style="background:#e83e8c; color:white; border:none; padding:6px; border-radius:4px; cursor:pointer; width:100%; font-weight:bold;">📧 Email</button></td></tr>`;
                 });
-            } catch (err) {}
+            } catch (err) { }
         }
 
         function downloadInvoice(id) { window.open(`${API_URL}/sales-orders/${id}/invoice`, '_blank'); }
@@ -1864,7 +2670,16 @@
             }
         }
 
-        window.addEventListener('message', function (event) { if (event.data.type === 'CREATE_PO_FROM_INDENT') { switchMainTab('poCard', 'nav-po'); openPOModal(); document.getElementById('poMaterialCode').value = event.data.data.code || ''; document.getElementById('poExpectedKg').value = event.data.data.qty || ''; document.getElementById('poScope').value = `Auto-generated from Toolroom Indent #${event.data.data.no}. Machine: ${event.data.data.machine}`; showToast("📋 PO Form pre-filled from Toolroom Indent!"); } });
+
+        window.addEventListener('message', function (event) {
+            if (event.data.type === 'CREATE_PO_FROM_INDENT') {
+                switchMainTab('poCard', 'nav-po');
+                switchPOTab('indents'); // Ensure we are on the Tooling tab
+                createPOFromIndent(event.data.data); // Pass the whole object to the right form!
+                showToast("📋 PO Form pre-filled from Toolroom Indent!");
+            }
+        });
+
     </script>
 </body>
 
