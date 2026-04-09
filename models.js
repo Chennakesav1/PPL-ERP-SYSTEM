@@ -21,7 +21,9 @@ const rawMaterialSchema = new mongoose.Schema({
 const purchaseOrderSchema = new mongoose.Schema({
     poNumber: String, supplierName: String, materialCode: String, grade: String, scope: String, expectedKg: Number,
     costPerKg: Number, totalCost: Number, status: { type: String, enum: ['PENDING', 'RECEIVED'], default: 'PENDING' },
-    orderedBy: String, orderDate: { type: Date, default: Date.now }, receivedDate: Date
+    orderedBy: String, orderDate: { type: Date, default: Date.now }, receivedDate: Date,
+    type: String,                 // <-- ADD THIS LINE
+    expectedDeliveryDate: Date
 });
 
 const productionBatchSchema = new mongoose.Schema({

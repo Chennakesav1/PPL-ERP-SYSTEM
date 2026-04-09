@@ -807,16 +807,29 @@ app.get('/api/purchase-orders', async (req, res) => {
 
 app.post('/api/purchase-orders', async (req, res) => {
     try {
-        const { supplierName, materialCode, grade, scope, expectedKg, costPerKg, username } = req.body;
+        // FIXED: Extracting all variables from the frontend, including type and dates!
+        const { poNumber, supplierName, materialCode, grade, scope, expectedKg, costPerKg, username, type, expectedDeliveryDate } = req.body;
+        
         await new PurchaseOrder({
-            poNumber: `PO-${Date.now()}`, supplierName, materialCode: materialCode.toUpperCase(),
-            grade: grade || "Standard", scope: scope || "General Inventory",
-            expectedKg: Number(expectedKg), costPerKg: Number(costPerKg),
-            totalCost: Number(expectedKg) * Number(costPerKg), orderedBy: username || "Purchase Dept",
-            status: 'PENDING', orderDate: new Date()
+            poNumber: poNumber || `PO-${Date.now()}`, // Uses the Toolroom ID if provided
+            supplierName, 
+            materialCode: materialCode.toUpperCase(),
+            grade: grade || "Standard", 
+            scope: scope || "General Inventory",
+            expectedKg: Number(expectedKg), 
+            costPerKg: Number(costPerKg),
+            totalCost: Number(expectedKg) * Number(costPerKg), 
+            orderedBy: username || "Purchase Dept",
+            status: 'PENDING', 
+            orderDate: new Date(),
+            type: type || 'RAW_MATERIAL',             // Saves the TOOLING tag!
+            expectedDeliveryDate: expectedDeliveryDate || null
         }).save();
+        
         res.json({ success: true, message: "PO Created Successfully!" });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
 });
 
 app.put('/api/purchase-orders/:id/receive', async (req, res) => {
