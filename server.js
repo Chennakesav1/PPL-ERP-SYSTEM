@@ -853,6 +853,23 @@ app.put('/api/purchase-orders/:id/receive', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+
+app.put('/api/purchase-orders/:id/status', async (req, res) => {
+    try {
+        const { status, username } = req.body;
+        const po = await PurchaseOrder.findById(req.params.id);
+        
+        if (!po) return res.status(404).json({ error: "PO not found" });
+        
+        po.status = status;
+        if (status === 'RECEIVED') po.receivedDate = new Date();
+        
+        await po.save();
+        res.json({ success: true, message: "PO Status Updated" });
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+});
 // ==========================================
 // WORK ORDERS (WO) MANAGEMENT
 // ==========================================

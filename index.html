@@ -1449,9 +1449,8 @@
         </div>
     </div>
 
-
-    <script>
-        const API_URL = 'https://ppl-erp-system.onrender.com/api';
+<script>
+        const API_URL = 'http://localhost:3000/api'; // Use localhost while testing!
         let currentUser = null;
         let currentLogFilter = 'ALL';
         let refreshInterval;
@@ -1460,21 +1459,21 @@
         let pendingQCBatches = [];
         let qcHistoryBatches = [];
         let currentQCView = 'PENDING';
-
+        
         // Data Stores
         window.activePurchaseIndents = [];
         window.documentRepo = [];
-        window.conversionHistory = [];
+        window.conversionHistory = []; 
         window.masterInventory = [];
         window.indentHistory = [];
 
         // Global Sync Function
-        window.saveAllData = async function () {
+        window.saveAllData = async function() {
             try {
                 const res = await fetch(`${API_URL}/sync`);
                 const data = await res.json();
                 let state = data.state || {};
-
+                
                 if (window.indentHistory && window.indentHistory.length > 0) state.indentHistory = window.indentHistory;
                 if (window.conversionHistory && window.conversionHistory.length > 0) state.conversionHistory = window.conversionHistory;
                 if (window.masterInventory && window.masterInventory.length > 0) state.masterInventory = window.masterInventory;
@@ -1608,7 +1607,7 @@
             if (currentUser && (currentUser.role === 'QC' || currentUser.role === 'QA' || currentUser.role === 'ADMIN')) {
                 if (currentQCView === 'PENDING') loadPendingQC();
                 else loadQCHistory();
-                loadPendingIndentsForPurchase(); // Syncs Toolroom Data
+                loadPendingIndentsForPurchase(); 
             }
 
             if (currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'PURCHASE')) {
@@ -1642,9 +1641,9 @@
                 const pendReqTable = document.getElementById('pendingRequestsTableSection');
                 const histSec = document.getElementById('indentPoHistorySection');
                 const formSec = document.getElementById('indentPoFormSection');
-
+                
                 if (pendReqTable) pendReqTable.style.display = 'block';
-                if (histSec) histSec.style.display = 'block';
+                if (histSec) histSec.style.display = 'block'; 
                 if (formSec) formSec.style.display = 'none';
             }
         }
@@ -1671,27 +1670,27 @@
                         } else {
                             window.activePurchaseIndents.forEach(ind => {
                                 let priorityHtml = ind.priority === 'URGENT' ? '<span style="color:red; font-weight:bold;">🚨 URGENT</span>' : '<span style="color:#666;">Normal</span>';
-
-                                // Fetch and format the Linked Docs for this row
+                                
                                 let linkedDocs = window.documentRepo.filter(d => d.part === ind.code);
-                                let docsHtml = linkedDocs.length > 0
-                                    ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>')
+                                let docsHtml = linkedDocs.length > 0 
+                                    ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>') 
                                     : '<span style="color:#999; font-style: italic; font-size: 11px;">None</span>';
 
                                 tbody.innerHTML += `
-                            <tr>
-                                <td><strong>${ind.no}</strong></td>
-                                <td><span style="font-size: 11px; color: #666;">${ind.date}</span></td>
-                                <td><strong style="color: var(--primary);">${ind.code}</strong></td>
-                                <td><span style="font-size: 12px;">${ind.desc || '-'}</span></td>
-                                <td>${ind.machine || '-'}</td>
-                                <td>${ind.partSize || '-'}</td>
-                                <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
-                                <td>${priorityHtml}</td>
-                                <td>${docsHtml}</td> <td>
-                                    <button onclick="createPOFromIndent('${ind.id}')" style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📝 Convert to PO</button>
-                                </td>
-                            </tr>`;
+                                <tr>
+                                    <td><strong>${ind.no}</strong></td>
+                                    <td><span style="font-size: 11px; color: #666;">${ind.date}</span></td>
+                                    <td><strong style="color: var(--primary);">${ind.code}</strong></td>
+                                    <td><span style="font-size: 12px;">${ind.desc || '-'}</span></td>
+                                    <td>${ind.machine || '-'}</td>
+                                    <td>${ind.partSize || '-'}</td>
+                                    <td><strong style="font-size: 16px;">${ind.qty}</strong></td>
+                                    <td>${priorityHtml}</td>
+                                    <td>${docsHtml}</td>
+                                    <td>
+                                        <button onclick="createPOFromIndent('${ind.id}')" style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📝 Convert to PO</button>
+                                    </td>
+                                </tr>`;
                             });
                         }
                     }
@@ -1705,9 +1704,9 @@
         function createPOFromIndent(indentData) {
             let indent;
             if (typeof indentData === 'object') {
-                indent = indentData; // Data came directly from the Toolroom iframe
+                indent = indentData; 
             } else {
-                indent = window.activePurchaseIndents.find(i => i.id == indentData); // Clicked manually
+                indent = window.activePurchaseIndents.find(i => i.id == indentData);
             }
             if (!indent) return;
 
@@ -1729,7 +1728,6 @@
             if (document.getElementById('indPoMachine')) document.getElementById('indPoMachine').value = `${indent.machine || ''} | ${indent.partSize || ''}`;
             if (document.getElementById('indPoDesc')) document.getElementById('indPoDesc').value = indent.desc || '';
 
-            // FIXED: Force secure download instead of opening in a new tab
             let linkedDocs = window.documentRepo.filter(d => d.part === indent.code);
             let docsHtml = linkedDocs.length > 0
                 ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 5px; font-size: 12px; border: 1px solid #b8daff;">⬇️ Download ${d.type}</a>`).join('')
@@ -1757,7 +1755,6 @@
             let indent = window.activePurchaseIndents.find(i => i.id == indentId) || window.indentHistory.find(i => i.id == indentId);
             if (!indent) return showToast("Indent not found!", true);
 
-            // Pause refresh
             if (refreshInterval) clearInterval(refreshInterval);
 
             const supplier = document.getElementById('indPoSupplier').value.trim();
@@ -1779,8 +1776,7 @@
                 if (res.ok) {
                     indent.status = 'PO RAISED';
                     indent.expectedDate = expectedDate;
-
-                    // MUST AWAIT THE SAVE
+                    
                     await window.saveAllData();
 
                     cancelIndentPO();
@@ -1788,10 +1784,10 @@
                     loadPOs();
                     showToast(`✅ PO successfully raised for ${indent.code}!`);
                 } else { showToast("❌ Failed to create PO in database.", true); }
-            } catch (err) { showToast("❌ Network Error connecting to database.", true); }
-            finally {
-                submitBtn.disabled = false; submitBtn.innerText = ogText;
-                refreshInterval = setInterval(refreshDashboard, 5000); // Restart refresh
+            } catch (err) { showToast("❌ Network Error connecting to database.", true); } 
+            finally { 
+                submitBtn.disabled = false; submitBtn.innerText = ogText; 
+                refreshInterval = setInterval(refreshDashboard, 5000); 
             }
         }
 
@@ -1807,7 +1803,7 @@
 
                 if (!pos || pos.length === 0) {
                     if (rawTbody) rawTbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px; font-weight: bold; color: #ff9800;">No Raw Material POs found.</td></tr>';
-                    if (indentTbody) indentTbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px; font-weight: bold; color: #17a2b8;">No Tool Room POs found.</td></tr>';
+                    if (indentTbody) indentTbody.innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 20px; font-weight: bold; color: #17a2b8;">No Tool Room POs found.</td></tr>';
                     return;
                 }
 
@@ -1821,17 +1817,16 @@
 
                     if (po.type === 'TOOLING') {
                         let indentNo = po.poNumber.replace('PO-IND-', '');
-
+                        
                         let origIndent = (window.indentHistory || []).find(i => i.no === indentNo);
                         let iDate = origIndent ? origIndent.date : new Date(po.orderDate).toLocaleDateString();
                         let iDesc = origIndent ? origIndent.desc : '-';
                         let iMac = origIndent ? origIndent.machine : '-';
                         let iSize = origIndent ? origIndent.partSize : '-';
 
-                        // Fetch and format the Linked Docs for this row
                         let linkedDocs = window.documentRepo.filter(d => d.part === po.materialCode);
-                        let docsHtml = linkedDocs.length > 0
-                            ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>')
+                        let docsHtml = linkedDocs.length > 0 
+                            ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>') 
                             : '<span style="color:#999; font-style: italic; font-size: 11px;">None</span>';
 
                         let receiveBtn = isPending ? `<button onclick="receiveIndentPO('${indentNo}', ${po.expectedKg})" style="background:#17a2b8; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">📥 Receive Tooling</button>` : `<span class="badge" style="background:#6f42c1; color:white; padding:4px; border-radius:4px; font-size:10px;">Sent to QA</span>`;
@@ -1846,7 +1841,8 @@
                             <td>${iSize}</td>
                             <td><strong style="color: #ff9800;">${expectedDate}</strong></td>
                             <td><strong style="font-size:15px;">${po.expectedKg || 0}</strong></td>
-                            <td>${docsHtml}</td> <td><span style="padding: 4px 8px; border-radius: 4px; font-weight: bold; ${isPending ? 'background:#ffc107; color:#000;' : 'background:#28a745; color:#fff;'}">${status}</span></td>
+                            <td>${docsHtml}</td>
+                            <td><span style="padding: 4px 8px; border-radius: 4px; font-weight: bold; ${isPending ? 'background:#ffc107; color:#000;' : 'background:#28a745; color:#fff;'}">${status}</span></td>
                             <td>${receiveBtn}</td> </tr>`;
                     } else {
                         const actionBtn = isPending ? `<button onclick="receivePO('${po._id}')" style="background:#28a745; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">📥 Mark Received</button>` : `<span style="color:#666; font-size:12px;">Received on<br>${receivedText}</span>`;
@@ -1864,14 +1860,13 @@
                 });
 
                 if (rawTbody) rawTbody.innerHTML = rawHTML || '<tr><td colspan="9" style="text-align: center; padding: 20px; color: #666;">No Raw Material POs found.</td></tr>';
-                if (indentTbody) indentTbody.innerHTML = indentHTML || '<tr><td colspan="11" style="text-align: center; padding: 20px; color: #666;">No Tool Room POs found.</td></tr>';
+                if (indentTbody) indentTbody.innerHTML = indentHTML || '<tr><td colspan="12" style="text-align: center; padding: 20px; color: #666;">No Tool Room POs found.</td></tr>';
             } catch (error) { console.error("ERROR LOADING POs:", error); }
         }
 
         async function receiveIndentPO(indentNo, expectedQty) {
             if (!confirm(`Are you sure you received ${expectedQty} units for Indent ${indentNo}?\nThis will send the items to QA for inspection.`)) return;
 
-            // Pause background refresh to prevent data loss
             if (refreshInterval) clearInterval(refreshInterval);
 
             let indent = window.activePurchaseIndents.find(i => i.no == indentNo) || window.indentHistory.find(i => i.no == indentNo);
@@ -1890,14 +1885,12 @@
                 if (po) await fetch(`${API_URL}/purchase-orders/${po._id}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'RECEIVED', username: 'Buyer' }) });
             } catch (e) { }
 
-            // MUST AWAIT THE SAVE
             await window.saveAllData();
-
+            
             loadPOs();
-            loadInwardQAQueue(); // Force QC to update instantly!
+            loadInwardQAQueue(); 
             showToast(`📦 Sent to QC! Tool is waiting for inspection.`);
 
-            // Restart background refresh
             refreshInterval = setInterval(refreshDashboard, 5000);
         }
 
@@ -1949,7 +1942,7 @@
             btnPending.classList.remove('active'); btnHistory.classList.remove('active');
             btnPending.style.background = '#eee'; btnHistory.style.background = '#eee';
             btnPending.style.color = '#555'; btnHistory.style.color = '#555';
-
+            
             if (view === 'PENDING') {
                 btnPending.classList.add('active'); btnPending.style.background = '#6f42c1'; btnPending.style.color = 'white';
                 document.getElementById('inwardPendingContainer').style.display = 'block';
@@ -2002,19 +1995,18 @@
         function openInwardQaModal(qaId) {
             const item = window.conversionHistory.find(c => c.id == qaId);
             if (!item) return;
-
+            
             document.getElementById('inwardQaConvId').value = item.id;
             document.getElementById('inwardQaIndentText').innerText = item.indentNo;
             document.getElementById('inwardQaToolText').innerText = item.src;
             document.getElementById('inwardQaQtyText').innerText = item.qty;
             document.getElementById('inwardQaMachineText').innerText = item.machine || '-';
 
-            // ADDED: Fetch the drawing from the repo for QC Inspection!
             let linkedDocs = window.documentRepo.filter(d => d.part === item.src);
-            let docsHtml = linkedDocs.length > 0
-                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 5px; font-size: 12px; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download Original Drawing to Verify</a>`).join('')
+            let docsHtml = linkedDocs.length > 0 
+                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 5px; font-size: 12px; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download Original Drawing to Verify</a>`).join('') 
                 : '<span style="color:#999; font-style: italic;">No drawing provided</span>';
-            if (document.getElementById('inwardQaDrawingLink')) document.getElementById('inwardQaDrawingLink').innerHTML = docsHtml;
+            if(document.getElementById('inwardQaDrawingLink')) document.getElementById('inwardQaDrawingLink').innerHTML = docsHtml;
 
             document.getElementById('inwardQaDimensions').value = '';
             document.getElementById('inwardQaRemarks').value = '';
@@ -2030,11 +2022,10 @@
             const remarks = document.getElementById('inwardQaRemarks').value.trim();
             const fileInput = document.getElementById('inwardQaFile');
 
-            if (!dimensions) return showToast("⚠️ Measured Dimensions are required!", true);
-            if (!remarks) return showToast("⚠️ Inspector Remarks are required!", true);
-            if (status === 'APPROVED' && fileInput.files.length === 0) return showToast("⚠️ Inspection Proof is mandatory for Approval!", true);
+            if (!dimensions) { alert("⚠️ Measured Dimensions are required!"); return; }
+            if (!remarks) { alert("⚠️ Inspector Remarks are required!"); return; }
+            if (status === 'APPROVED' && fileInput.files.length === 0) { alert("⚠️ Inspection Proof (PDF/Image) is mandatory for Approval!"); return; }
 
-            // Pause refresh
             if (refreshInterval) clearInterval(refreshInterval);
 
             const item = window.conversionHistory.find(c => c.id == qaId);
@@ -2065,14 +2056,14 @@
                 }
             }
 
-            // MUST AWAIT THE SAVE
             await window.saveAllData();
-
+            
             closeInwardQaModal();
             loadInwardQAQueue();
-            showToast(status === 'APPROVED' ? `✅ Approved! Added ${item.qty} to Master Stock.` : `❌ Tool Rejected.`);
+            
+            // Replaced silent toast with un-ignorable alert
+            alert(status === 'APPROVED' ? `✅ Approved! Added ${item.qty} to Master Stock.` : `❌ Tool Rejected.`);
 
-            // Restart refresh
             refreshInterval = setInterval(refreshDashboard, 5000);
         }
 
@@ -2093,7 +2084,7 @@
                         <td><button onclick="openQCInspection('${b._id}')" style="background:#007bff; color:white; border:none; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">🔍 Full Inspect</button></td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (err) { }
+            } catch (err) {}
         }
 
         function openQCInspection(batchId, isHistoryMode = false) {
@@ -2158,7 +2149,7 @@
                     showToast(`✅ Batch ${status} successfully!`); document.getElementById('qcModal').style.display = 'none'; document.getElementById('qcRemarksInput').value = '';
                     loadPendingQC(); if (typeof loadInventory === 'function') loadInventory(); if (typeof loadProductionBatches === 'function') loadProductionBatches();
                 } else alert("Error: " + data.error);
-            } catch (err) { }
+            } catch (err) {}
         }
 
         async function toggleQCView(view) {
@@ -2183,7 +2174,7 @@
                         <td>👤 ${b.qcBy || '-'}</td><td><button onclick="openQCInspection('${b._id}', true)" style="background:#6c757d; color:white; border:none; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">👁️ View Data</button></td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (err) { }
+            } catch (err) {}
         }
 
         function applyQCHistoryFilters() {
@@ -2230,7 +2221,7 @@
                 length: document.getElementById('prodLength').value, af: document.getElementById('prodAF').value, productGrade: document.getElementById('prodGrade').value, rawMaterialCode: document.getElementById('prodRMCode').value,
                 heatNo: document.getElementById('prodHeatNo').value, rawMaterialConsumedKg: document.getElementById('prodRMKg').value, pieceWeightKg: document.getElementById('prodPieceWt').value, scheduleHours: document.getElementById('prodSchHrs').value,
                 jobChangeHours: document.getElementById('prodJcHrs').value, prodPlannedHours: document.getElementById('prodPlannedHrs').value, speedRpm: document.getElementById('prodSpeed').value, shiftTargetQty: document.getElementById('prodTarget').value,
-                acceptedQty: document.getElementById('prodAccepted').value, rejectedQty: document.getElementById('prodRejected').value, rejectionKg: document.getElementById('prodRejKg').value, rejectionReason: document.getElementById('prodRejReason').value, remarks: document.getElementById('prodRemarks').value,
+                acceptedQty: document.getElementById('prodAccepted').value, rejectedQty: document.getElementById('prodRejected').value, rejectionKg: document.getElementById('prodRejKg').value, rejectionReason: document.getElementById('prodRejReason').value, remarks: document.getElementById('prodRemarks').value, 
                 lossMajorJC: document.getElementById('l_MajorJC').value, lossMinorJC: document.getElementById('l_MinorJC').value, lossSetting: document.getElementById('l_Setting').value, lossMcClean: document.getElementById('l_McClean').value, lossToolRework: document.getElementById('l_ToolRework').value, lossNoTool: document.getElementById('l_NoTool').value, lossNoLoad: document.getElementById('l_NoLoad').value, lossNoOperator: document.getElementById('l_NoOperator').value, lossMMnt: document.getElementById('l_MMnt').value, lossEMnt: document.getElementById('l_EMnt').value, lossNoPower: document.getElementById('l_NoPower').value, lossNoAirOil: document.getElementById('l_NoAirOil').value, lossNoRm: document.getElementById('l_NoRm').value, lossRmLoading: document.getElementById('l_RmLoading').value, lossQaApproval: document.getElementById('l_QaApproval').value, lossCoilChange: document.getElementById('l_CoilChange').value, lossNoPlan: document.getElementById('l_NoPlan').value, lossNpdTeam: document.getElementById('l_NpdTeam').value, lossUnknown: document.getElementById('l_Unknown').value,
                 loggedBy: currentUser.username
             };
@@ -2259,8 +2250,8 @@
 
                 batches.forEach(b => {
                     const isFinished = b.nextProcessRoute === 'READY_STOCK' && b.qcStatus === 'APPROVED';
-                    if (currentLogFilter === 'COMPLETED') { if (!isFinished) return; }
-                    else if (currentLogFilter === 'ALL') { if (isFinished) return; }
+                    if (currentLogFilter === 'COMPLETED') { if (!isFinished) return; } 
+                    else if (currentLogFilter === 'ALL') { if (isFinished) return; } 
                     else { if (b.stage !== currentLogFilter || isFinished) return; }
                     count++;
 
@@ -2306,7 +2297,7 @@
 
                 if (count === 0) tbody.innerHTML = '<tr><td colspan="53" style="text-align: center; padding: 20px;">No logs found for this filter.</td></tr>';
                 applyProductionFilters(); calculateLiveOEE(); renderVisualCharts();
-            } catch (error) { }
+            } catch (error) {}
         }
 
         function autoFillNextStage(batchId) {
@@ -2348,7 +2339,7 @@
             try {
                 const response = await fetch(`${API_URL}/ppc/verify/${batchId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: status, nextRoute: nextRoute, remarks: "Approved", username: currentUser.username }) });
                 if ((await response.json()).success) { showToast(`✅ Batch routed to ${nextRoute}`); refreshDashboard(); }
-            } catch (err) { }
+            } catch (err) {}
         }
 
         function filterLogs(stage) { currentLogFilter = stage; document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); document.getElementById('tab-' + stage).classList.add('active'); loadProductionBatches(); }
@@ -2381,7 +2372,7 @@
                     }
                 }
                 if (document.getElementById("totalAccQty")) { document.getElementById("totalAccQty").textContent = totalAcc; document.getElementById("totalRejQty").textContent = totalRej; document.getElementById("totalRejKg").textContent = totalRejKg.toFixed(2); }
-            } catch (error) { }
+            } catch (error) {}
         }
 
         function calculateLiveOEE() {
@@ -2401,7 +2392,7 @@
                 let oee = avail * perf * qual;
 
                 document.getElementById('oeeTotal').textContent = (oee * 100).toFixed(1) + "%"; document.getElementById('oeeAvail').textContent = (avail * 100).toFixed(1) + "%"; document.getElementById('oeeDowntimeText').textContent = dtHrs.toFixed(1) + " hrs down"; document.getElementById('oeePerf').textContent = (perf * 100).toFixed(1) + "%"; document.getElementById('oeeSpeedText').textContent = prod + " / " + target; document.getElementById('oeeQual').textContent = (qual * 100).toFixed(1) + "%"; document.getElementById('oeeRejText').textContent = rej + " rejected";
-            } catch (error) { }
+            } catch (error) {}
         }
 
         let machineChartInstance = null; let qualityChartInstance = null;
@@ -2418,7 +2409,7 @@
                 const ctxQ = document.getElementById('qualityChart').getContext('2d');
                 if (qualityChartInstance) qualityChartInstance.destroy();
                 qualityChartInstance = new Chart(ctxQ, { type: 'doughnut', data: { labels: ['Accepted', 'Rejected'], datasets: [{ data: (totalAcc === 0 && totalRej === 0) ? [1, 0] : [totalAcc, totalRej], backgroundColor: ['#28a745', '#dc3545'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } } });
-            } catch (error) { }
+            } catch (error) {}
         }
 
         function generateDailyPDF() {
@@ -2441,7 +2432,7 @@
                 activeWorkOrders = await res.json();
                 const woDrop = document.getElementById('prodWO'); woDrop.innerHTML = '<option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option>';
                 activeWorkOrders.forEach(wo => { const prog = wo.targetQty ? Math.round((wo.producedQty / wo.targetQty) * 100) : 0; woDrop.innerHTML += `<option value="${wo.woNumber}">${wo.woNumber} (${wo.partNo}) - ${prog}% Done</option>`; });
-            } catch (e) { }
+            } catch (e) {}
         }
 
         function autoFillFromWO() {
@@ -2473,7 +2464,7 @@
                     tbody.appendChild(tr);
                 });
                 filterInventory();
-            } catch (error) { }
+            } catch (error) {}
         }
 
         async function updateStock(productId) {
@@ -2518,7 +2509,7 @@
         }
 
         function openReceiveModal() { document.getElementById('receiveStockModal').style.display = 'flex'; }
-        function closeReceiveModal() { document.getElementById('receiveStockModal').style.display = 'none';['rawCodeInput', 'rawNameInput', 'rawGradeInput', 'rawSupplierInput', 'rawScopeInput', 'rawKgInput'].forEach(id => document.getElementById(id).value = ''); }
+        function closeReceiveModal() { document.getElementById('receiveStockModal').style.display = 'none'; ['rawCodeInput', 'rawNameInput', 'rawGradeInput', 'rawSupplierInput', 'rawScopeInput', 'rawKgInput'].forEach(id => document.getElementById(id).value = ''); }
 
         async function submitRawMaterial() {
             const code = document.getElementById('rawCodeInput').value.trim().toUpperCase(); const kg = document.getElementById('rawKgInput').value;
@@ -2582,7 +2573,7 @@
             const name = document.getElementById('crmName').value; if (!name) return showToast("Customer Name is required!", true);
             try {
                 const res = await fetch(`${API_URL}/customers`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, sector: document.getElementById('crmSector').value, transportMode: document.getElementById('crmTransport').value, phone: document.getElementById('crmPhone').value, email: document.getElementById('crmEmail').value, address: document.getElementById('crmAddress').value, area: document.getElementById('crmArea').value, state: document.getElementById('crmState').value, zone: document.getElementById('crmZone').value, pinCode: document.getElementById('crmPinCode').value }) });
-                if (res.ok) { showToast("👥 Customer Added!");['crmName', 'crmSector', 'crmTransport', 'crmPhone', 'crmEmail', 'crmAddress', 'crmArea', 'crmState', 'crmZone', 'crmPinCode'].forEach(id => document.getElementById(id).value = ''); loadCustomers(); }
+                if (res.ok) { showToast("👥 Customer Added!"); ['crmName', 'crmSector', 'crmTransport', 'crmPhone', 'crmEmail', 'crmAddress', 'crmArea', 'crmState', 'crmZone', 'crmPinCode'].forEach(id => document.getElementById(id).value = ''); loadCustomers(); }
             } catch (err) { }
         }
 
@@ -2604,7 +2595,7 @@
 
                     tbody.innerHTML += `<tr><td><strong>${o.orderNo}</strong><br><span style="font-size:10px; color:#888;">${new Date(o.orderDate).toLocaleDateString()}</span></td><td><strong>${o.customerName || 'Walk-in'}</strong></td><td style="min-width: 200px;">${scrollableItemsHtml}</td><td><strong>₹${o.grandTotal.toLocaleString()}</strong></td><td><span style="background:${statusColor}; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:11px;">${o.status}</span></td><td style="min-width: 150px;">${actionButtons}</td><td style="min-width: 100px;"><button onclick="sendManualNotification('${o._id}', 'whatsapp')" style="background:#25D366; color:white; border:none; padding:6px; border-radius:4px; cursor:pointer; width:100%; margin-bottom:5px; font-weight:bold;">💬 WhatsApp</button><button onclick="sendManualNotification('${o._id}', 'email')" style="background:#e83e8c; color:white; border:none; padding:6px; border-radius:4px; cursor:pointer; width:100%; font-weight:bold;">📧 Email</button></td></tr>`;
                 });
-            } catch (err) { }
+            } catch (err) {}
         }
 
         function downloadInvoice(id) { window.open(`${API_URL}/sales-orders/${id}/invoice`, '_blank'); }
@@ -2730,16 +2721,7 @@
             }
         }
 
-
-        window.addEventListener('message', function (event) {
-            if (event.data.type === 'CREATE_PO_FROM_INDENT') {
-                switchMainTab('poCard', 'nav-po');
-                switchPOTab('indents'); // Ensure we are on the Tooling tab
-                createPOFromIndent(event.data.data); // Pass the whole object to the right form!
-                showToast("📋 PO Form pre-filled from Toolroom Indent!");
-            }
-        });
-
+        window.addEventListener('message', function (event) { if (event.data.type === 'CREATE_PO_FROM_INDENT') { switchMainTab('poCard', 'nav-po'); switchPOTab('indents'); openPOModal(); document.getElementById('poMaterialCode').value = event.data.data.code || ''; document.getElementById('poExpectedKg').value = event.data.data.qty || ''; document.getElementById('poScope').value = `Auto-generated from Toolroom Indent #${event.data.data.no}. Machine: ${event.data.data.machine}`; showToast("📋 PO Form pre-filled from Toolroom Indent!"); } });
     </script>
 </body>
 
