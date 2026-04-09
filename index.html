@@ -517,12 +517,17 @@
             <span class="close-btn" onclick="closeInwardQaModal()" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888;">×</span>
             <h3 style="color: #6f42c1; border-bottom: 2px solid #6f42c1; padding-bottom: 10px; margin-top: 0;">🔍 Inspect Incoming Tool</h3>
             <input type="hidden" id="inwardQaConvId">
-            <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; gap: 10px;">
-                <div style="margin:0;"><label style="font-size:12px; color:#666;">Indent Ref:</label><br><span id="inwardQaIndentText" style="font-weight:bold;">--</span></div>
-                <div style="margin:0;"><label style="font-size:12px; color:#666;">Tool Code:</label><br><span id="inwardQaToolText" style="font-weight:bold; color:var(--primary); font-size:16px;">--</span></div>
-                <div style="margin:0;"><label style="font-size:12px; color:#666;">Rcvd Qty:</label><br><span id="inwardQaQtyText" style="font-weight:bold; font-size:16px;">--</span></div>
-                <div style="margin:0;"><label style="font-size:12px; color:#666;">Machine:</label><br><span id="inwardQaMachineText" style="font-weight:bold;">--</span></div>
-            </div>
+           <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px; gap: 10px;">
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Indent Ref:</label><br><span id="inwardQaIndentText" style="font-weight:bold;">--</span></div>
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Tool Code:</label><br><span id="inwardQaToolText" style="font-weight:bold; color:var(--primary); font-size:16px;">--</span></div>
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Rcvd Qty:</label><br><span id="inwardQaQtyText" style="font-weight:bold; font-size:16px;">--</span></div>
+                        <div style="margin:0;"><label style="font-size:12px; color:#666;">Machine:</label><br><span id="inwardQaMachineText" style="font-weight:bold;">--</span></div>
+                        
+                        <div style="margin:0; grid-column: span 2;">
+                            <label style="font-size:12px; color:#666;">Reference Drawing from Tool Room:</label><br>
+                            <div id="inwardQaDrawingLink" style="font-weight:bold; padding-top: 5px;">--</div>
+                        </div>
+                    </div>
             <div style="text-align: left; margin-bottom: 15px;">
                 <label style="font-weight:bold; font-size:13px; color:#555;">Measured Dimensions (per drawing) *</label>
                 <input type="text" id="inwardQaDimensions" class="prod-input" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px;" required placeholder="e.g., Length: 45.2mm, Dia: 12.0mm">
@@ -901,8 +906,11 @@
             if(document.getElementById('indPoMachine')) document.getElementById('indPoMachine').value = `${indent.machine} | ${indent.partSize}`;
             if(document.getElementById('indPoDesc')) document.getElementById('indPoDesc').value = indent.desc;
 
+            // REPLACE the old docsHtml logic with this safe download logic:
             let linkedDocs = window.documentRepo.filter(d => d.part === indent.code);
-            let docsHtml = linkedDocs.length > 0 ? linkedDocs.map(d => `<a href="${d.dataUrl}" target="_blank" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 3px 6px; border-radius: 4px;">📄 ${d.type}</a>`).join(' ') : '<span style="color:#999; font-style: italic;">No drawings linked</span>';
+            let docsHtml = linkedDocs.length > 0 
+                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download ${d.type}</a>`).join(' ') 
+                : '<span style="color:#999; font-style: italic;">No drawings linked</span>';
             if(document.getElementById('indPoDocs')) document.getElementById('indPoDocs').innerHTML = docsHtml;
 
             if(document.getElementById('indPoQty')) document.getElementById('indPoQty').value = indent.qty;
@@ -920,8 +928,10 @@
 
         async function submitIndentPO(e) {
             e.preventDefault();
-            const indentId = parseInt(document.getElementById('indPoIndentId').value);
+            // REMOVED parseInt() - This fixes the bug where Toolroom doesn't get notified!
+            const indentId = document.getElementById('indPoIndentId').value;
             let indent = window.activePurchaseIndents.find(i => i.id == indentId) || window.indentHistory.find(i => i.id == indentId);
+            
             if (!indent) return showToast("Indent not found!", true);
 
             const supplier = document.getElementById('indPoSupplier').value.trim();
@@ -1142,6 +1152,15 @@
             document.getElementById('inwardQaToolText').innerText = item.src;
             document.getElementById('inwardQaQtyText').innerText = item.qty;
             document.getElementById('inwardQaMachineText').innerText = item.machine || '-';
+            
+            // ADD THIS NEW BLOCK: Fetch the drawing from the repo for QC!
+            let linkedDocs = window.documentRepo.filter(d => d.part === item.src);
+            let docsHtml = linkedDocs.length > 0 
+                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download Original Drawing to Verify</a>`).join(' ') 
+                : '<span style="color:#999; font-style: italic;">No drawing provided</span>';
+            if(document.getElementById('inwardQaDrawingLink')) document.getElementById('inwardQaDrawingLink').innerHTML = docsHtml;
+
+            // Clear inputs and open
             document.getElementById('inwardQaDimensions').value = '';
             document.getElementById('inwardQaRemarks').value = '';
             document.getElementById('inwardQaFile').value = '';
