@@ -1207,7 +1207,8 @@
                             style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff9800; margin-bottom: 15px; padding-bottom: 10px;">
                             <h3 style="color: #ff9800; margin: 0;">🛒 Raise PO for Tool Room</h3>
                             <button class="btn" onclick="cancelIndentPO()"
-                                style="background: #6c757d; color: white; padding: 8px 15px;">🔙 Back to List</button>
+                                style="background: #6c757d; color: white; padding: 8px 15px; border:none; border-radius: 4px; cursor: pointer;">🔙
+                                Back to List</button>
                         </div>
 
                         <form id="indentPoForm" onsubmit="submitIndentPO(event)">
@@ -1218,22 +1219,22 @@
                                 <div class="form-group" style="margin:0;">
                                     <label style="font-size:12px; color:#666; font-weight: bold;">Indent Ref.</label>
                                     <input type="text" id="indPoRef" readonly class="prod-input"
-                                        style="background: transparent; border: none; font-weight: bold; font-size: 16px; padding: 0; color: #333;">
+                                        style="background: transparent; border: none; font-weight: bold; font-size: 16px; padding: 0; color: #333; width: 100%;">
                                 </div>
                                 <div class="form-group" style="margin:0;">
                                     <label style="font-size:12px; color:#666; font-weight: bold;">Priority</label>
                                     <input type="text" id="indPoPriority" readonly class="prod-input"
-                                        style="background: transparent; border: none; font-weight: bold; padding: 0;">
+                                        style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;">
                                 </div>
                                 <div class="form-group" style="margin:0;">
                                     <label style="font-size:12px; color:#666; font-weight: bold;">Tool Code</label>
                                     <input type="text" id="indPoToolCode" readonly class="prod-input"
-                                        style="background: transparent; border: none; font-weight: bold; color: var(--primary); padding: 0; font-size: 15px;">
+                                        style="background: transparent; border: none; font-weight: bold; color: var(--primary); padding: 0; font-size: 15px; width: 100%;">
                                 </div>
                                 <div class="form-group" style="margin:0;">
                                     <label style="font-size:12px; color:#666; font-weight: bold;">Machine / Size</label>
                                     <input type="text" id="indPoMachine" readonly class="prod-input"
-                                        style="background: transparent; border: none; font-weight: bold; padding: 0;">
+                                        style="background: transparent; border: none; font-weight: bold; padding: 0; width: 100%;">
                                 </div>
                                 <div class="form-group" style="margin:0;">
                                     <label style="font-size:12px; color:#666; font-weight: bold;">Tool
@@ -1256,32 +1257,33 @@
                                 <div class="form-group" style="margin:0;">
                                     <label style="font-size:12px; font-weight:bold; color:#555;">Supplier Name *</label>
                                     <input type="text" id="indPoSupplier" class="prod-input" required
-                                        placeholder="Enter Supplier" style="border-color: #ff9800; border-width: 2px;">
+                                        placeholder="Enter Supplier"
+                                        style="border-color: #ff9800; border-width: 2px; width: 100%; box-sizing: border-box;">
                                 </div>
                                 <div class="form-group" style="margin:0;">
                                     <label style="font-size:12px; font-weight:bold; color:#555;">Order Qty (Nos)
                                         *</label>
                                     <input type="number" id="indPoQty" class="prod-input" required min="1"
-                                        style="border-color: #ff9800; border-width: 2px; font-weight: bold;">
+                                        style="border-color: #ff9800; border-width: 2px; font-weight: bold; width: 100%; box-sizing: border-box;">
                                 </div>
                                 <div class="form-group" style="margin:0;">
                                     <label style="font-size:12px; font-weight:bold; color:#555;">Unit Price (₹)
                                         *</label>
                                     <input type="number" id="indPoPrice" class="prod-input" required min="0.01"
                                         step="0.01"
-                                        style="border-color: #ff9800; border-width: 2px; font-weight: bold;">
+                                        style="border-color: #ff9800; border-width: 2px; font-weight: bold; width: 100%; box-sizing: border-box;">
                                 </div>
                                 <div class="form-group" style="margin:0;">
                                     <label style="font-size:12px; font-weight:bold; color:#555;">Expected Delivery
                                         *</label>
                                     <input type="date" id="indPoExpectedDate" class="prod-input" required
-                                        style="border-color: #ff9800; border-width: 2px; font-weight: bold; cursor: pointer;">
+                                        style="border-color: #ff9800; border-width: 2px; font-weight: bold; cursor: pointer; width: 100%; box-sizing: border-box;">
                                 </div>
                             </div>
 
                             <div style="margin-top: 25px; text-align: right;">
                                 <button type="submit" class="save-btn"
-                                    style="background-color: #28a745; display: inline-block; width: auto; padding: 12px 30px; font-size: 16px; margin: 0;">
+                                    style="background-color: #28a745; display: inline-block; width: auto; padding: 12px 30px; font-size: 16px; margin: 0; border: none; border-radius: 4px; color: white; cursor: pointer;">
                                     ✅ Generate PO & Notify Tool Room
                                 </button>
                             </div>
@@ -1378,66 +1380,7 @@
 
 
 
-    <div id="indentPoModal" class="modal-overlay">
-        <div class="modal-box" style="width: 650px;">
-            <h3 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">🛒 Raise PO for Tool
-                Room</h3>
 
-            <form id="indentPoForm" onsubmit="submitIndentPO(event)">
-                <input type="hidden" id="indPoIndentId">
-
-                <div class="grid-2"
-                    style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
-                    <div class="form-group">
-                        <label>Indent Ref.</label>
-                        <input type="text" id="indPoRef" readonly
-                            style="background: transparent; border: none; font-weight: bold; padding: 0;">
-                    </div>
-                    <div class="form-group">
-                        <label>Priority</label>
-                        <input type="text" id="indPoPriority" readonly
-                            style="background: transparent; border: none; font-weight: bold; padding: 0;">
-                    </div>
-                    <div class="form-group">
-                        <label>Tool Code</label>
-                        <input type="text" id="indPoToolCode" readonly
-                            style="background: transparent; border: none; font-weight: bold; color: var(--primary); padding: 0;">
-                    </div>
-                    <div class="form-group">
-                        <label>Machine / Size</label>
-                        <input type="text" id="indPoMachine" readonly
-                            style="background: transparent; border: none; font-weight: bold; padding: 0;">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Tool Description</label>
-                        <input type="text" id="indPoDesc" readonly
-                            style="background: transparent; border: none; font-weight: bold; padding: 0;">
-                    </div>
-                </div>
-
-                <h4 style="color: var(--primary); text-align: left; margin-bottom: 10px;">Supplier Details</h4>
-                <div class="grid-3">
-                    <div class="form-group">
-                        <label>Supplier Name *</label>
-                        <input type="text" id="indPoSupplier" required placeholder="Enter Supplier">
-                    </div>
-                    <div class="form-group">
-                        <label>Order Qty (Nos) *</label>
-                        <input type="number" id="indPoQty" required min="1">
-                    </div>
-                    <div class="form-group">
-                        <label>Unit Price (₹) *</label>
-                        <input type="number" id="indPoPrice" required min="0.01" step="0.01">
-                    </div>
-                </div>
-
-                <div class="modal-actions" style="margin-top: 20px;">
-                    <button type="button" class="btn btn-outline" onclick="closeIndentPoModal()">Cancel</button>
-                    <button type="submit" class="btn btn-success">✅ Generate PO & Notify Tool Room</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
 
 
@@ -3600,7 +3543,7 @@
         window.activePurchaseIndents = [];
         window.documentRepo = [];
 
-        // 1. Tab Switching Logic
+        // 1. Tab Switching Logic for Purchase Dashboard
         function switchPOTab(tab) {
             document.getElementById('poRawSection').style.display = tab === 'raw' ? 'block' : 'none';
             document.getElementById('poIndentsSection').style.display = tab === 'indents' ? 'block' : 'none';
@@ -3611,10 +3554,18 @@
             document.getElementById('tab-po-indents').style.background = tab === 'indents' ? '#17a2b8' : '#eee';
             document.getElementById('tab-po-indents').style.color = tab === 'indents' ? 'white' : '#555';
 
-            // Always reset the Tool Room view to the table when clicking the tab
+            // IMPORTANT: Reset the Tool Room view to the table when clicking the tab
             if (tab === 'indents') {
-                cancelIndentPO();
+                document.getElementById('pendingRequestsTableSection').style.display = 'block';
+                document.getElementById('indentPoFormSection').style.display = 'none';
             }
+        }
+
+        // 4. Cancel / Back to List
+        function cancelIndentPO() {
+            document.getElementById('indentPoFormSection').style.display = 'none';
+            document.getElementById('pendingRequestsTableSection').style.display = 'block';
+            document.getElementById('indentPoForm').reset();
         }
 
         // 2. Load the Pending Requests
@@ -3700,12 +3651,7 @@
             setTimeout(() => document.getElementById('indPoSupplier').focus(), 100);
         }
 
-        // 4. Cancel / Back to List
-        function cancelIndentPO() {
-            document.getElementById('indentPoFormSection').style.display = 'none';
-            document.getElementById('pendingRequestsTableSection').style.display = 'block';
-            document.getElementById('indentPoForm').reset();
-        }
+
 
         // 5. Submit PO
         async function submitIndentPO(e) {
