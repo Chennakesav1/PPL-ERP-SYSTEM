@@ -1449,6 +1449,15 @@
         </div>
     </div>
 
+
+    <div id="customModalOverlay" class="modal" style="display: none; position: fixed; z-index: 100000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); align-items: center; justify-content: center; backdrop-filter: blur(3px);">
+        <div class="modal-content" style="background-color: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
+            <h3 id="customModalTitle" style="margin-top: 0; color: #007bff; border-bottom: 2px solid #eee; padding-bottom: 10px;">Alert</h3>
+            <p id="customModalMessage" style="color: #444; font-size: 16px; margin: 20px 0; line-height: 1.5;"></p>
+            <button class="save-btn" onclick="closeCustomAlert()" style="background-color: #007bff; margin-top: 10px;">OK</button>
+        </div>
+    </div>
+
 <script>
         const API_URL = 'https://ppl-erp-system.onrender.com/api'; // Use localhost while testing!
         let currentUser = null;
@@ -1494,6 +1503,15 @@
             toast.innerText = message;
             toast.className = isError ? "toast show error" : "toast show";
             setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function customAlert(message, title = "Notification") {
+            document.getElementById('customModalTitle').innerText = title;
+            document.getElementById('customModalMessage').innerHTML = message;
+            document.getElementById('customModalOverlay').style.display = 'flex';
+        }
+        function closeCustomAlert() {
+            document.getElementById('customModalOverlay').style.display = 'none';
         }
 
         setTimeout(() => {
@@ -2022,49 +2040,73 @@
             const remarks = document.getElementById('inwardQaRemarks').value.trim();
             const fileInput = document.getElementById('inwardQaFile');
 
-            if (!dimensions) { alert("⚠️ Measured Dimensions are required!"); return; }
-            if (!remarks) { alert("⚠️ Inspector Remarks are required!"); return; }
-            if (status === 'APPROVED' && fileInput.files.length === 0) { alert("⚠️ Inspection Proof (PDF/Image) is mandatory for Approval!"); return; }
+            // Beautiful new CSS Alerts
+            if (!dimensions) { customAlert("⚠️ Measured Dimensions are required!", "Validation Error"); return; }
+            if (!remarks) { customAlert("⚠️ Inspector Remarks are required!", "Validation Error"); return; }
+            if (status === 'APPROVED' && fileInput.files.length === 0) { customAlert("⚠️ Inspection Proof (PDF/Image) is mandatory for Approval!", "Validation Error"); return; }
+
+            // Loading Animations for Buttons
+            const btnApprove = document.getElementById('btnQcApprove');
+            const btnReject = document.getElementById('btnQcReject');
+            const ogApprove = btnApprove.innerText;
+            const ogReject = btnReject.innerText;
+            
+            if(status === 'APPROVED') btnApprove.innerText = "⏳ Uploading & Saving...";
+            else btnReject.innerText = "⏳ Rejecting...";
+            
+            btnApprove.disabled = true;
+            btnReject.disabled = true;
 
             if (refreshInterval) clearInterval(refreshInterval);
 
-            const item = window.conversionHistory.find(c => c.id == qaId);
-            if (!item) {
-                if (refreshInterval) refreshInterval = setInterval(refreshDashboard, 5000);
-                return;
-            }
-            let indent = window.indentHistory.find(i => i.no === item.indentNo);
+            try {
+                const item = window.conversionHistory.find(c => c.id == qaId);
+                if (!item) throw new Error("Item not found.");
+                
+                let indent = window.indentHistory.find(i => i.no === item.indentNo);
 
-            let fileBase64 = null; let fileName = null;
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0]; fileName = file.name;
-                fileBase64 = await new Promise((resolve) => {
-                    const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(file);
-                });
-                window.documentRepo.unshift({ date: new Date().toLocaleDateString(), part: item.src, type: `QA Proof (${status})`, filename: fileName, dataUrl: fileBase64 });
-            }
-
-            item.status = status; item.qaRemarks = remarks; item.qaDimensions = dimensions;
-            if (indent) indent.status = status === 'APPROVED' ? 'QC APPROVED' : 'QC REJECTED';
-
-            if (status === 'APPROVED') {
-                let invItem = window.masterInventory.find(t => t.code === item.src);
-                if (invItem) {
-                    invItem.spareStock += Number(item.qty); invItem.stock = invItem.rngStock + invItem.spareStock;
-                } else {
-                    window.masterInventory.push({ code: item.src, desc: "Inward Tool", machine: item.machine, rngStock: 0, spareStock: Number(item.qty), stock: Number(item.qty), min: 5, actualLife: 0, assumedLife: 50000 });
+                let fileBase64 = null; let fileName = null;
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0]; fileName = file.name;
+                    fileBase64 = await new Promise((resolve) => {
+                        const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(file);
+                    });
+                    window.documentRepo.unshift({ date: new Date().toLocaleDateString(), part: item.src, type: `QA Proof (${status})`, filename: fileName, dataUrl: fileBase64 });
                 }
+
+                item.status = status; item.qaRemarks = remarks; item.qaDimensions = dimensions;
+                if (indent) indent.status = status === 'APPROVED' ? 'QC APPROVED' : 'QC REJECTED';
+
+                // Add to Tool Room Master Stock
+                if (status === 'APPROVED') {
+                    let invItem = window.masterInventory.find(t => t.code === item.src);
+                    if (invItem) {
+                        invItem.spareStock += Number(item.qty); 
+                        invItem.stock = invItem.rngStock + invItem.spareStock;
+                    } else {
+                        window.masterInventory.push({ code: item.src, desc: indent ? indent.desc : "Inward Tool", machine: item.machine, rngStock: 0, spareStock: Number(item.qty), stock: Number(item.qty), min: 5, actualLife: 0, assumedLife: 50000 });
+                    }
+                }
+
+                await window.saveAllData();
+                
+                closeInwardQaModal();
+                loadInwardQAQueue();
+                loadInwardQAHistory(); // Instantly update the History Tab!
+                
+                customAlert(status === 'APPROVED' ? `✅ Approved! Successfully added ${item.qty} units to the Tool Room Master Stock.` : `❌ Tool Rejected.`, "QA Complete");
+                
+            } catch (err) {
+                console.error(err);
+                customAlert("❌ Error processing QA: " + err.message, "Error");
+            } finally {
+                // Reset buttons and resume refreshing
+                btnApprove.innerText = ogApprove;
+                btnReject.innerText = ogReject;
+                btnApprove.disabled = false;
+                btnReject.disabled = false;
+                refreshInterval = setInterval(refreshDashboard, 5000);
             }
-
-            await window.saveAllData();
-            
-            closeInwardQaModal();
-            loadInwardQAQueue();
-            
-            // Replaced silent toast with un-ignorable alert
-            alert(status === 'APPROVED' ? `✅ Approved! Added ${item.qty} to Master Stock.` : `❌ Tool Rejected.`);
-
-            refreshInterval = setInterval(refreshDashboard, 5000);
         }
 
         async function loadPendingQC() {
