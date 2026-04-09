@@ -1734,11 +1734,12 @@
 
         async function submitIndentPO(e) {
             e.preventDefault();
-            // REMOVED parseInt() - This fixes the bug where Toolroom doesn't get notified!
             const indentId = document.getElementById('indPoIndentId').value;
             let indent = window.activePurchaseIndents.find(i => i.id == indentId) || window.indentHistory.find(i => i.id == indentId);
-
             if (!indent) return showToast("Indent not found!", true);
+
+            // Pause refresh
+            if (refreshInterval) clearInterval(refreshInterval);
 
             const supplier = document.getElementById('indPoSupplier').value.trim();
             const qty = parseInt(document.getElementById('indPoQty').value);
@@ -1759,15 +1760,20 @@
                 if (res.ok) {
                     indent.status = 'PO RAISED';
                     indent.expectedDate = expectedDate;
-                    if (typeof saveAllData === 'function') saveAllData();
+                    
+                    // MUST AWAIT THE SAVE
+                    await window.saveAllData();
 
                     cancelIndentPO();
                     loadPendingIndentsForPurchase();
                     loadPOs();
                     showToast(`✅ PO successfully raised for ${indent.code}!`);
                 } else { showToast("❌ Failed to create PO in database.", true); }
-            } catch (err) { showToast("❌ Network Error connecting to database.", true); }
-            finally { submitBtn.disabled = false; submitBtn.innerText = ogText; }
+            } catch (err) { showToast("❌ Network Error connecting to database.", true); } 
+            finally { 
+                submitBtn.disabled = false; submitBtn.innerText = ogText; 
+                refreshInterval = setInterval(refreshDashboard, 5000); // Restart refresh
+            }
         }
 
         async function loadPOs() {
@@ -1831,12 +1837,15 @@
         async function receiveIndentPO(indentNo, expectedQty) {
             if (!confirm(`Are you sure you received ${expectedQty} units for Indent ${indentNo}?\nThis will send the items to QA for inspection.`)) return;
 
+            // Pause background refresh to prevent data loss
+            if (refreshInterval) clearInterval(refreshInterval);
+
             let indent = window.activePurchaseIndents.find(i => i.no == indentNo) || window.indentHistory.find(i => i.no == indentNo);
             if (!indent) indent = { no: indentNo, code: 'UNKNOWN-TOOL', machine: 'Unknown', qty: expectedQty };
 
             indent.status = 'RECEIVED (Pending QA)';
 
-            if (typeof conversionHistory === 'undefined') window.conversionHistory = [];
+            if (!window.conversionHistory) window.conversionHistory = [];
             window.conversionHistory.unshift({
                 id: Date.now().toString(), type: 'INWARD_PO', indentNo: indent.no, date: new Date().toLocaleDateString(), src: indent.code, machine: indent.machine, qty: expectedQty, op: (currentUser ? currentUser.username : 'Buyer'), status: 'Pending QA'
             });
@@ -1847,9 +1856,15 @@
                 if (po) await fetch(`${API_URL}/purchase-orders/${po._id}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'RECEIVED', username: 'Buyer' }) });
             } catch (e) { }
 
-            saveAllData();
+            // MUST AWAIT THE SAVE
+            await window.saveAllData();
+            
             loadPOs();
+            loadInwardQAQueue(); // Force QC to update instantly!
             showToast(`📦 Sent to QC! Tool is waiting for inspection.`);
+
+            // Restart background refresh
+            refreshInterval = setInterval(refreshDashboard, 5000);
         }
 
         function openPOModal() { document.getElementById('poModal').style.display = 'flex'; }
@@ -1985,8 +2000,14 @@
             if (!remarks) return showToast("⚠️ Inspector Remarks are required!", true);
             if (status === 'APPROVED' && fileInput.files.length === 0) return showToast("⚠️ Inspection Proof is mandatory for Approval!", true);
 
+            // Pause refresh
+            if (refreshInterval) clearInterval(refreshInterval);
+
             const item = window.conversionHistory.find(c => c.id == qaId);
-            if (!item) return;
+            if (!item) {
+                if (refreshInterval) refreshInterval = setInterval(refreshDashboard, 5000);
+                return;
+            }
             let indent = window.indentHistory.find(i => i.no === item.indentNo);
 
             let fileBase64 = null; let fileName = null;
@@ -2010,10 +2031,15 @@
                 }
             }
 
-            saveAllData();
+            // MUST AWAIT THE SAVE
+            await window.saveAllData();
+            
             closeInwardQaModal();
             loadInwardQAQueue();
             showToast(status === 'APPROVED' ? `✅ Approved! Added ${item.qty} to Master Stock.` : `❌ Tool Rejected.`);
+
+            // Restart refresh
+            refreshInterval = setInterval(refreshDashboard, 5000);
         }
 
         async function loadPendingQC() {
