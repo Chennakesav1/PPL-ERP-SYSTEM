@@ -2040,29 +2040,24 @@
             const remarks = document.getElementById('inwardQaRemarks').value.trim();
             const fileInput = document.getElementById('inwardQaFile');
 
-            // Beautiful new CSS Alerts
-            if (!dimensions) { customAlert("⚠️ Measured Dimensions are required!", "Validation Error"); return; }
-            if (!remarks) { customAlert("⚠️ Inspector Remarks are required!", "Validation Error"); return; }
-            if (status === 'APPROVED' && fileInput.files.length === 0) { customAlert("⚠️ Inspection Proof (PDF/Image) is mandatory for Approval!", "Validation Error"); return; }
+            if (!dimensions) return showToast("⚠️ Measured Dimensions are required!", true);
+            if (!remarks) return showToast("⚠️ Inspector Remarks are required!", true);
+            if (status === 'APPROVED' && fileInput.files.length === 0) return showToast("⚠️ Inspection Proof is mandatory for Approval!", true);
 
-            // Loading Animations for Buttons
-            const btnApprove = document.getElementById('btnQcApprove');
-            const btnReject = document.getElementById('btnQcReject');
-            const ogApprove = btnApprove.innerText;
-            const ogReject = btnReject.innerText;
-            
-            if(status === 'APPROVED') btnApprove.innerText = "⏳ Uploading & Saving...";
-            else btnReject.innerText = "⏳ Rejecting...";
-            
-            btnApprove.disabled = true;
-            btnReject.disabled = true;
+            // 🛑 LOCK THE BUTTONS TO PREVENT DOUBLE CLICKS
+            const buttons = document.querySelectorAll('#inwardQaModal button');
+            buttons.forEach(btn => {
+                btn.disabled = true; // Disable instantly
+                if (btn.innerText.includes('Approve') && status === 'APPROVED') btn.innerText = "⏳ Saving...";
+                if (btn.innerText.includes('Reject') && status === 'REJECTED') btn.innerText = "⏳ Rejecting...";
+            });
 
+            // Pause background refresh
             if (refreshInterval) clearInterval(refreshInterval);
 
             try {
                 const item = window.conversionHistory.find(c => c.id == qaId);
-                if (!item) throw new Error("Item not found.");
-                
+                if (!item) throw new Error("Item not found in history.");
                 let indent = window.indentHistory.find(i => i.no === item.indentNo);
 
                 let fileBase64 = null; let fileName = null;
@@ -2077,34 +2072,35 @@
                 item.status = status; item.qaRemarks = remarks; item.qaDimensions = dimensions;
                 if (indent) indent.status = status === 'APPROVED' ? 'QC APPROVED' : 'QC REJECTED';
 
-                // Add to Tool Room Master Stock
+                // Prevent processing the same item twice
                 if (status === 'APPROVED') {
                     let invItem = window.masterInventory.find(t => t.code === item.src);
                     if (invItem) {
                         invItem.spareStock += Number(item.qty); 
                         invItem.stock = invItem.rngStock + invItem.spareStock;
                     } else {
-                        window.masterInventory.push({ code: item.src, desc: indent ? indent.desc : "Inward Tool", machine: item.machine, rngStock: 0, spareStock: Number(item.qty), stock: Number(item.qty), min: 5, actualLife: 0, assumedLife: 50000 });
+                        window.masterInventory.push({ code: item.src, desc: "Inward Tool", machine: item.machine, rngStock: 0, spareStock: Number(item.qty), stock: Number(item.qty), min: 5, actualLife: 0, assumedLife: 50000 });
                     }
                 }
 
+                // WAIT for database to finish
                 await window.saveAllData();
                 
                 closeInwardQaModal();
                 loadInwardQAQueue();
-                loadInwardQAHistory(); // Instantly update the History Tab!
-                
-                customAlert(status === 'APPROVED' ? `✅ Approved! Successfully added ${item.qty} units to the Tool Room Master Stock.` : `❌ Tool Rejected.`, "QA Complete");
-                
+                loadInwardQAHistory(); // Refresh history immediately
+                showToast(status === 'APPROVED' ? `✅ Approved! Added ${item.qty} to Master Stock.` : `❌ Tool Rejected.`);
+
             } catch (err) {
                 console.error(err);
-                customAlert("❌ Error processing QA: " + err.message, "Error");
+                showToast("❌ Error saving QC data.", true);
             } finally {
-                // Reset buttons and resume refreshing
-                btnApprove.innerText = ogApprove;
-                btnReject.innerText = ogReject;
-                btnApprove.disabled = false;
-                btnReject.disabled = false;
+                // 🟢 UNLOCK THE BUTTONS if modal re-opens later
+                buttons.forEach(btn => {
+                    btn.disabled = false;
+                    if (btn.innerText.includes('Saving')) btn.innerText = "✅ Approve to Stock";
+                    if (btn.innerText.includes('Rejecting')) btn.innerText = "❌ Reject";
+                });
                 refreshInterval = setInterval(refreshDashboard, 5000);
             }
         }
@@ -2179,19 +2175,49 @@
             const overrideAcc = document.getElementById('qcOverrideAcc').value;
             const overrideRej = document.getElementById('qcOverrideRej').value;
             const overrideRejKg = document.getElementById('qcOverrideRejKg').value;
+            
             if (status === 'REJECTED' && !remarks) return alert("QC Remarks are mandatory when rejecting a batch!");
             if (!confirm(`Are you sure you want to officially mark this batch as ${status}?`)) return;
+
+            // 🛑 LOCK THE BUTTONS TO PREVENT DOUBLE CLICKS
+            const btnApprove = document.getElementById('btnQcApprove');
+            const btnReject = document.getElementById('btnQcReject');
+            const ogApprove = btnApprove.innerText;
+            const ogReject = btnReject.innerText;
+
+            btnApprove.disabled = true;
+            btnReject.disabled = true;
+            
+            if (status === 'APPROVED') btnApprove.innerText = "⏳ Saving...";
+            if (status === 'REJECTED') btnReject.innerText = "⏳ Saving...";
 
             try {
                 const qcUsername = (currentUser && currentUser.username) ? currentUser.username : 'QC Inspector';
                 const payload = { qcBy: qcUsername, qcRemarks: remarks, status: status, accQty: Number(overrideAcc), rejQty: Number(overrideRej), rejKg: Number(overrideRejKg) };
+                
                 const res = await fetch(`${API_URL}/qc/approve/${batchId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const data = await res.json();
+                
                 if (data.success) {
-                    showToast(`✅ Batch ${status} successfully!`); document.getElementById('qcModal').style.display = 'none'; document.getElementById('qcRemarksInput').value = '';
-                    loadPendingQC(); if (typeof loadInventory === 'function') loadInventory(); if (typeof loadProductionBatches === 'function') loadProductionBatches();
-                } else alert("Error: " + data.error);
-            } catch (err) {}
+                    showToast(`✅ Batch ${status} successfully!`); 
+                    document.getElementById('qcModal').style.display = 'none'; 
+                    document.getElementById('qcRemarksInput').value = '';
+                    loadPendingQC(); 
+                    if (typeof loadInventory === 'function') loadInventory(); 
+                    if (typeof loadProductionBatches === 'function') loadProductionBatches();
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("❌ Network Error during QC", true);
+            } finally {
+                // 🟢 UNLOCK THE BUTTONS
+                btnApprove.disabled = false;
+                btnReject.disabled = false;
+                btnApprove.innerText = ogApprove;
+                btnReject.innerText = ogReject;
+            }
         }
 
         async function toggleQCView(view) {
