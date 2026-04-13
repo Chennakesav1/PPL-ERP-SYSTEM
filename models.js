@@ -46,11 +46,22 @@ const productionBatchSchema = new mongoose.Schema({
     measuredLength: Number, measuredAF: String, threadGauge: { type: String, enum: ['PASS', 'FAIL', 'N/A'], default: 'N/A' }
 });
 
-const workOrderSchema = new mongoose.Schema({
-    woNumber: { type: String, required: true, unique: true }, partNo: String, partName: String, targetQty: Number, producedQty: { type: Number, default: 0 },
-    status: { type: String, enum: ['ACTIVE', 'COMPLETED', 'CANCELLED'], default: 'ACTIVE' }, createdBy: String, createdAt: { type: Date, default: Date.now }
+const updateSchema = new mongoose.Schema({
+    DATE: String, FOUR_M: String, FORGING: { type: Number, default: 0 },
+    ROLLING: { type: Number, default: 0 }, SECONDARY: { type: Number, default: 0 },
+    HT: { type: Number, default: 0 }, POLISHING: { type: Number, default: 0 },
+    PLATING: { type: Number, default: 0 }, FINAL_INSPECTION: { type: Number, default: 0 },
+    FG: { type: Number, default: 0 }
 });
 
+const workOrderSchema = new mongoose.Schema({
+    woNumber: { type: String, required: true, unique: true }, partNo: String, partName: String, targetQty: Number, producedQty: { type: Number, default: 0 },
+    status: { type: String, enum: ['ACTIVE', 'COMPLETED', 'CANCELLED'], default: 'ACTIVE' }, createdBy: String, createdAt: { type: Date, default: Date.now },
+    // PPC Module Fields
+    type: String, size: String, pitch: String, length: String, gr: String, af: String,
+    rmDetails: String, chWt: Number, rmKg: Number, remarks: String,
+    history: [updateSchema]
+});
 const CustomerSchema = new mongoose.Schema({
     name: { type: String, required: true }, sector: { type: String }, transportMode: { type: String }, phone: { type: String }, email: { type: String },
     address: { type: String }, area: { type: String }, pinCode: { type: String }, state: { type: String }, zone: { type: String },
