@@ -406,10 +406,20 @@
                 style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
             <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')"
                 style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
-            <button class="tab-btn" id="nav-ppc" onclick="switchMainTab('ppcCard', 'nav-ppc')"
+            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')"
+                style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
+            
+            <button class="tab-btn" id="nav-ppc" onclick="switchMainTab('ppcCard', 'nav-ppc')" 
                 style="display: none; background: #e83e8c; color: white;">📊 PPC / Work Orders</button>
         </div>
-        <div
+
+        <div style="display: flex; align-items: center; justify-content: flex-end; font-size: 13px; white-space: nowrap; width: 180px;">
+            <span id="roleDisplay" class="role-badge" style="padding: 4px 10px; font-size: 12px; text-align: center;"></span>
+            <a href="#" onclick="logout()" style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 15px;">Logout</a>
+        </div>
+    </div>
+
+    <div id="mainDashboard">
            <div class="card" id="ppcCard" style="display: none; margin-bottom: 20px;">
                 <h2 style="color: #e83e8c; border-bottom: 2px solid #e83e8c; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                     <span>📊 PPC & Work Order Management</span>
