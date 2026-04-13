@@ -404,13 +404,9 @@
                 style="display: none;">POs</button>
             <button class="tab-btn" id="nav-sales" onclick="switchMainTab('salesCard', 'nav-sales')"
                 style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
-            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')"
-                style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
-            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')"
-                style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
-            
-            <button class="tab-btn" id="nav-ppc" onclick="switchMainTab('ppcCard', 'nav-ppc')" 
-                style="display: none; background: #e83e8c; color: white;">📊 PPC / Work Orders</button>
+            <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')" style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
+            <button class="tab-btn" id="nav-ppc" onclick="switchMainTab('ppcCard', 'nav-ppc')" style="display: none; background: #e83e8c; color: white;">📊 PPC / Work Orders</button>
+            <button class="tab-btn" id="nav-reports" onclick="switchMainTab('reportsCard', 'nav-reports')" style="display: none; background: #dc3545; color: white;">📑 Update Reports</button>
         </div>
 
         <div style="display: flex; align-items: center; justify-content: flex-end; font-size: 13px; white-space: nowrap; width: 180px;">
@@ -420,48 +416,21 @@
     </div>
 
     <div id="mainDashboard">
-           <div class="card" id="ppcCard" style="display: none; margin-bottom: 20px;">
-                <h2 style="color: #e83e8c; border-bottom: 2px solid #e83e8c; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-                    <span>📊 PPC & Work Order Management</span>
-                    <div class="tab-container" style="border: none; margin: 0; padding: 0;">
-                        <button class="tab-btn active" id="tab-ppc-create" onclick="switchPPCTab('create')" style="background: #e83e8c; color: white;">➕ Create WO</button>
-                        <button class="tab-btn" id="tab-ppc-active" onclick="switchPPCTab('active')">🟢 Active WOs</button>
-                        <button class="tab-btn" id="tab-ppc-update" onclick="switchPPCTab('update')">📝 Daily Update</button>
-                        <button class="tab-btn admin-actions" id="tab-ppc-history" onclick="switchPPCTab('history')">📜 Admin: Logs</button>
-                    </div>
-                </h2>
-
-                <div id="ppcCreateSection">
-                    <div class="form-grid" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #e83e8c; margin-bottom: 15px;">
-                        <div class="form-group"><label>WO NO *</label><input type="text" id="crt_woNo" class="prod-input" placeholder="e.g. WO-1001" required></div>
-                        <div class="form-group"><label>PART NO *</label><input type="text" id="crt_partNo" class="prod-input" required></div>
-                        <div class="form-group"><label>PART NAME</label><input type="text" id="crt_partName" class="prod-input"></div>
-                        <div class="form-group"><label>TYPE</label><input type="text" id="crt_type" class="prod-input"></div>
-                        <div class="form-group"><label>SIZE</label><input type="text" id="crt_size" class="prod-input"></div>
-                        <div class="form-group"><label>PITCH</label><input type="text" id="crt_pitch" class="prod-input"></div>
-                        <div class="form-group"><label>LENGTH</label><input type="text" id="crt_length" class="prod-input"></div>
-                        <div class="form-group"><label>GR</label><input type="text" id="crt_gr" class="prod-input"></div>
-                        <div class="form-group"><label>A/F</label><input type="text" id="crt_af" class="prod-input"></div>
-                        <div class="form-group"><label>TARGET QTY *</label><input type="number" id="crt_targetQty" class="prod-input" required></div>
-                        <div class="form-group"><label>R.M DETAILS</label><input type="text" id="crt_rmDetails" class="prod-input"></div>
-                        <div class="form-group"><label>CH WT</label><input type="number" step="0.01" id="crt_chWt" class="prod-input"></div>
-                        <div class="form-group"><label>RM KG</label><input type="number" step="0.01" id="crt_rmKg" class="prod-input"></div>
-                        <button onclick="submitNewWorkOrder()" class="save-btn" style="background: #e83e8c; grid-column: 1 / -1;">➕ Create Master Work Order</button>
-                    </div>
+           <div class="card" id="reportsCard" style="display: none; margin-bottom: 20px;">
+                <h2 style="color: #dc3545; border-bottom: 2px solid #dc3545;">📑 Master Update Reports</h2>
+                <div class="tab-container" style="margin-bottom: 15px;">
+                    <button class="tab-btn active" id="tab-rep-ppc" onclick="switchReportTab('ppc')" style="background: #e83e8c; color: white;">PPC Updates</button>
+                    <button class="tab-btn" id="tab-rep-qc" onclick="switchReportTab('qc')">QC Updates</button>
+                    <button class="tab-btn" id="tab-rep-sales" onclick="switchReportTab('sales')">Sales Updates</button>
                 </div>
 
-                <div id="ppcActiveSection" style="display: none;">
+                <div id="repPPCSection">
                     <div class="table-wrapper">
-                        <table id="ppcActiveTable">
-                            <thead style="background-color: #28a745; color: white;">
+                        <table id="repPPCTable">
+                            <thead style="background-color: #e83e8c; color: white;">
                                 <tr>
-                                    <th>WO Number</th>
-                                    <th>Part No</th>
-                                    <th>Part Name</th>
-                                    <th>Target Qty</th>
-                                    <th>Produced Qty</th>
-                                    <th style="background-color: #dc3545;">Pending Qty</th>
-                                    <th>Progress</th>
+                                    <th>LOG DATE</th><th>WO NO</th><th>PART NO</th><th>TARGET QTY</th>
+                                    <th>FORGING</th><th>ROLLING</th><th>HT</th><th>POLISHING</th><th>FG</th><th>4M</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -469,46 +438,28 @@
                     </div>
                 </div>
 
-                <div id="ppcUpdateSection" style="display: none;">
-                    <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                        <div class="form-section-title" style="color:#007bff;">1. Select Active Order</div>
-                        <div class="form-grid" style="margin-bottom: 15px;">
-                            <select id="upd_woSelect" class="prod-input" onchange="loadWODetailsForUpdate()"><option value="">-- Select Work Order --</option></select>
-                            <input type="text" id="upd_partNo" class="prod-input" readonly placeholder="Part No">
-                            <input type="text" id="upd_planQty" class="prod-input" readonly placeholder="Target Qty">
-                            <input type="date" id="upd_date" class="prod-input" onchange="loadWODetailsForUpdate()" title="Log Date">
-                            <input type="text" id="upd_fourM" class="prod-input" placeholder="4M Status">
-                        </div>
-                        <div class="form-section-title" style="color:#28a745;">2. Enter Daily Progress</div>
-                        <div class="form-grid" style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); background: #e8f5e9; padding: 15px; border-radius: 8px;">
-                            <div class="form-group"><label>FORGING</label><input type="number" id="upd_forging" class="prod-input" min="0"></div>
-                            <div class="form-group"><label>ROLLING</label><input type="number" id="upd_rolling" class="prod-input" min="0"></div>
-                            <div class="form-group"><label>SECONDARY</label><input type="number" id="upd_secondary" class="prod-input" min="0"></div>
-                            <div class="form-group"><label>HT</label><input type="number" id="upd_ht" class="prod-input" min="0"></div>
-                            <div class="form-group"><label>POLISHING</label><input type="number" id="upd_polishing" class="prod-input" min="0"></div>
-                            <div class="form-group"><label>PLATING</label><input type="number" id="upd_plating" class="prod-input" min="0"></div>
-                            <div class="form-group"><label>FINAL INSP.</label><input type="number" id="upd_finalInsp" class="prod-input" min="0"></div>
-                            <div class="form-group"><label>FG</label><input type="number" id="upd_fg" class="prod-input" min="0"></div>
-                        </div>
-                        <button onclick="savePpcDailyUpdate()" class="save-btn" style="background: #28a745; margin-top: 20px;">💾 Save Daily Production Update</button>
+                <div id="repQCSection" style="display: none;">
+                    <div class="table-wrapper">
+                        <table id="repQCTable">
+                            <thead style="background-color: #17a2b8; color: white;">
+                                <tr>
+                                    <th>Date</th><th>Stage</th><th>Machine</th><th>Part No</th>
+                                    <th style="background:#28a745;">Acc Qty</th>
+                                    <th style="background:#dc3545;">Status</th>
+                                    <th>Inspector</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
 
-                <div id="ppcHistorySection" class="admin-actions" style="display: none;">
+                <div id="repSalesSection" style="display: none;">
                     <div class="table-wrapper">
-                        <table id="ppcHistoryTable">
-                            <thead style="background-color: #6c757d; color: white;">
+                        <table id="repSalesTable">
+                            <thead style="background-color: #6f42c1; color: white;">
                                 <tr>
-                                    <th>LOG DATE</th>
-                                    <th>WO NO</th>
-                                    <th>PART NO</th>
-                                    <th>TARGET QTY</th>
-                                    <th>FORGING</th>
-                                    <th>ROLLING</th>
-                                    <th>HT</th>
-                                    <th>POLISHING</th>
-                                    <th>FG</th>
-                                    <th>4M</th>
+                                    <th>Date</th><th>Order No</th><th>Customer</th><th>Amount</th><th>Status</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -1730,10 +1681,10 @@
             document.getElementById('topNav').style.display = 'flex';
             document.getElementById('roleDisplay').innerText = `👤 ${currentUser.username.toUpperCase()} (${currentUser.role})`;
 
-            const allCards = ['productionCard', 'invCard', 'txCard', 'rawMaterialCard', 'poCard', 'qcCard', 'toolroomCard', 'salesCard', 'ppcCard'];
+            const allCards = ['productionCard', 'invCard', 'txCard', 'rawMaterialCard', 'poCard', 'qcCard', 'toolroomCard', 'salesCard', 'ppcCard', 'reportsCard'];
             allCards.forEach(id => { if (document.getElementById(id)) document.getElementById(id).style.display = 'none'; });
 
-            const allNavs = ['nav-prod', 'nav-qc', 'nav-inv', 'nav-tx', 'nav-rm', 'nav-po', 'nav-sales', 'nav-toolroom', 'nav-ppc'];
+            const allNavs = ['nav-prod', 'nav-qc', 'nav-inv', 'nav-tx', 'nav-rm', 'nav-po', 'nav-sales', 'nav-toolroom', 'nav-ppc', 'nav-reports'];
             allNavs.forEach(id => { if (document.getElementById(id)) document.getElementById(id).style.display = 'none'; });
 
             document.getElementById('addBtnUI').style.display = 'none';
@@ -1790,12 +1741,13 @@
         }
 
         function switchMainTab(cardId, btnId) {
-            const allCards = ['salesCard', 'productionCard', 'qcCard', 'invCard', 'txCard', 'rawMaterialCard', 'poCard', 'toolroomCard'];
+            const allCards = ['salesCard', 'productionCard', 'qcCard', 'invCard', 'txCard', 'rawMaterialCard', 'poCard', 'toolroomCard', 'ppcCard', 'reportsCard'];
             allCards.forEach(id => { const element = document.getElementById(id); if (element) element.style.display = 'none'; });
             document.querySelectorAll('#navButtons .tab-btn').forEach(btn => btn.classList.remove('active'));
 
             if (cardId === 'salesCard') { loadCustomers(); loadSalesOrders(); }
             if (cardId === 'qcCard') loadPendingQC();
+            if (cardId === 'reportsCard') switchReportTab('ppc'); // Auto-load reports
 
             if (document.getElementById(cardId)) document.getElementById(cardId).style.display = 'block';
             if (document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
@@ -3077,8 +3029,9 @@
             }
         }
 
+
         // ==========================================
-        // PPC / WORK ORDER MODULE
+        // PPC / WORK ORDER & REPORTS MODULE
         // ==========================================
         let allWoHistory = [];
 
@@ -3086,7 +3039,6 @@
             document.getElementById('ppcCreateSection').style.display = tab === 'create' ? 'block' : 'none';
             document.getElementById('ppcActiveSection').style.display = tab === 'active' ? 'block' : 'none';
             document.getElementById('ppcUpdateSection').style.display = tab === 'update' ? 'block' : 'none';
-            document.getElementById('ppcHistorySection').style.display = tab === 'history' ? 'block' : 'none';
 
             document.getElementById('tab-ppc-create').style.background = tab === 'create' ? '#e83e8c' : '#eee';
             document.getElementById('tab-ppc-create').style.color = tab === 'create' ? 'white' : '#555';
@@ -3094,14 +3046,11 @@
             document.getElementById('tab-ppc-active').style.color = tab === 'active' ? 'white' : '#555';
             document.getElementById('tab-ppc-update').style.background = tab === 'update' ? '#17a2b8' : '#eee';
             document.getElementById('tab-ppc-update').style.color = tab === 'update' ? 'white' : '#555';
-            document.getElementById('tab-ppc-history').style.background = tab === 'history' ? '#6c757d' : '#eee';
-            document.getElementById('tab-ppc-history').style.color = tab === 'history' ? 'white' : '#555';
 
             if (tab === 'update' || tab === 'active') {
                 document.getElementById('upd_date').value = new Date().toISOString().split('T')[0];
-                loadActiveWorkOrders(); // Refresh table and dropdown
+                loadActiveWorkOrders(); 
             }
-            if (tab === 'history') loadAdminPPCHistory();
         }
 
         async function submitNewWorkOrder() {
@@ -3113,6 +3062,7 @@
             const payload = {
                 woNumber: woNo, partNo: partNo, partName: document.getElementById('crt_partName').value, targetQty: target,
                 type: document.getElementById('crt_type').value, size: document.getElementById('crt_size').value, pitch: document.getElementById('crt_pitch').value, length: document.getElementById('crt_length').value, gr: document.getElementById('crt_gr').value, af: document.getElementById('crt_af').value, rmDetails: document.getElementById('crt_rmDetails').value, chWt: document.getElementById('crt_chWt').value, rmKg: document.getElementById('crt_rmKg').value,
+                planQty: document.getElementById('crt_planQty').value, actualQty: document.getElementById('crt_actualQty').value, remarks: document.getElementById('crt_remarks').value,
                 createdBy: currentUser.username
             };
             
@@ -3121,7 +3071,7 @@
                 if(res.ok) { 
                     showToast("✅ Master Work Order Created!"); 
                     loadActiveWorkOrders(); 
-                    ['crt_woNo', 'crt_partNo', 'crt_partName', 'crt_targetQty'].forEach(id => document.getElementById(id).value = '');
+                    ['crt_woNo', 'crt_partNo', 'crt_partName', 'crt_targetQty', 'crt_planQty', 'crt_actualQty', 'crt_remarks'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = ''; });
                 } else showToast("❌ Error creating WO", true);
             } catch(e) { }
         }
@@ -3132,23 +3082,19 @@
                 if (!res.ok) return;
                 activeWorkOrders = await res.json();
                 
-                // 1. Populate Dropdown for PPC Daily Update
                 const updDrop = document.getElementById('upd_woSelect');
                 if (updDrop) {
-                    const prev = updDrop.value;
-                    updDrop.innerHTML = '<option value="">-- Select Work Order --</option>';
+                    const prev = updDrop.value; updDrop.innerHTML = '<option value="">-- Select Work Order --</option>';
                     activeWorkOrders.forEach(wo => { updDrop.innerHTML += `<option value="${wo.woNumber}">${wo.woNumber} (${wo.partNo})</option>`; });
                     updDrop.value = prev;
                 }
 
-                // 2. Populate Dropdown for Production Data Entry
                 const prodDrop = document.getElementById('prodWO');
                 if (prodDrop) {
                     prodDrop.innerHTML = '<option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option>';
                     activeWorkOrders.forEach(wo => { prodDrop.innerHTML += `<option value="${wo.woNumber}">${wo.woNumber} (${wo.partNo}) - Pending: ${wo.targetQty - wo.producedQty}</option>`; });
                 }
 
-                // 3. Populate Active WO Table in PPC
                 const activeTbody = document.querySelector('#ppcActiveTable tbody');
                 if (activeTbody) {
                     activeTbody.innerHTML = '';
@@ -3159,31 +3105,26 @@
                         
                         activeTbody.innerHTML += `<tr>
                             <td><strong>${wo.woNumber}</strong></td>
-                            <td>${wo.partNo}</td>
+                            <td>${wo.partNo || '-'}</td>
                             <td>${wo.partName || '-'}</td>
-                            <td>${wo.targetQty}</td>
-                            <td>${produced}</td>
+                            <td>${wo.type || '-'}</td>
+                            <td>${wo.size || '-'}</td>
+                            <td>${wo.pitch || '-'}</td>
+                            <td>${wo.length || '-'}</td>
+                            <td>${wo.gr || '-'}</td>
+                            <td>${wo.af || '-'}</td>
+                            <td><strong>${wo.targetQty || 0}</strong></td>
+                            <td>${wo.planQty || 0}</td>
+                            <td>${wo.actualQty || 0}</td>
+                            <td>${wo.rmDetails || '-'}</td>
+                            <td>${wo.chWt || 0}</td>
+                            <td>${wo.rmKg || 0}</td>
+                            <td>${wo.remarks || '-'}</td>
+                            <td style="color: #28a745; font-weight: bold;">${produced}</td>
                             <td style="color: red; font-weight: bold;">${pending}</td>
                             <td><progress value="${prog}" max="100"></progress> ${prog}%</td>
                         </tr>`;
                     });
-                }
-
-                // 4. Production Team Popup Logic
-                if (currentUser && currentUser.role === 'PRODUCTION') {
-                    let newOrdersAlert = "🚨 PENDING WORK ORDERS FROM PPC:\n\n";
-                    let needsAlert = false;
-                    activeWorkOrders.forEach(wo => {
-                        const pending = wo.targetQty - (wo.producedQty || 0);
-                        if (pending > 0) { 
-                            newOrdersAlert += `• ${wo.woNumber} | Part: ${wo.partNo} | Pending: ${pending}\n`;
-                            needsAlert = true;
-                        }
-                    });
-                    if (needsAlert && !window.prodWoAlertShown) {
-                        customAlert(newOrdersAlert.replace(/\n/g, '<br>'), "Production Required");
-                        window.prodWoAlertShown = true;
-                    }
                 }
             } catch (e) {}
         }
@@ -3236,13 +3177,38 @@
             } catch(e) { }
         }
 
+        // --- MASTER REPORTS ADMIN LOGIC ---
+        function switchReportTab(tab) {
+            ['ppc', 'qc', 'sales'].forEach(t => {
+                document.getElementById('rep' + t.toUpperCase() + 'Section').style.display = (tab === t) ? 'block' : 'none';
+                const btn = document.getElementById('tab-rep-' + t);
+                if (btn) {
+                    btn.classList.remove('active');
+                    btn.style.background = '#eee';
+                    btn.style.color = '#555';
+                }
+            });
+            
+            const activeBtn = document.getElementById('tab-rep-' + tab);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.style.color = 'white';
+                if(tab === 'ppc') activeBtn.style.background = '#e83e8c';
+                if(tab === 'qc') activeBtn.style.background = '#17a2b8';
+                if(tab === 'sales') activeBtn.style.background = '#6f42c1';
+            }
+
+            if (tab === 'ppc') loadAdminPPCHistory();
+            if (tab === 'qc') loadAdminQCHistory();
+            if (tab === 'sales') loadAdminSalesHistory();
+        }
+
         async function loadAdminPPCHistory() {
             try {
                 const res = await fetch(`${API_URL}/work-orders/all`);
                 const allOrders = await res.json();
-                const tbody = document.querySelector('#ppcHistoryTable tbody');
-                tbody.innerHTML = '';
-                
+                const tbody = document.querySelector('#repPPCTable tbody');
+                if(tbody) tbody.innerHTML = '';
                 allOrders.forEach(wo => {
                     if (wo.history && wo.history.length > 0) {
                         wo.history.forEach(log => {
@@ -3264,10 +3230,50 @@
             } catch (e) {}
         }
 
+        async function loadAdminQCHistory() {
+            try {
+                const res = await fetch(`${API_URL}/qc/history`);
+                const history = await res.json();
+                const tbody = document.querySelector('#repQCTable tbody');
+                if(tbody) tbody.innerHTML = '';
+                history.forEach(b => {
+                    const statusColor = b.qcStatus === 'APPROVED' ? '#28a745' : '#dc3545';
+                    tbody.innerHTML += `<tr>
+                        <td>${new Date(b.qcDate || b.date).toLocaleDateString()}</td>
+                        <td><span style="background:#17a2b8; color:white; padding:3px 6px; border-radius:3px; font-size:11px;">${b.stage}</span></td>
+                        <td><strong>${b.machineName || '-'}</strong></td>
+                        <td><strong>${b.partNo || '-'}</strong></td>
+                        <td style="color: green; font-weight: bold;">${b.acceptedQty || 0}</td>
+                        <td><span style="background:${statusColor}; color:white; padding:3px 8px; border-radius:12px; font-weight:bold; font-size:10px;">${b.qcStatus}</span></td>
+                        <td>👤 ${b.qcBy || '-'}</td>
+                    </tr>`;
+                });
+            } catch (err) {}
+        }
+
+        async function loadAdminSalesHistory() {
+            try {
+                const res = await fetch(`${API_URL}/sales-orders`); 
+                const orders = await res.json();
+                const tbody = document.querySelector('#repSalesTable tbody');
+                if(tbody) tbody.innerHTML = '';
+                orders.forEach(o => {
+                    let statusColor = o.status === 'QUOTATION' ? '#6c757d' : (o.status === 'CONFIRMED' ? '#007bff' : (o.status === 'DISPATCHED' ? '#ff9800' : '#28a745'));
+                    tbody.innerHTML += `<tr>
+                        <td>${new Date(o.orderDate).toLocaleDateString()}</td>
+                        <td><strong>${o.orderNo}</strong></td>
+                        <td>${o.customerName || 'Walk-in'}</td>
+                        <td><strong>₹${o.grandTotal.toLocaleString()}</strong></td>
+                        <td><span style="background:${statusColor}; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:11px;">${o.status}</span></td>
+                    </tr>`;
+                });
+            } catch(err) {}
+        }
+
         window.addEventListener('message', function (event) { if (event.data.type === 'CREATE_PO_FROM_INDENT') { switchMainTab('poCard', 'nav-po'); switchPOTab('indents'); openPOModal(); document.getElementById('poMaterialCode').value = event.data.data.code || ''; document.getElementById('poExpectedKg').value = event.data.data.qty || ''; document.getElementById('poScope').value = `Auto-generated from Toolroom Indent #${event.data.data.no}. Machine: ${event.data.data.machine}`; showToast("📋 PO Form pre-filled from Toolroom Indent!"); } });
-
-
     </script>
+
+      
 </body>
 
 </html>

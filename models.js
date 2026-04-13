@@ -55,11 +55,14 @@ const updateSchema = new mongoose.Schema({
 });
 
 const workOrderSchema = new mongoose.Schema({
-    woNumber: { type: String, required: true, unique: true }, partNo: String, partName: String, targetQty: Number, producedQty: { type: Number, default: 0 },
-    status: { type: String, enum: ['ACTIVE', 'COMPLETED', 'CANCELLED'], default: 'ACTIVE' }, createdBy: String, createdAt: { type: Date, default: Date.now },
+    woNumber: { type: String, required: true, unique: true }, 
+    partNo: String, partName: String, targetQty: Number, producedQty: { type: Number, default: 0 },
+    status: { type: String, enum: ['ACTIVE', 'COMPLETED', 'CANCELLED'], default: 'ACTIVE' }, 
+    createdBy: String, createdAt: { type: Date, default: Date.now },
     // PPC Module Fields
     type: String, size: String, pitch: String, length: String, gr: String, af: String,
-    rmDetails: String, chWt: Number, rmKg: Number, remarks: String,
+    rmDetails: String, chWt: Number, rmKg: Number, 
+    remarks: String, planQty: Number, actualQty: Number, // <-- Added Plan and Actual Qty
     history: [updateSchema]
 });
 const CustomerSchema = new mongoose.Schema({
