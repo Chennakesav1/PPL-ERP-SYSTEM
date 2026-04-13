@@ -902,10 +902,15 @@ app.put('/api/purchase-orders/:id/status', async (req, res) => {
     }
 });
 // ==========================================
-// WORK ORDERS (WO) MANAGEMENT
+// WORK ORDERS (WO) MANAGEMENT & PPC TRACKING
 // ==========================================
 app.get('/api/work-orders/active', async (req, res) => {
     try { res.json(await WorkOrder.find({ status: 'ACTIVE' }).sort({ createdAt: -1 })); }
+    catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/api/work-orders/all', async (req, res) => {
+    try { res.json(await WorkOrder.find().sort({ createdAt: -1 })); }
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -914,28 +919,20 @@ app.post('/api/work-orders', async (req, res) => {
     catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ==========================================
-// NEW: TOOL ROOM & QA SYNC ENDPOINTS
-// ==========================================
-app.get('/api/sync', async (req, res) => {
+app.put('/api/work-orders/:woNumber/daily', async (req, res) => {
     try {
-        let doc = await ErpState.findOne({ identifier: "production_state" });
-        if (!doc) {
-            doc = await ErpState.create({ identifier: "production_state", state: {} });
-        }
-        res.json(doc);
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
+        const wo = await WorkOrder.findOne({ woNumber: req.params.woNumber });
+        if (!wo) return res.status(404).json({ error: "Work order not found" });
 
-app.post('/api/sync', async (req, res) => {
-    try {
-        const updatedDoc = await ErpState.findOneAndUpdate(
-            { identifier: "production_state" },
-            { state: req.body },
-            { upsert: true, returnDocument: 'after' }
-        );
-        res.json({ success: true, message: "Successfully synced to MongoDB" });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+        const updateData = req.body;
+        const existingIndex = wo.history.findIndex(h => h.DATE === updateData.DATE);
+        
+        if (existingIndex >= 0) wo.history[existingIndex] = updateData;
+        else wo.history.push(updateData);
+
+        await wo.save();
+        res.json({ success: true, message: "Daily log updated!" });
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // ==========================================
