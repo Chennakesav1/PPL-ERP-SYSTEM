@@ -406,12 +406,16 @@
                 style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
             <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')"
                 style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
-            <div class="card" id="ppcCard" style="display: none; margin-bottom: 20px;">
+            <button class="tab-btn" id="nav-ppc" onclick="switchMainTab('ppcCard', 'nav-ppc')"
+                style="display: none; background: #e83e8c; color: white;">📊 PPC / Work Orders</button>
+        </div>
+        <div
+           <div class="card" id="ppcCard" style="display: none; margin-bottom: 20px;">
                 <h2 style="color: #e83e8c; border-bottom: 2px solid #e83e8c; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                     <span>📊 PPC & Work Order Management</span>
                     <div class="tab-container" style="border: none; margin: 0; padding: 0;">
                         <button class="tab-btn active" id="tab-ppc-create" onclick="switchPPCTab('create')" style="background: #e83e8c; color: white;">➕ Create WO</button>
-                        <button class="tab-btn" id="tab-ppc-active" onclick="switchPPCTab('active')">🟢 Active WOs (Pending)</button>
+                        <button class="tab-btn" id="tab-ppc-active" onclick="switchPPCTab('active')">🟢 Active WOs</button>
                         <button class="tab-btn" id="tab-ppc-update" onclick="switchPPCTab('update')">📝 Daily Update</button>
                         <button class="tab-btn admin-actions" id="tab-ppc-history" onclick="switchPPCTab('history')">📜 Admin: Logs</button>
                     </div>
@@ -502,14 +506,77 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card inventory-section" id="invCard" style="display: none;">
+
+            <div id="ppcUpdateSection" style="display: none;">
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+                    <div class="form-section-title" style="color:#007bff;">1. Select Active Order</div>
+                    <div class="form-grid" style="margin-bottom: 15px;">
+                        <select id="upd_woSelect" class="prod-input" onchange="loadWODetailsForUpdate()">
+                            <option value="">-- Select Work Order --</option>
+                        </select>
+                        <input type="text" id="upd_partNo" class="prod-input" readonly placeholder="Part No">
+                        <input type="text" id="upd_planQty" class="prod-input" readonly placeholder="Target Qty">
+                        <input type="date" id="upd_date" class="prod-input" onchange="loadWODetailsForUpdate()"
+                            title="Log Date">
+                        <input type="text" id="upd_fourM" class="prod-input" placeholder="4M Status">
+                    </div>
+                    <div class="form-section-title" style="color:#28a745;">2. Enter Daily Progress</div>
+                    <div class="form-grid"
+                        style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); background: #e8f5e9; padding: 15px; border-radius: 8px;">
+                        <div class="form-group"><label>FORGING</label><input type="number" id="upd_forging"
+                                class="prod-input" min="0"></div>
+                        <div class="form-group"><label>ROLLING</label><input type="number" id="upd_rolling"
+                                class="prod-input" min="0"></div>
+                        <div class="form-group"><label>SECONDARY</label><input type="number" id="upd_secondary"
+                                class="prod-input" min="0"></div>
+                        <div class="form-group"><label>HT</label><input type="number" id="upd_ht" class="prod-input"
+                                min="0"></div>
+                        <div class="form-group"><label>POLISHING</label><input type="number" id="upd_polishing"
+                                class="prod-input" min="0"></div>
+                        <div class="form-group"><label>PLATING</label><input type="number" id="upd_plating"
+                                class="prod-input" min="0"></div>
+                        <div class="form-group"><label>FINAL INSP.</label><input type="number" id="upd_finalInsp"
+                                class="prod-input" min="0"></div>
+                        <div class="form-group"><label>FG</label><input type="number" id="upd_fg" class="prod-input"
+                                min="0"></div>
+                    </div>
+                    <button onclick="savePpcDailyUpdate()" class="save-btn"
+                        style="background: #28a745; margin-top: 20px;">💾 Save Daily Production Update</button>
+                </div>
+            </div>
+
+            <div id="ppcHistorySection" class="admin-actions" style="display: none;">
+                <div class="table-wrapper">
+                    <table id="ppcHistoryTable">
+                        <thead style="background-color: #6c757d; color: white;">
+                            <tr>
+                                <th>LOG DATE</th>
+                                <th>WO NO</th>
+                                <th>PART NO</th>
+                                <th>TARGET QTY</th>
+                                <th>FORGING</th>
+                                <th>ROLLING</th>
+                                <th>HT</th>
+                                <th>POLISHING</th>
+                                <th>FG</th>
+                                <th>4M</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div
-            style="display: flex; align-items: center; justify-content: flex-end; font-size: 13px; white-space: nowrap; width: 180px;">
-            <span id="roleDisplay" class="role-badge"
-                style="padding: 4px 10px; font-size: 12px; text-align: center;"></span>
-            <a href="#" onclick="logout()"
-                style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 15px;">Logout</a>
-        </div>
+    </div>
+    <div
+        style="display: flex; align-items: center; justify-content: flex-end; font-size: 13px; white-space: nowrap; width: 180px;">
+        <span id="roleDisplay" class="role-badge"
+            style="padding: 4px 10px; font-size: 12px; text-align: center;"></span>
+        <a href="#" onclick="logout()"
+            style="color: #dc3545; text-decoration: none; font-weight: bold; margin-left: 15px;">Logout</a>
+    </div>
     </div>
 
     <div id="mainDashboard">
@@ -960,7 +1027,7 @@
             </div>
 
 
-            
+
 
             <div class="card inventory-section" id="invCard" style="display: none;">
                 <h2>Finished Goods Stock & WIP
@@ -1000,16 +1067,26 @@
             <div class="card transaction-section" id="txCard" style="display: none;">
                 <h2>Recent Movements
                     <div class="search-container">
-                        <input type="date" id="dateSearchInput" class="search-box" style="width: 130px;" onchange="applyTxFilters()">
-                        <input type="text" id="searchTxInput" class="search-box" style="width: 150px;" onkeyup="applyTxFilters()" placeholder="🔍 Search multi terms (e.g. m6 64s)...">
-                        <button class="export-btn" onclick="exportTableToCSV('transactionsTable', 'Warehouse_Movements.csv')">⬇️ Excel</button>
+                        <input type="date" id="dateSearchInput" class="search-box" style="width: 130px;"
+                            onchange="applyTxFilters()">
+                        <input type="text" id="searchTxInput" class="search-box" style="width: 150px;"
+                            onkeyup="applyTxFilters()" placeholder="🔍 Search multi terms (e.g. m6 64s)...">
+                        <button class="export-btn"
+                            onclick="exportTableToCSV('transactionsTable', 'Warehouse_Movements.csv')">⬇️ Excel</button>
                     </div>
                 </h2>
                 <div class="tab-container" style="margin-bottom: 15px;">
-                    <button class="tab-btn active" id="tab-tx-ALL" onclick="currentTxFilter='ALL'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">All</button>
-                    <button class="tab-btn" id="tab-tx-FG" onclick="currentTxFilter='FG'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">FG Only</button>
-                    <button class="tab-btn" id="tab-tx-RAW" onclick="currentTxFilter='RAW'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Raw Material</button>
-                    <button class="tab-btn" id="tab-tx-TOOL" onclick="currentTxFilter='TOOL'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Tool Indents</button>
+                    <button class="tab-btn active" id="tab-tx-ALL"
+                        onclick="currentTxFilter='ALL'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">All</button>
+                    <button class="tab-btn" id="tab-tx-FG"
+                        onclick="currentTxFilter='FG'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">FG
+                        Only</button>
+                    <button class="tab-btn" id="tab-tx-RAW"
+                        onclick="currentTxFilter='RAW'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Raw
+                        Material</button>
+                    <button class="tab-btn" id="tab-tx-TOOL"
+                        onclick="currentTxFilter='TOOL'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Tool
+                        Indents</button>
                 </div>
 
                 <div class="table-wrapper">
@@ -1553,15 +1630,19 @@
     </div>
 
 
-    <div id="customModalOverlay" class="modal" style="display: none; position: fixed; z-index: 100000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); align-items: center; justify-content: center; backdrop-filter: blur(3px);">
-        <div class="modal-content" style="background-color: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
-            <h3 id="customModalTitle" style="margin-top: 0; color: #007bff; border-bottom: 2px solid #eee; padding-bottom: 10px;">Alert</h3>
+    <div id="customModalOverlay" class="modal"
+        style="display: none; position: fixed; z-index: 100000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); align-items: center; justify-content: center; backdrop-filter: blur(3px);">
+        <div class="modal-content"
+            style="background-color: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
+            <h3 id="customModalTitle"
+                style="margin-top: 0; color: #007bff; border-bottom: 2px solid #eee; padding-bottom: 10px;">Alert</h3>
             <p id="customModalMessage" style="color: #444; font-size: 16px; margin: 20px 0; line-height: 1.5;"></p>
-            <button class="save-btn" onclick="closeCustomAlert()" style="background-color: #007bff; margin-top: 10px;">OK</button>
+            <button class="save-btn" onclick="closeCustomAlert()"
+                style="background-color: #007bff; margin-top: 10px;">OK</button>
         </div>
     </div>
 
-<script>
+    <script>
         const API_URL = 'http://localhost:5000/api';
         let currentUser = null;
         let currentLogFilter = 'ALL';
@@ -1571,21 +1652,21 @@
         let pendingQCBatches = [];
         let qcHistoryBatches = [];
         let currentQCView = 'PENDING';
-        
+
         // Data Stores
         window.activePurchaseIndents = [];
         window.documentRepo = [];
-        window.conversionHistory = []; 
+        window.conversionHistory = [];
         window.masterInventory = [];
         window.indentHistory = [];
 
         // Global Sync Function
-        window.saveAllData = async function() {
+        window.saveAllData = async function () {
             try {
                 const res = await fetch(`${API_URL}/sync`);
                 const data = await res.json();
                 let state = data.state || {};
-                
+
                 if (window.indentHistory && window.indentHistory.length > 0) state.indentHistory = window.indentHistory;
                 if (window.conversionHistory && window.conversionHistory.length > 0) state.conversionHistory = window.conversionHistory;
                 if (window.masterInventory && window.masterInventory.length > 0) state.masterInventory = window.masterInventory;
@@ -1645,10 +1726,10 @@
             document.getElementById('topNav').style.display = 'flex';
             document.getElementById('roleDisplay').innerText = `👤 ${currentUser.username.toUpperCase()} (${currentUser.role})`;
 
-            const allCards = ['productionCard', 'invCard', 'txCard', 'rawMaterialCard', 'poCard', 'qcCard', 'toolroomCard', 'salesCard','ppcCard'];
+            const allCards = ['productionCard', 'invCard', 'txCard', 'rawMaterialCard', 'poCard', 'qcCard', 'toolroomCard', 'salesCard', 'ppcCard'];
             allCards.forEach(id => { if (document.getElementById(id)) document.getElementById(id).style.display = 'none'; });
 
-            const allNavs = ['nav-prod', 'nav-qc', 'nav-inv', 'nav-tx', 'nav-rm', 'nav-po', 'nav-sales', 'nav-toolroom','nav-ppc'];
+            const allNavs = ['nav-prod', 'nav-qc', 'nav-inv', 'nav-tx', 'nav-rm', 'nav-po', 'nav-sales', 'nav-toolroom', 'nav-ppc'];
             allNavs.forEach(id => { if (document.getElementById(id)) document.getElementById(id).style.display = 'none'; });
 
             document.getElementById('addBtnUI').style.display = 'none';
@@ -1728,7 +1809,7 @@
             if (currentUser && (currentUser.role === 'QC' || currentUser.role === 'QA' || currentUser.role === 'ADMIN')) {
                 if (currentQCView === 'PENDING') loadPendingQC();
                 else loadQCHistory();
-                loadPendingIndentsForPurchase(); 
+                loadPendingIndentsForPurchase();
             }
 
             if (currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'PURCHASE')) {
@@ -1762,9 +1843,9 @@
                 const pendReqTable = document.getElementById('pendingRequestsTableSection');
                 const histSec = document.getElementById('indentPoHistorySection');
                 const formSec = document.getElementById('indentPoFormSection');
-                
+
                 if (pendReqTable) pendReqTable.style.display = 'block';
-                if (histSec) histSec.style.display = 'block'; 
+                if (histSec) histSec.style.display = 'block';
                 if (formSec) formSec.style.display = 'none';
             }
         }
@@ -1791,10 +1872,10 @@
                         } else {
                             window.activePurchaseIndents.forEach(ind => {
                                 let priorityHtml = ind.priority === 'URGENT' ? '<span style="color:red; font-weight:bold;">🚨 URGENT</span>' : '<span style="color:#666;">Normal</span>';
-                                
+
                                 let linkedDocs = window.documentRepo.filter(d => d.part === ind.code);
-                                let docsHtml = linkedDocs.length > 0 
-                                    ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>') 
+                                let docsHtml = linkedDocs.length > 0
+                                    ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>')
                                     : '<span style="color:#999; font-style: italic; font-size: 11px;">None</span>';
 
                                 tbody.innerHTML += `
@@ -1825,7 +1906,7 @@
         function createPOFromIndent(indentData) {
             let indent;
             if (typeof indentData === 'object') {
-                indent = indentData; 
+                indent = indentData;
             } else {
                 indent = window.activePurchaseIndents.find(i => i.id == indentData);
             }
@@ -1897,7 +1978,7 @@
                 if (res.ok) {
                     indent.status = 'PO RAISED';
                     indent.expectedDate = expectedDate;
-                    
+
                     await window.saveAllData();
 
                     cancelIndentPO();
@@ -1905,10 +1986,10 @@
                     loadPOs();
                     showToast(`✅ PO successfully raised for ${indent.code}!`);
                 } else { showToast("❌ Failed to create PO in database.", true); }
-            } catch (err) { showToast("❌ Network Error connecting to database.", true); } 
-            finally { 
-                submitBtn.disabled = false; submitBtn.innerText = ogText; 
-                refreshInterval = setInterval(refreshDashboard, 5000); 
+            } catch (err) { showToast("❌ Network Error connecting to database.", true); }
+            finally {
+                submitBtn.disabled = false; submitBtn.innerText = ogText;
+                refreshInterval = setInterval(refreshDashboard, 5000);
             }
         }
 
@@ -1938,7 +2019,7 @@
 
                     if (po.type === 'TOOLING') {
                         let indentNo = po.poNumber.replace('PO-IND-', '');
-                        
+
                         let origIndent = (window.indentHistory || []).find(i => i.no === indentNo);
                         let iDate = origIndent ? origIndent.date : new Date(po.orderDate).toLocaleDateString();
                         let iDesc = origIndent ? origIndent.desc : '-';
@@ -1946,8 +2027,8 @@
                         let iSize = origIndent ? origIndent.partSize : '-';
 
                         let linkedDocs = window.documentRepo.filter(d => d.part === po.materialCode);
-                        let docsHtml = linkedDocs.length > 0 
-                            ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>') 
+                        let docsHtml = linkedDocs.length > 0
+                            ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 2px 6px; border-radius: 4px; display: inline-block; font-size: 11px; border: 1px solid #b8daff; margin-bottom: 2px;">📄 ${d.type}</a>`).join('<br>')
                             : '<span style="color:#999; font-style: italic; font-size: 11px;">None</span>';
 
                         let receiveBtn = isPending ? `<button onclick="receiveIndentPO('${indentNo}', ${po.expectedKg})" style="background:#17a2b8; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;">📥 Receive Tooling</button>` : `<span class="badge" style="background:#6f42c1; color:white; padding:4px; border-radius:4px; font-size:10px;">Sent to QA</span>`;
@@ -2007,9 +2088,9 @@
             } catch (e) { }
 
             await window.saveAllData();
-            
+
             loadPOs();
-            loadInwardQAQueue(); 
+            loadInwardQAQueue();
             showToast(`📦 Sent to QC! Tool is waiting for inspection.`);
 
             refreshInterval = setInterval(refreshDashboard, 5000);
@@ -2063,7 +2144,7 @@
             btnPending.classList.remove('active'); btnHistory.classList.remove('active');
             btnPending.style.background = '#eee'; btnHistory.style.background = '#eee';
             btnPending.style.color = '#555'; btnHistory.style.color = '#555';
-            
+
             if (view === 'PENDING') {
                 btnPending.classList.add('active'); btnPending.style.background = '#6f42c1'; btnPending.style.color = 'white';
                 document.getElementById('inwardPendingContainer').style.display = 'block';
@@ -2116,7 +2197,7 @@
         function openInwardQaModal(qaId) {
             const item = window.conversionHistory.find(c => c.id == qaId);
             if (!item) return;
-            
+
             document.getElementById('inwardQaConvId').value = item.id;
             document.getElementById('inwardQaIndentText').innerText = item.indentNo;
             document.getElementById('inwardQaToolText').innerText = item.src;
@@ -2124,10 +2205,10 @@
             document.getElementById('inwardQaMachineText').innerText = item.machine || '-';
 
             let linkedDocs = window.documentRepo.filter(d => d.part === item.src);
-            let docsHtml = linkedDocs.length > 0 
-                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 5px; font-size: 12px; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download Original Drawing to Verify</a>`).join('') 
+            let docsHtml = linkedDocs.length > 0
+                ? linkedDocs.map(d => `<a href="${d.dataUrl}" download="${d.filename || 'Drawing.pdf'}" style="color: #007bff; text-decoration: none; background: #e0f0ff; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 5px; font-size: 12px; border: 1px solid #b8daff; cursor: pointer;">⬇️ Download Original Drawing to Verify</a>`).join('')
                 : '<span style="color:#999; font-style: italic;">No drawing provided</span>';
-            if(document.getElementById('inwardQaDrawingLink')) document.getElementById('inwardQaDrawingLink').innerHTML = docsHtml;
+            if (document.getElementById('inwardQaDrawingLink')) document.getElementById('inwardQaDrawingLink').innerHTML = docsHtml;
 
             document.getElementById('inwardQaDimensions').value = '';
             document.getElementById('inwardQaRemarks').value = '';
@@ -2179,7 +2260,7 @@
                 if (status === 'APPROVED') {
                     let invItem = window.masterInventory.find(t => t.code === item.src);
                     if (invItem) {
-                        invItem.spareStock += Number(item.qty); 
+                        invItem.spareStock += Number(item.qty);
                         invItem.stock = invItem.rngStock + invItem.spareStock;
                     } else {
                         window.masterInventory.push({ code: item.src, desc: "Inward Tool", machine: item.machine, rngStock: 0, spareStock: Number(item.qty), stock: Number(item.qty), min: 5, actualLife: 0, assumedLife: 50000 });
@@ -2188,7 +2269,7 @@
 
                 // WAIT for database to finish
                 await window.saveAllData();
-                
+
                 closeInwardQaModal();
                 loadInwardQAQueue();
                 loadInwardQAHistory(); // Refresh history immediately
@@ -2225,7 +2306,7 @@
                         <td><button onclick="openQCInspection('${b._id}')" style="background:#007bff; color:white; border:none; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">🔍 Full Inspect</button></td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (err) {}
+            } catch (err) { }
         }
 
         function openQCInspection(batchId, isHistoryMode = false) {
@@ -2252,10 +2333,10 @@
                 </div>
                 <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 5px solid #007bff;">
                     <h4 style="margin-top:0; color:#007bff;">3. Physical Measurements</h4>
-                    ${isHistoryMode ? 
-                        `<p><strong>Length:</strong> ${b.measuredLength || 'N/A'} mm</p><p><strong>A/F:</strong> ${b.measuredAF || 'N/A'}</p><p><strong>Thread Gauge:</strong> ${b.threadGauge || 'N/A'}</p>` 
-                        : 
-                        `<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    ${isHistoryMode ?
+                    `<p><strong>Length:</strong> ${b.measuredLength || 'N/A'} mm</p><p><strong>A/F:</strong> ${b.measuredAF || 'N/A'}</p><p><strong>Thread Gauge:</strong> ${b.threadGauge || 'N/A'}</p>`
+                    :
+                    `<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                             <input type="number" step="0.01" id="qcLenInput" class="prod-input" placeholder="Length (mm)" style="border: 1px solid #007bff;">
                             <input type="text" id="qcAfInput" class="prod-input" placeholder="A/F" style="border: 1px solid #007bff;">
                             <select id="qcThreadInput" class="prod-input" style="border: 1px solid #007bff;">
@@ -2264,7 +2345,7 @@
                                 <option value="FAIL">FAIL</option>
                             </select>
                         </div>`
-                    }
+                }
                 </div>
                 <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; grid-column: span 3; border-left: 5px solid #28a745;">
                     <h4 style="margin-top:0; color:#28a745; text-align:center;">4. Output Verification</h4>
@@ -2290,7 +2371,7 @@
             const overrideAcc = document.getElementById('qcOverrideAcc').value;
             const overrideRej = document.getElementById('qcOverrideRej').value;
             const overrideRejKg = document.getElementById('qcOverrideRejKg').value;
-            
+
             if (status === 'REJECTED' && !remarks) return alert("QC Remarks are mandatory when rejecting a batch!");
             if (!confirm(`Are you sure you want to officially mark this batch as ${status}?`)) return;
 
@@ -2302,29 +2383,29 @@
 
             btnApprove.disabled = true;
             btnReject.disabled = true;
-            
+
             if (status === 'APPROVED') btnApprove.innerText = "⏳ Saving...";
             if (status === 'REJECTED') btnReject.innerText = "⏳ Saving...";
 
             try {
                 const qcUsername = (currentUser && currentUser.username) ? currentUser.username : 'QC Inspector';
                 // Add these lines right before `const qcUsername = ...`
-            const mLen = document.getElementById('qcLenInput') ? document.getElementById('qcLenInput').value : null;
-            const mAf = document.getElementById('qcAfInput') ? document.getElementById('qcAfInput').value : null;
-            const mThread = document.getElementById('qcThreadInput') ? document.getElementById('qcThreadInput').value : null;
+                const mLen = document.getElementById('qcLenInput') ? document.getElementById('qcLenInput').value : null;
+                const mAf = document.getElementById('qcAfInput') ? document.getElementById('qcAfInput').value : null;
+                const mThread = document.getElementById('qcThreadInput') ? document.getElementById('qcThreadInput').value : null;
 
-            // Change the payload line to include them:
-            const payload = { qcBy: qcUsername, qcRemarks: remarks, status: status, accQty: Number(overrideAcc), rejQty: Number(overrideRej), rejKg: Number(overrideRejKg), measuredLength: mLen, measuredAF: mAf, threadGauge: mThread };
-                
+                // Change the payload line to include them:
+                const payload = { qcBy: qcUsername, qcRemarks: remarks, status: status, accQty: Number(overrideAcc), rejQty: Number(overrideRej), rejKg: Number(overrideRejKg), measuredLength: mLen, measuredAF: mAf, threadGauge: mThread };
+
                 const res = await fetch(`${API_URL}/qc/approve/${batchId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const data = await res.json();
-                
+
                 if (data.success) {
-                    showToast(`✅ Batch ${status} successfully!`); 
-                    document.getElementById('qcModal').style.display = 'none'; 
+                    showToast(`✅ Batch ${status} successfully!`);
+                    document.getElementById('qcModal').style.display = 'none';
                     document.getElementById('qcRemarksInput').value = '';
-                    loadPendingQC(); 
-                    if (typeof loadInventory === 'function') loadInventory(); 
+                    loadPendingQC();
+                    if (typeof loadInventory === 'function') loadInventory();
                     if (typeof loadProductionBatches === 'function') loadProductionBatches();
                 } else {
                     alert("Error: " + data.error);
@@ -2363,7 +2444,7 @@
                         <td>👤 ${b.qcBy || '-'}</td><td><button onclick="openQCInspection('${b._id}', true)" style="background:#6c757d; color:white; border:none; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">👁️ View Data</button></td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (err) {}
+            } catch (err) { }
         }
 
         function applyQCHistoryFilters() {
@@ -2410,7 +2491,7 @@
                 length: document.getElementById('prodLength').value, af: document.getElementById('prodAF').value, productGrade: document.getElementById('prodGrade').value, rawMaterialCode: document.getElementById('prodRMCode').value,
                 heatNo: document.getElementById('prodHeatNo').value, rawMaterialConsumedKg: document.getElementById('prodRMKg').value, pieceWeightKg: document.getElementById('prodPieceWt').value, scheduleHours: document.getElementById('prodSchHrs').value,
                 jobChangeHours: document.getElementById('prodJcHrs').value, prodPlannedHours: document.getElementById('prodPlannedHrs').value, speedRpm: document.getElementById('prodSpeed').value, shiftTargetQty: document.getElementById('prodTarget').value,
-                acceptedQty: document.getElementById('prodAccepted').value, rejectedQty: document.getElementById('prodRejected').value, rejectionKg: document.getElementById('prodRejKg').value, rejectionReason: document.getElementById('prodRejReason').value, remarks: document.getElementById('prodRemarks').value, 
+                acceptedQty: document.getElementById('prodAccepted').value, rejectedQty: document.getElementById('prodRejected').value, rejectionKg: document.getElementById('prodRejKg').value, rejectionReason: document.getElementById('prodRejReason').value, remarks: document.getElementById('prodRemarks').value,
                 lossMajorJC: document.getElementById('l_MajorJC').value, lossMinorJC: document.getElementById('l_MinorJC').value, lossSetting: document.getElementById('l_Setting').value, lossMcClean: document.getElementById('l_McClean').value, lossToolRework: document.getElementById('l_ToolRework').value, lossNoTool: document.getElementById('l_NoTool').value, lossNoLoad: document.getElementById('l_NoLoad').value, lossNoOperator: document.getElementById('l_NoOperator').value, lossMMnt: document.getElementById('l_MMnt').value, lossEMnt: document.getElementById('l_EMnt').value, lossNoPower: document.getElementById('l_NoPower').value, lossNoAirOil: document.getElementById('l_NoAirOil').value, lossNoRm: document.getElementById('l_NoRm').value, lossRmLoading: document.getElementById('l_RmLoading').value, lossQaApproval: document.getElementById('l_QaApproval').value, lossCoilChange: document.getElementById('l_CoilChange').value, lossNoPlan: document.getElementById('l_NoPlan').value, lossNpdTeam: document.getElementById('l_NpdTeam').value, lossUnknown: document.getElementById('l_Unknown').value,
                 loggedBy: currentUser.username
             };
@@ -2439,8 +2520,8 @@
 
                 batches.forEach(b => {
                     const isFinished = b.nextProcessRoute === 'READY_STOCK' && b.qcStatus === 'APPROVED';
-                    if (currentLogFilter === 'COMPLETED') { if (!isFinished) return; } 
-                    else if (currentLogFilter === 'ALL') { if (isFinished) return; } 
+                    if (currentLogFilter === 'COMPLETED') { if (!isFinished) return; }
+                    else if (currentLogFilter === 'ALL') { if (isFinished) return; }
                     else { if (b.stage !== currentLogFilter || isFinished) return; }
                     count++;
 
@@ -2486,7 +2567,7 @@
 
                 if (count === 0) tbody.innerHTML = '<tr><td colspan="53" style="text-align: center; padding: 20px;">No logs found for this filter.</td></tr>';
                 applyProductionFilters(); calculateLiveOEE(); renderVisualCharts();
-            } catch (error) {}
+            } catch (error) { }
         }
 
         function autoFillNextStage(batchId) {
@@ -2528,7 +2609,7 @@
             try {
                 const response = await fetch(`${API_URL}/ppc/verify/${batchId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: status, nextRoute: nextRoute, remarks: "Approved", username: currentUser.username }) });
                 if ((await response.json()).success) { showToast(`✅ Batch routed to ${nextRoute}`); refreshDashboard(); }
-            } catch (err) {}
+            } catch (err) { }
         }
 
         function filterLogs(stage) { currentLogFilter = stage; document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); document.getElementById('tab-' + stage).classList.add('active'); loadProductionBatches(); }
@@ -2561,7 +2642,7 @@
                     }
                 }
                 if (document.getElementById("totalAccQty")) { document.getElementById("totalAccQty").textContent = totalAcc; document.getElementById("totalRejQty").textContent = totalRej; document.getElementById("totalRejKg").textContent = totalRejKg.toFixed(2); }
-            } catch (error) {}
+            } catch (error) { }
         }
 
         function calculateLiveOEE() {
@@ -2581,7 +2662,7 @@
                 let oee = avail * perf * qual;
 
                 document.getElementById('oeeTotal').textContent = (oee * 100).toFixed(1) + "%"; document.getElementById('oeeAvail').textContent = (avail * 100).toFixed(1) + "%"; document.getElementById('oeeDowntimeText').textContent = dtHrs.toFixed(1) + " hrs down"; document.getElementById('oeePerf').textContent = (perf * 100).toFixed(1) + "%"; document.getElementById('oeeSpeedText').textContent = prod + " / " + target; document.getElementById('oeeQual').textContent = (qual * 100).toFixed(1) + "%"; document.getElementById('oeeRejText').textContent = rej + " rejected";
-            } catch (error) {}
+            } catch (error) { }
         }
 
         let machineChartInstance = null; let qualityChartInstance = null;
@@ -2598,7 +2679,7 @@
                 const ctxQ = document.getElementById('qualityChart').getContext('2d');
                 if (qualityChartInstance) qualityChartInstance.destroy();
                 qualityChartInstance = new Chart(ctxQ, { type: 'doughnut', data: { labels: ['Accepted', 'Rejected'], datasets: [{ data: (totalAcc === 0 && totalRej === 0) ? [1, 0] : [totalAcc, totalRej], backgroundColor: ['#28a745', '#dc3545'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } } });
-            } catch (error) {}
+            } catch (error) { }
         }
 
         function generateDailyPDF() {
@@ -2621,7 +2702,7 @@
                 activeWorkOrders = await res.json();
                 const woDrop = document.getElementById('prodWO'); woDrop.innerHTML = '<option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option>';
                 activeWorkOrders.forEach(wo => { const prog = wo.targetQty ? Math.round((wo.producedQty / wo.targetQty) * 100) : 0; woDrop.innerHTML += `<option value="${wo.woNumber}">${wo.woNumber} (${wo.partNo}) - ${prog}% Done</option>`; });
-            } catch (e) {}
+            } catch (e) { }
         }
 
 
@@ -2629,12 +2710,12 @@
             const woNo = document.getElementById('newWoNumber').value;
             const partNo = document.getElementById('newWoPartNo').value;
             const target = document.getElementById('newWoTarget').value;
-            if(!woNo || !partNo || !target) return showToast("Fill all required WO fields!", true);
-            
+            if (!woNo || !partNo || !target) return showToast("Fill all required WO fields!", true);
+
             try {
-                const res = await fetch(`${API_URL}/work-orders`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ woNumber: woNo, partNo, partName: document.getElementById('newWoPartName').value, targetQty: target, createdBy: currentUser.username }) });
-                if(res.ok) { showToast("✅ Work Order Created"); loadActiveWorkOrders(); }
-            } catch(e) { }
+                const res = await fetch(`${API_URL}/work-orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ woNumber: woNo, partNo, partName: document.getElementById('newWoPartName').value, targetQty: target, createdBy: currentUser.username }) });
+                if (res.ok) { showToast("✅ Work Order Created"); loadActiveWorkOrders(); }
+            } catch (e) { }
         }
 
         // Updated loadActiveWorkOrders to populate table and show alert to production
@@ -2642,22 +2723,22 @@
             try {
                 const res = await fetch(`${API_URL}/work-orders/active`); if (!res.ok) return;
                 activeWorkOrders = await res.json();
-                
+
                 // 1. Populate Dropdown
-                const woDrop = document.getElementById('prodWO'); if(woDrop) woDrop.innerHTML = '<option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option>';
-                
+                const woDrop = document.getElementById('prodWO'); if (woDrop) woDrop.innerHTML = '<option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option>';
+
                 // 2. Populate WO Table
-                const tbody = document.querySelector('#woTable tbody'); if(tbody) tbody.innerHTML = '';
+                const tbody = document.querySelector('#woTable tbody'); if (tbody) tbody.innerHTML = '';
 
                 let pendingAlertMsg = "🔔 PENDING WORK ORDERS:\n";
                 let hasAlerts = false;
 
-                activeWorkOrders.forEach(wo => { 
-                    const prog = wo.targetQty ? Math.round((wo.producedQty / wo.targetQty) * 100) : 0; 
-                    if(woDrop) woDrop.innerHTML += `<option value="${wo.woNumber}">${wo.woNumber} (${wo.partNo}) - ${wo.targetQty - wo.producedQty} Pending</option>`; 
-                    
-                    if(tbody) tbody.innerHTML += `<tr><td><strong>${wo.woNumber}</strong></td><td>${wo.partNo}</td><td>${wo.partName || '-'}</td><td>${wo.targetQty}</td><td>${wo.producedQty || 0}</td><td><progress value="${prog}" max="100"></progress> ${prog}%</td><td><span style="background:#28a745; color:white; padding:4px; border-radius:4px; font-size:11px;">ACTIVE</span></td></tr>`;
-                    
+                activeWorkOrders.forEach(wo => {
+                    const prog = wo.targetQty ? Math.round((wo.producedQty / wo.targetQty) * 100) : 0;
+                    if (woDrop) woDrop.innerHTML += `<option value="${wo.woNumber}">${wo.woNumber} (${wo.partNo}) - ${wo.targetQty - wo.producedQty} Pending</option>`;
+
+                    if (tbody) tbody.innerHTML += `<tr><td><strong>${wo.woNumber}</strong></td><td>${wo.partNo}</td><td>${wo.partName || '-'}</td><td>${wo.targetQty}</td><td>${wo.producedQty || 0}</td><td><progress value="${prog}" max="100"></progress> ${prog}%</td><td><span style="background:#28a745; color:white; padding:4px; border-radius:4px; font-size:11px;">ACTIVE</span></td></tr>`;
+
                     if (wo.producedQty < wo.targetQty) {
                         pendingAlertMsg += `• ${wo.woNumber} (${wo.partNo}): ${wo.targetQty - wo.producedQty} remaining\n`;
                         hasAlerts = true;
@@ -2670,7 +2751,7 @@
                     window.woAlertShown = true; // prevent endless looping
                 }
 
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function autoFillFromWO() {
@@ -2710,16 +2791,16 @@
                     tbody.appendChild(tr);
                 });
                 filterInventory();
-            } catch (error) {}
+            } catch (error) { }
         }
 
 
         async function reconcileFG(productId) {
             if (!confirm("This will zero out Production Readied and add the difference to Current Stock. Proceed?")) return;
             try {
-                const res = await fetch(`${API_URL}/inventory/reconcile/${productId}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: currentUser.username}) });
+                const res = await fetch(`${API_URL}/inventory/reconcile/${productId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: currentUser.username }) });
                 if (res.ok) { showToast("✅ Reconciled!"); loadInventory(); loadTransactions(); }
-            } catch(e) {}
+            } catch (e) { }
         }
 
         async function updateStock(productId) {
@@ -2764,7 +2845,7 @@
         }
 
         function openReceiveModal() { document.getElementById('receiveStockModal').style.display = 'flex'; }
-        function closeReceiveModal() { document.getElementById('receiveStockModal').style.display = 'none'; ['rawCodeInput', 'rawNameInput', 'rawGradeInput', 'rawSupplierInput', 'rawScopeInput', 'rawKgInput'].forEach(id => document.getElementById(id).value = ''); }
+        function closeReceiveModal() { document.getElementById('receiveStockModal').style.display = 'none';['rawCodeInput', 'rawNameInput', 'rawGradeInput', 'rawSupplierInput', 'rawScopeInput', 'rawKgInput'].forEach(id => document.getElementById(id).value = ''); }
 
         async function submitRawMaterial() {
             const code = document.getElementById('rawCodeInput').value.trim().toUpperCase(); const kg = document.getElementById('rawKgInput').value;
@@ -2782,20 +2863,20 @@
 
         let currentTxFilter = 'ALL';
         function applyTxFilters() {
-            const searchTerms = document.getElementById("searchTxInput").value.toUpperCase().split(' ').filter(t => t.trim() !== ''); 
-            const date = document.getElementById("dateSearchInput").value; 
+            const searchTerms = document.getElementById("searchTxInput").value.toUpperCase().split(' ').filter(t => t.trim() !== '');
+            const date = document.getElementById("dateSearchInput").value;
             const tr = document.getElementById("transactionsTable").getElementsByTagName("tr");
-            
+
             for (let i = 1; i < tr.length; i++) {
                 if (tr[i].cells.length === 1) continue;
                 let rowText = tr[i].textContent.toUpperCase();
-                let itemCode = tr[i].getElementsByTagName("td")[1].textContent.toUpperCase(); 
+                let itemCode = tr[i].getElementsByTagName("td")[1].textContent.toUpperCase();
                 let rowDate = tr[i].getAttribute("data-date");
-                
+
                 // Multi-term logic: every word typed must exist in the row
-                let matchesText = searchTerms.length === 0 || searchTerms.every(term => rowText.includes(term)); 
+                let matchesText = searchTerms.length === 0 || searchTerms.every(term => rowText.includes(term));
                 let matchesDate = !date || rowDate === date;
-                
+
                 // Tab logic
                 let matchesTab = true;
                 if (currentTxFilter === 'RAW') matchesTab = itemCode.includes('[RAW]');
@@ -2844,7 +2925,7 @@
             const name = document.getElementById('crmName').value; if (!name) return showToast("Customer Name is required!", true);
             try {
                 const res = await fetch(`${API_URL}/customers`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name, sector: document.getElementById('crmSector').value, transportMode: document.getElementById('crmTransport').value, phone: document.getElementById('crmPhone').value, email: document.getElementById('crmEmail').value, address: document.getElementById('crmAddress').value, area: document.getElementById('crmArea').value, state: document.getElementById('crmState').value, zone: document.getElementById('crmZone').value, pinCode: document.getElementById('crmPinCode').value }) });
-                if (res.ok) { showToast("👥 Customer Added!"); ['crmName', 'crmSector', 'crmTransport', 'crmPhone', 'crmEmail', 'crmAddress', 'crmArea', 'crmState', 'crmZone', 'crmPinCode'].forEach(id => document.getElementById(id).value = ''); loadCustomers(); }
+                if (res.ok) { showToast("👥 Customer Added!");['crmName', 'crmSector', 'crmTransport', 'crmPhone', 'crmEmail', 'crmAddress', 'crmArea', 'crmState', 'crmZone', 'crmPinCode'].forEach(id => document.getElementById(id).value = ''); loadCustomers(); }
             } catch (err) { }
         }
 
@@ -2866,7 +2947,7 @@
 
                     tbody.innerHTML += `<tr><td><strong>${o.orderNo}</strong><br><span style="font-size:10px; color:#888;">${new Date(o.orderDate).toLocaleDateString()}</span></td><td><strong>${o.customerName || 'Walk-in'}</strong></td><td style="min-width: 200px;">${scrollableItemsHtml}</td><td><strong>₹${o.grandTotal.toLocaleString()}</strong></td><td><span style="background:${statusColor}; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size:11px;">${o.status}</span></td><td style="min-width: 150px;">${actionButtons}</td><td style="min-width: 100px;"><button onclick="sendManualNotification('${o._id}', 'whatsapp')" style="background:#25D366; color:white; border:none; padding:6px; border-radius:4px; cursor:pointer; width:100%; margin-bottom:5px; font-weight:bold;">💬 WhatsApp</button><button onclick="sendManualNotification('${o._id}', 'email')" style="background:#e83e8c; color:white; border:none; padding:6px; border-radius:4px; cursor:pointer; width:100%; font-weight:bold;">📧 Email</button></td></tr>`;
                 });
-            } catch (err) {}
+            } catch (err) { }
         }
 
         function downloadInvoice(id) { window.open(`${API_URL}/sales-orders/${id}/invoice`, '_blank'); }
@@ -2992,8 +3073,6 @@
             }
         }
 
-
-
         // ==========================================
         // PPC / WORK ORDER MODULE
         // ==========================================
@@ -3019,6 +3098,28 @@
                 loadActiveWorkOrders(); // Refresh table and dropdown
             }
             if (tab === 'history') loadAdminPPCHistory();
+        }
+
+        async function submitNewWorkOrder() {
+            const woNo = document.getElementById('crt_woNo').value;
+            const partNo = document.getElementById('crt_partNo').value;
+            const target = document.getElementById('crt_targetQty').value;
+            if(!woNo || !partNo || !target) return showToast("Fill WO NO, Part No, and Target!", true);
+
+            const payload = {
+                woNumber: woNo, partNo: partNo, partName: document.getElementById('crt_partName').value, targetQty: target,
+                type: document.getElementById('crt_type').value, size: document.getElementById('crt_size').value, pitch: document.getElementById('crt_pitch').value, length: document.getElementById('crt_length').value, gr: document.getElementById('crt_gr').value, af: document.getElementById('crt_af').value, rmDetails: document.getElementById('crt_rmDetails').value, chWt: document.getElementById('crt_chWt').value, rmKg: document.getElementById('crt_rmKg').value,
+                createdBy: currentUser.username
+            };
+            
+            try {
+                const res = await fetch(`${API_URL}/work-orders`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+                if(res.ok) { 
+                    showToast("✅ Master Work Order Created!"); 
+                    loadActiveWorkOrders(); 
+                    ['crt_woNo', 'crt_partNo', 'crt_partName', 'crt_targetQty'].forEach(id => document.getElementById(id).value = '');
+                } else showToast("❌ Error creating WO", true);
+            } catch(e) { }
         }
 
         async function loadActiveWorkOrders() {
@@ -3082,35 +3183,6 @@
                 }
             } catch (e) {}
         }
-
-
-
-
-
-
-        async function submitNewWorkOrder() {
-            const woNo = document.getElementById('crt_woNo').value;
-            const partNo = document.getElementById('crt_partNo').value;
-            const target = document.getElementById('crt_targetQty').value;
-            if(!woNo || !partNo || !target) return showToast("Fill WO NO, Part No, and Target!", true);
-
-            const payload = {
-                woNumber: woNo, partNo: partNo, partName: document.getElementById('crt_partName').value, targetQty: target,
-                type: document.getElementById('crt_type').value, size: document.getElementById('crt_size').value, pitch: document.getElementById('crt_pitch').value, length: document.getElementById('crt_length').value, gr: document.getElementById('crt_gr').value, af: document.getElementById('crt_af').value, rmDetails: document.getElementById('crt_rmDetails').value, chWt: document.getElementById('crt_chWt').value, rmKg: document.getElementById('crt_rmKg').value,
-                createdBy: currentUser.username
-            };
-            
-            try {
-                const res = await fetch(`${API_URL}/work-orders`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-                if(res.ok) { 
-                    showToast("✅ Master Work Order Created!"); 
-                    loadActiveWorkOrders(); 
-                    ['crt_woNo', 'crt_partNo', 'crt_partName', 'crt_targetQty'].forEach(id => document.getElementById(id).value = '');
-                } else showToast("❌ Error creating WO", true);
-            } catch(e) { }
-        }
-
-        
 
         function loadWODetailsForUpdate() {
             const selectedWo = document.getElementById('upd_woSelect').value;
@@ -3189,6 +3261,8 @@
         }
 
         window.addEventListener('message', function (event) { if (event.data.type === 'CREATE_PO_FROM_INDENT') { switchMainTab('poCard', 'nav-po'); switchPOTab('indents'); openPOModal(); document.getElementById('poMaterialCode').value = event.data.data.code || ''; document.getElementById('poExpectedKg').value = event.data.data.qty || ''; document.getElementById('poScope').value = `Auto-generated from Toolroom Indent #${event.data.data.no}. Machine: ${event.data.data.machine}`; showToast("📋 PO Form pre-filled from Toolroom Indent!"); } });
+
+
     </script>
 </body>
 
