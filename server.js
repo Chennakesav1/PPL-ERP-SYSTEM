@@ -832,36 +832,46 @@ app.post('/api/raw-materials/receive', async (req, res) => {
 });
 
 app.get('/api/purchase-orders', async (req, res) => {
-    try { res.json(await PurchaseOrder.find().sort({ orderDate: -1, _id: -1 })); }
-    catch (err) { res.status(500).json({ error: err.message }); }
+    try { 
+        const pos = await PurchaseOrder.find().sort({ orderDate: -1, _id: -1 });
+        res.json(pos);
+    } catch (err) { 
+        console.error("GET /api/purchase-orders ERROR:", err);
+        res.status(500).json({ error: err.message }); 
+    }
 });
 
 app.post('/api/purchase-orders', async (req, res) => {
     try {
-        // FIXED: Extracting all variables from the frontend, including type and dates!
         const { poNumber, supplierName, materialCode, grade, scope, expectedKg, costPerKg, username, type, expectedDeliveryDate } = req.body;
         
-        await new PurchaseOrder({
-            poNumber: poNumber || `PO-${Date.now()}`, // Uses the Toolroom ID if provided
-            supplierName, 
-            materialCode: materialCode.toUpperCase(),
-            grade: grade || "Standard", 
+        // Create a safe payload, only including fields that actually exist
+        const newPO = new PurchaseOrder({
+            poNumber: poNumber || `PO-${Date.now()}`,
+            supplierName: supplierName || "Unknown Supplier",
+            materialCode: materialCode ? materialCode.toUpperCase() : "UNKNOWN",
+            grade: grade || "Standard",
             scope: scope || "General Inventory",
-            expectedKg: Number(expectedKg), 
-            costPerKg: Number(costPerKg),
-            totalCost: Number(expectedKg) * Number(costPerKg), 
+            expectedKg: Number(expectedKg) || 0,
+            costPerKg: Number(costPerKg) || 0,
+            totalCost: (Number(expectedKg) || 0) * (Number(costPerKg) || 0),
             orderedBy: username || "Purchase Dept",
-            status: 'PENDING', 
-            orderDate: new Date(),
-            type: type || 'RAW_MATERIAL',             // Saves the TOOLING tag!
-            expectedDeliveryDate: expectedDeliveryDate || null
-        }).save();
-        
+            status: 'PENDING',
+            orderDate: new Date()
+        });
+
+        // Add these fields only if your schema supports them to prevent crashes
+        if (type) newPO.type = type;
+        if (expectedDeliveryDate) newPO.expectedDeliveryDate = new Date(expectedDeliveryDate);
+
+        await newPO.save();
         res.json({ success: true, message: "PO Created Successfully!" });
     } catch (err) { 
+        console.error("POST /api/purchase-orders ERROR:", err);
         res.status(500).json({ error: err.message }); 
     }
 });
+
 
 app.put('/api/purchase-orders/:id/receive', async (req, res) => {
     try {
@@ -993,6 +1003,47 @@ app.get('/toolroom.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'toolroom.html'));
 });
 
+
+
+// ==========================================
+        // PPC / WORK ORDER & REPORTS MODULE
+        // ==========================================
+        let allWoHistory = [];
+
+        function switchPPCTab(tab) {
+            // Hide all PPC sections
+            document.getElementById('ppcCreateSection').style.display = tab === 'create' ? 'block' : 'none';
+            document.getElementById('ppcActiveSection').style.display = tab === 'active' ? 'block' : 'none';
+            document.getElementById('ppcUpdateSection').style.display = tab === 'update' ? 'block' : 'none';
+
+            // Reset all PPC tab button styles
+            ['create', 'active', 'update'].forEach(t => {
+                const btn = document.getElementById('tab-ppc-' + t);
+                if (btn) {
+                    btn.classList.remove('active');
+                    btn.style.background = '#eee';
+                    btn.style.color = '#555';
+                }
+            });
+
+            // Style the active button
+            const activeBtn = document.getElementById('tab-ppc-' + tab);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.style.color = 'white';
+                if(tab === 'create') activeBtn.style.background = '#e83e8c';
+                if(tab === 'active') activeBtn.style.background = '#28a745';
+                if(tab === 'update') activeBtn.style.background = '#17a2b8';
+            }
+
+            // If switching to update or active tab, refresh the data
+            if (tab === 'update' || tab === 'active') {
+                document.getElementById('upd_date').value = new Date().toISOString().split('T')[0];
+                if (typeof loadActiveWorkOrders === 'function') {
+                    loadActiveWorkOrders(); 
+                }
+            }
+        }
 // ==========================================
 // SERVER LISTEN
 // ==========================================
