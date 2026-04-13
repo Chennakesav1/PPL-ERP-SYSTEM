@@ -406,6 +406,8 @@
                 style="display: none; background: #6f42c1; color: white;">📈 Sales</button>
             <button class="tab-btn" id="nav-toolroom" onclick="switchMainTab('toolroomCard', 'nav-toolroom')"
                 style="display: none; background: #343a40; color: white;">🛠️ Tool Room</button>
+            <button class="tab-btn" id="nav-po" onclick="switchMainTab('poCard', 'nav-po')" style="display: none;">POs</button>
+            <button class="tab-btn" id="nav-wo" onclick="switchMainTab('woCard', 'nav-wo')" style="display: none; background: #e83e8c; color: white;">📋 Work Orders</button>    
         </div>
         <div
             style="display: flex; align-items: center; justify-content: flex-end; font-size: 13px; white-space: nowrap; width: 180px;">
@@ -863,6 +865,34 @@
                 </div>
             </div>
 
+
+            <div class="card" id="woCard" style="display: none; margin-bottom: 20px;">
+                <h2 style="color: #e83e8c; border-bottom: 2px solid #e83e8c;">📋 Work Order Management</h2>
+                <div class="form-grid" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #e83e8c; margin-bottom: 15px;">
+                    <input type="text" id="newWoNumber" class="prod-input" placeholder="* WO Number (e.g., WO-1001)" required>
+                    <input type="text" id="newWoPartNo" class="prod-input" placeholder="* Part No / Barcode" required>
+                    <input type="text" id="newWoPartName" class="prod-input" placeholder="Part Name">
+                    <input type="number" id="newWoTarget" class="prod-input" placeholder="* Target Qty" required>
+                    <button onclick="createWorkOrder()" class="save-btn" style="background: #e83e8c; grid-column: 1 / -1;">➕ Create Work Order</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="woTable">
+                        <thead style="background-color: #e83e8c; color: white;">
+                            <tr>
+                                <th>WO Number</th>
+                                <th>Part No</th>
+                                <th>Part Name</th>
+                                <th>Target Qty</th>
+                                <th>Produced Qty</th>
+                                <th>Progress</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="card inventory-section" id="invCard" style="display: none;">
                 <h2>Finished Goods Stock & WIP
                     <div class="search-container">
@@ -901,14 +931,18 @@
             <div class="card transaction-section" id="txCard" style="display: none;">
                 <h2>Recent Movements
                     <div class="search-container">
-                        <input type="date" id="dateSearchInput" class="search-box" style="width: 130px;"
-                            onchange="applyTxFilters()">
-                        <input type="text" id="searchTxInput" class="search-box" style="width: 150px;"
-                            onkeyup="applyTxFilters()" placeholder="🔍 Item...">
-                        <button class="export-btn"
-                            onclick="exportTableToCSV('transactionsTable', 'Warehouse_Movements.csv')">⬇️ Excel</button>
+                        <input type="date" id="dateSearchInput" class="search-box" style="width: 130px;" onchange="applyTxFilters()">
+                        <input type="text" id="searchTxInput" class="search-box" style="width: 150px;" onkeyup="applyTxFilters()" placeholder="🔍 Search multi terms (e.g. m6 64s)...">
+                        <button class="export-btn" onclick="exportTableToCSV('transactionsTable', 'Warehouse_Movements.csv')">⬇️ Excel</button>
                     </div>
                 </h2>
+                <div class="tab-container" style="margin-bottom: 15px;">
+                    <button class="tab-btn active" id="tab-tx-ALL" onclick="currentTxFilter='ALL'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">All</button>
+                    <button class="tab-btn" id="tab-tx-FG" onclick="currentTxFilter='FG'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">FG Only</button>
+                    <button class="tab-btn" id="tab-tx-RAW" onclick="currentTxFilter='RAW'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Raw Material</button>
+                    <button class="tab-btn" id="tab-tx-TOOL" onclick="currentTxFilter='TOOL'; applyTxFilters(); document.querySelectorAll('#txCard .tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Tool Indents</button>
+                </div>
+
                 <div class="table-wrapper">
                     <table id="transactionsTable">
                         <thead>
@@ -2149,7 +2183,19 @@
                 </div>
                 <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 5px solid #007bff;">
                     <h4 style="margin-top:0; color:#007bff;">3. Physical Measurements</h4>
-                    <p><strong>Length:</strong> ${b.measuredLength || 'N/A'} mm</p><p><strong>A/F:</strong> ${b.measuredAF || 'N/A'}</p><p><strong>Thread Gauge:</strong> ${b.threadGauge || 'N/A'}</p>
+                    ${isHistoryMode ? 
+                        `<p><strong>Length:</strong> ${b.measuredLength || 'N/A'} mm</p><p><strong>A/F:</strong> ${b.measuredAF || 'N/A'}</p><p><strong>Thread Gauge:</strong> ${b.threadGauge || 'N/A'}</p>` 
+                        : 
+                        `<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                            <input type="number" step="0.01" id="qcLenInput" class="prod-input" placeholder="Length (mm)" style="border: 1px solid #007bff;">
+                            <input type="text" id="qcAfInput" class="prod-input" placeholder="A/F" style="border: 1px solid #007bff;">
+                            <select id="qcThreadInput" class="prod-input" style="border: 1px solid #007bff;">
+                                <option value="N/A">Thread Gauge: N/A</option>
+                                <option value="PASS">PASS</option>
+                                <option value="FAIL">FAIL</option>
+                            </select>
+                        </div>`
+                    }
                 </div>
                 <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; grid-column: span 3; border-left: 5px solid #28a745;">
                     <h4 style="margin-top:0; color:#28a745; text-align:center;">4. Output Verification</h4>
@@ -2193,7 +2239,13 @@
 
             try {
                 const qcUsername = (currentUser && currentUser.username) ? currentUser.username : 'QC Inspector';
-                const payload = { qcBy: qcUsername, qcRemarks: remarks, status: status, accQty: Number(overrideAcc), rejQty: Number(overrideRej), rejKg: Number(overrideRejKg) };
+                // Add these lines right before `const qcUsername = ...`
+            const mLen = document.getElementById('qcLenInput') ? document.getElementById('qcLenInput').value : null;
+            const mAf = document.getElementById('qcAfInput') ? document.getElementById('qcAfInput').value : null;
+            const mThread = document.getElementById('qcThreadInput') ? document.getElementById('qcThreadInput').value : null;
+
+            // Change the payload line to include them:
+            const payload = { qcBy: qcUsername, qcRemarks: remarks, status: status, accQty: Number(overrideAcc), rejQty: Number(overrideRej), rejKg: Number(overrideRejKg), measuredLength: mLen, measuredAF: mAf, threadGauge: mThread };
                 
                 const res = await fetch(`${API_URL}/qc/approve/${batchId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const data = await res.json();
@@ -2503,6 +2555,55 @@
             } catch (e) {}
         }
 
+
+        async function createWorkOrder() {
+            const woNo = document.getElementById('newWoNumber').value;
+            const partNo = document.getElementById('newWoPartNo').value;
+            const target = document.getElementById('newWoTarget').value;
+            if(!woNo || !partNo || !target) return showToast("Fill all required WO fields!", true);
+            
+            try {
+                const res = await fetch(`${API_URL}/work-orders`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ woNumber: woNo, partNo, partName: document.getElementById('newWoPartName').value, targetQty: target, createdBy: currentUser.username }) });
+                if(res.ok) { showToast("✅ Work Order Created"); loadActiveWorkOrders(); }
+            } catch(e) { }
+        }
+
+        // Updated loadActiveWorkOrders to populate table and show alert to production
+        async function loadActiveWorkOrders() {
+            try {
+                const res = await fetch(`${API_URL}/work-orders/active`); if (!res.ok) return;
+                activeWorkOrders = await res.json();
+                
+                // 1. Populate Dropdown
+                const woDrop = document.getElementById('prodWO'); if(woDrop) woDrop.innerHTML = '<option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option>';
+                
+                // 2. Populate WO Table
+                const tbody = document.querySelector('#woTable tbody'); if(tbody) tbody.innerHTML = '';
+
+                let pendingAlertMsg = "🔔 PENDING WORK ORDERS:\n";
+                let hasAlerts = false;
+
+                activeWorkOrders.forEach(wo => { 
+                    const prog = wo.targetQty ? Math.round((wo.producedQty / wo.targetQty) * 100) : 0; 
+                    if(woDrop) woDrop.innerHTML += `<option value="${wo.woNumber}">${wo.woNumber} (${wo.partNo}) - ${wo.targetQty - wo.producedQty} Pending</option>`; 
+                    
+                    if(tbody) tbody.innerHTML += `<tr><td><strong>${wo.woNumber}</strong></td><td>${wo.partNo}</td><td>${wo.partName || '-'}</td><td>${wo.targetQty}</td><td>${wo.producedQty || 0}</td><td><progress value="${prog}" max="100"></progress> ${prog}%</td><td><span style="background:#28a745; color:white; padding:4px; border-radius:4px; font-size:11px;">ACTIVE</span></td></tr>`;
+                    
+                    if (wo.producedQty < wo.targetQty) {
+                        pendingAlertMsg += `• ${wo.woNumber} (${wo.partNo}): ${wo.targetQty - wo.producedQty} remaining\n`;
+                        hasAlerts = true;
+                    }
+                });
+
+                // Show Popup to Production Users on Load
+                if (hasAlerts && currentUser && currentUser.role === 'PRODUCTION' && !window.woAlertShown) {
+                    customAlert(pendingAlertMsg.replace(/\n/g, '<br>'), "Pending Production Targets");
+                    window.woAlertShown = true; // prevent endless looping
+                }
+
+            } catch (e) {}
+        }
+
         function autoFillFromWO() {
             const sel = document.getElementById('prodWO').value; toggleOtherInput('prodWO', 'prodWOOther');
             if (sel !== 'OTHER' && sel !== '') {
@@ -2529,10 +2630,27 @@
                         actionHTML = `<td class="admin-actions" style="display:flex; flex-direction:column; gap:5px;"><input type="number" id="stock-${p._id}" value="${cStock}" style="width: 70px; text-align: center; border: 1px solid #ccc; border-radius: 4px; padding: 4px; margin-bottom: 5px;"><button onclick="updateStock('${p._id}')" style="background: #28a745; color: white; border: none; padding: 5px; border-radius: 4px; cursor: pointer;">Save</button><button onclick="deleteProduct('${p._id}')" style="background: #dc3545; color: white; border: none; padding: 5px; border-radius: 4px; cursor: pointer;">Delete</button></td>`;
                     }
                     tr.innerHTML = `<td><strong>${p.productCode || 'N/A'}</strong></td><td>${p.sector || '-'}</td><td>${p.type || '-'}</td><td>${p.grade || '-'}</td><td>${p.length ? p.length + ' mm' : '-'}</td><td>${p.af !== undefined && p.af !== null ? p.af : '-'}</td><td>${p.weightPerPc || '0'}g</td><td style="color: #17a2b8; font-weight: bold; font-size: 1.1em;">${wip}</td><td style="color: #6f42c1; font-weight: bold; font-size: 1.1em;">${prodR}</td><td style="color: #ff9800; font-weight: bold; font-size: 1.1em;">${fgc}</td><td style="color: ${diff === 0 ? '#28a745' : '#dc3545'}; font-weight: bold; font-size: 1.1em;">${diff}</td><td class="stock-val ${isLow ? 'low-stock-text' : ''}" style="color: #28a745; font-weight: bold; font-size: 1.1em;">${cStock}</td>${actionHTML}`;
+                    if (currentUser && currentUser.role === 'ADMIN') {
+                        actionHTML = `<td class="admin-actions" style="display:flex; flex-direction:column; gap:5px;">
+                            <input type="number" id="stock-${p._id}" value="${cStock}" style="width: 70px; text-align: center; border: 1px solid #ccc; border-radius: 4px; padding: 4px; margin-bottom: 5px;">
+                            <button onclick="updateStock('${p._id}')" style="background: #28a745; color: white; border: none; padding: 5px; border-radius: 4px; cursor: pointer;">Save</button>
+                            ${diff !== 0 ? `<button onclick="reconcileFG('${p._id}')" style="background: #6f42c1; color: white; border: none; padding: 5px; border-radius: 4px; cursor: pointer;">Reconcile FG</button>` : ''}
+                            <button onclick="deleteProduct('${p._id}')" style="background: #dc3545; color: white; border: none; padding: 5px; border-radius: 4px; cursor: pointer;">Delete</button>
+                        </td>`;
+                    }
                     tbody.appendChild(tr);
                 });
                 filterInventory();
             } catch (error) {}
+        }
+
+
+        async function reconcileFG(productId) {
+            if (!confirm("This will zero out Production Readied and add the difference to Current Stock. Proceed?")) return;
+            try {
+                const res = await fetch(`${API_URL}/inventory/reconcile/${productId}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: currentUser.username}) });
+                if (res.ok) { showToast("✅ Reconciled!"); loadInventory(); loadTransactions(); }
+            } catch(e) {}
         }
 
         async function updateStock(productId) {
@@ -2593,13 +2711,29 @@
             for (let i = 1; i < tr.length; i++) { if (tr[i].cells.length === 1) continue; tr[i].style.display = (tr[i].textContent || tr[i].innerText).toUpperCase().indexOf(filter) > -1 ? "" : "none"; }
         }
 
+        let currentTxFilter = 'ALL';
         function applyTxFilters() {
-            const text = document.getElementById("searchTxInput").value.toUpperCase(); const date = document.getElementById("dateSearchInput").value; const tr = document.getElementById("transactionsTable").getElementsByTagName("tr");
+            const searchTerms = document.getElementById("searchTxInput").value.toUpperCase().split(' ').filter(t => t.trim() !== ''); 
+            const date = document.getElementById("dateSearchInput").value; 
+            const tr = document.getElementById("transactionsTable").getElementsByTagName("tr");
+            
             for (let i = 1; i < tr.length; i++) {
                 if (tr[i].cells.length === 1) continue;
-                let itemCode = tr[i].getElementsByTagName("td")[1].textContent.toUpperCase(); let rowDate = tr[i].getAttribute("data-date");
-                let matchesText = itemCode.includes(text); let matchesDate = !date || rowDate === date;
-                tr[i].style.display = (matchesText && matchesDate) ? "" : "none";
+                let rowText = tr[i].textContent.toUpperCase();
+                let itemCode = tr[i].getElementsByTagName("td")[1].textContent.toUpperCase(); 
+                let rowDate = tr[i].getAttribute("data-date");
+                
+                // Multi-term logic: every word typed must exist in the row
+                let matchesText = searchTerms.length === 0 || searchTerms.every(term => rowText.includes(term)); 
+                let matchesDate = !date || rowDate === date;
+                
+                // Tab logic
+                let matchesTab = true;
+                if (currentTxFilter === 'RAW') matchesTab = itemCode.includes('[RAW]');
+                else if (currentTxFilter === 'TOOL') matchesTab = itemCode.includes('[GRN]') || itemCode.includes('TOOL');
+                else if (currentTxFilter === 'FG') matchesTab = !itemCode.includes('[RAW]') && !itemCode.includes('[GRN]') && !itemCode.includes('TOOL');
+
+                tr[i].style.display = (matchesText && matchesDate && matchesTab) ? "" : "none";
             }
         }
 

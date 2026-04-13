@@ -635,6 +635,16 @@ app.put('/api/qc/approve/:id', async (req, res) => {
                     product.productionReadied = (product.productionReadied || 0) + finalAccQty;
                     product.wipStock = Math.max((product.wipStock || 0) - (finalAccQty + finalRejQty), 0);
                     await new Transaction({ barcode: product.barcode, type: 'QC_APPROVAL', quantity: finalAccQty, resultingStock: product.currentStock, user: req.body.qcBy || 'QC Inspector' }).save();
+                    
+                    // --- NEW: WORK ORDER AUTO-CLOSURE LOGIC ---
+                    if (batch.workOrderNo && batch.workOrderNo !== 'OTHER') {
+                        let wo = await WorkOrder.findOne({ woNumber: batch.workOrderNo });
+                        if (wo) {
+                            wo.producedQty = (wo.producedQty || 0) + finalAccQty;
+                            if (wo.producedQty >= wo.targetQty) wo.status = 'COMPLETED'; // Auto-remove from active
+                            await wo.save();
+                        }
+                    }
                 } else if (batch.stage === 'FORGING') {
                     product.wipStock = (product.wipStock || 0) + finalAccQty;
                 } else {
@@ -738,6 +748,27 @@ app.put('/api/inventory/:id', async (req, res) => {
 app.delete('/api/inventory/:id', async (req, res) => {
     try { await Product.findByIdAndDelete(req.params.id); res.status(200).json({ message: "Deleted" }); }
     catch (error) { res.status(500).json({ message: error.message }); }
+});
+
+app.put('/api/inventory/reconcile/:id', async (req, res) => {
+    try {
+        let product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ error: "Product not found" });
+
+        let readied = product.productionReadied || 0;
+        let fg = product.fgCheck || 0;
+        let diff = readied - fg;
+
+        product.currentStock = (product.currentStock || 0) + diff;
+        product.fgCheck = readied; // Update FG check to latest
+        product.productionReadied = 0; // Reset readied to 0
+        product.lastUpdated = new Date();
+        
+        await product.save();
+        await new Transaction({ barcode: product.barcode, type: 'ADJUSTMENT', quantity: diff, resultingStock: product.currentStock, user: req.body.username || 'System' }).save();
+        
+        res.json({ success: true, message: "Stock Reconciled!" });
+    } catch (error) { res.status(500).json({ message: error.message }); }
 });
 
 app.get('/api/transactions', async (req, res) => {
