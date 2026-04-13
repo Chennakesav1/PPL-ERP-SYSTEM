@@ -121,12 +121,19 @@
                 </div>
 
                 <div id="repPPCSection">
-                    <div class="table-wrapper">
-                        <table id="repPPCTable">
+                    <div class="table-wrapper" style="overflow-x: auto;">
+                        <table id="repPPCTable" style="min-width: 1500px;">
                             <thead style="background-color: #e83e8c; color: white;">
                                 <tr>
-                                    <th>LOG DATE</th><th>WO NO</th><th>PART NO</th><th>TARGET QTY</th>
-                                    <th>FORGING</th><th>ROLLING</th><th>HT</th><th>POLISHING</th><th>FG</th><th>4M</th>
+                                    <th>LOG DATE</th><th>WO NO</th><th>PART NO</th>
+                                    <th>TYPE</th><th>SIZE</th><th>PITCH</th><th>LENGTH</th><th>GR</th><th>A/F</th>
+                                    <th>PLAN QTY</th><th>ACTUAL QTY</th>
+                                    <th style="background-color: #ff9800;">FORGING</th>
+                                    <th style="background-color: #17a2b8;">ROLLING</th>
+                                    <th style="background-color: #dc3545;">HT</th>
+                                    <th style="background-color: #6f42c1;">POLISHING</th>
+                                    <th style="background-color: #28a745;">FG</th>
+                                    <th>4M STATUS</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -179,14 +186,14 @@
                             <div class="form-grid" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #e83e8c;">
                                 <div class="form-group"><label>WO NO *</label><input type="text" id="crt_woNo" class="prod-input" placeholder="e.g. WO-1001" required></div>
                                 <div class="form-group"><label>PART NO *</label><input type="text" id="crt_partNo" class="prod-input" required></div>
-                                <div class="form-group"><label>PART NAME</label><input type="text" id="crt_partName" class="prod-input"></div>
+                                
                                 <div class="form-group"><label>TYPE</label><input type="text" id="crt_type" class="prod-input"></div>
                                 <div class="form-group"><label>SIZE</label><input type="text" id="crt_size" class="prod-input"></div>
                                 <div class="form-group"><label>PITCH</label><input type="text" id="crt_pitch" class="prod-input"></div>
                                 <div class="form-group"><label>LENGTH</label><input type="text" id="crt_length" class="prod-input"></div>
                                 <div class="form-group"><label>GR</label><input type="text" id="crt_gr" class="prod-input"></div>
                                 <div class="form-group"><label>A/F</label><input type="text" id="crt_af" class="prod-input"></div>
-                                <div class="form-group"><label>TARGET QTY *</label><input type="number" id="crt_targetQty" class="prod-input" required></div>
+                                
                                 <div class="form-group"><label>PLAN QTY</label><input type="number" id="crt_planQty" class="prod-input"></div>
                                 <div class="form-group"><label>ACTUAL QTY</label><input type="number" id="crt_actualQty" class="prod-input"></div>
                                 <div class="form-group"><label>R.M DETAILS</label><input type="text" id="crt_rmDetails" class="prod-input"></div>
@@ -198,49 +205,92 @@
                         </div>
 
                         <div id="ppcActiveSection" style="display: none;">
-                            <div class="table-wrapper" style="overflow-x: auto;">
-                                <table id="ppcActiveTable" style="min-width: 1300px;">
-                                    <thead style="background-color: #28a745; color: white;">
-                                        <tr>
-                                            <th>WO NO</th><th>PART NO</th><th>PART NAME</th>
-                                            <th>TYPE</th><th>SIZE</th><th>PITCH</th><th>LENGTH</th><th>GR</th><th>A/F</th>
-                                            <th>TARGET QTY</th><th>PLAN QTY</th><th>ACTUAL QTY</th>
-                                            <th>R.M DETAILS</th><th>CH WT</th><th>RM KG</th><th>REMARKS</th>
-                                            <th>PRODUCED</th><th style="background-color: #dc3545;">PENDING</th><th>PROGRESS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
+                    <div class="table-wrapper" style="overflow-x: auto;">
+                        <table id="ppcActiveTable" style="min-width: 1400px;">
+                            <thead style="background-color: #28a745; color: white;">
+                                <tr>
+                                    <th>WO NO</th>
+                                    <th>PART NO</th>
+                                    
+                                    <th>TYPE</th>
+                                    <th>SIZE</th>
+                                    <th>PITCH</th>
+                                    <th>LENGTH</th>
+                                    <th>GR</th>
+                                    <th>A/F</th>
+                                    
+                                    <th>PLAN QTY</th>
+                                    <th>ACTUAL QTY</th>
+                                    <th>R.M DETAILS</th>
+                                    <th>CH WT</th>
+                                    <th>RM KG</th>
+                                    <th>REMARKS</th>
+                                    <th>PRODUCED</th>
+                                    <th style="background-color: #dc3545;">PENDING</th>
+                                    <th>PROGRESS</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                    <div id="ppcUpdateSection" style="display: none;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+                        <div class="form-section-title" style="color:#007bff;">1. Select Active Order</div>
+                        <div class="form-grid" style="margin-bottom: 15px;">
+                            <select id="upd_woSelect" class="prod-input full-width" onchange="loadWODetailsForUpdate()" style="border-color: #007bff; font-weight: bold; font-size: 16px;">
+                                <option value="">-- Select Work Order --</option>
+                            </select>
+                        </div>
+                        
+                        <div id="upd_woDetailsGrid" class="form-grid-multi" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #6c757d; margin-bottom: 15px; display: none;">
+                            <div class="form-group"><label>PART NO</label><input type="text" id="upd_partNo" class="prod-input" readonly></div>
+                            <div class="form-group"><label>PART NAME</label><input type="text" id="upd_partName" class="prod-input" readonly></div>
+                            <div class="form-group"><label>TYPE</label><input type="text" id="upd_type" class="prod-input" readonly></div>
+                            <div class="form-group"><label>SIZE</label><input type="text" id="upd_size" class="prod-input" readonly></div>
+                            <div class="form-group"><label>PITCH</label><input type="text" id="upd_pitch" class="prod-input" readonly></div>
+                            <div class="form-group"><label>LENGTH</label><input type="text" id="upd_length" class="prod-input" readonly></div>
+                            <div class="form-group"><label>GR</label><input type="text" id="upd_gr" class="prod-input" readonly></div>
+                            <div class="form-group"><label>A/F</label><input type="text" id="upd_af" class="prod-input" readonly></div>
+                            <div class="form-group"><label>TARGET QTY</label><input type="text" id="upd_targetQty" class="prod-input" readonly style="color: #007bff; font-weight: bold;"></div>
+                            <div class="form-group"><label>PLAN QTY</label><input type="text" id="upd_planQtyWO" class="prod-input" readonly></div>
+                            <div class="form-group"><label>ACTUAL QTY</label><input type="text" id="upd_actualQty" class="prod-input" readonly></div>
+                            <div class="form-group"><label>R.M DETAILS</label><input type="text" id="upd_rmDetails" class="prod-input" readonly></div>
+                            <div class="form-group"><label>CH WT</label><input type="text" id="upd_chWt" class="prod-input" readonly></div>
+                            <div class="form-group"><label>RM KG</label><input type="text" id="upd_rmKg" class="prod-input" readonly></div>
                         </div>
 
-                        <div id="ppcUpdateSection" style="display: none;">
-                            <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                                <div class="form-section-title" style="color:#007bff;">1. Select Active Order</div>
-                                <div class="form-grid" style="margin-bottom: 15px;">
-                                    <select id="upd_woSelect" class="prod-input" onchange="loadWODetailsForUpdate()"><option value="">-- Select Work Order --</option></select>
-                                    <input type="text" id="upd_partNo" class="prod-input" readonly placeholder="Part No">
-                                    <input type="text" id="upd_planQty" class="prod-input" readonly placeholder="Target Qty">
-                                    <input type="date" id="upd_date" class="prod-input" onchange="loadWODetailsForUpdate()" title="Log Date">
-                                    <input type="text" id="upd_fourM" class="prod-input" placeholder="4M Status">
-                                </div>
-                                <div class="form-section-title" style="color:#28a745;">2. Enter Daily Progress</div>
-                                <div class="form-grid" style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); background: #e8f5e9; padding: 15px; border-radius: 8px;">
-                                    <div class="form-group"><label>FORGING</label><input type="number" id="upd_forging" class="prod-input" min="0"></div>
-                                    <div class="form-group"><label>ROLLING</label><input type="number" id="upd_rolling" class="prod-input" min="0"></div>
-                                    <div class="form-group"><label>SECONDARY</label><input type="number" id="upd_secondary" class="prod-input" min="0"></div>
-                                    <div class="form-group"><label>HT</label><input type="number" id="upd_ht" class="prod-input" min="0"></div>
-                                    <div class="form-group"><label>POLISHING</label><input type="number" id="upd_polishing" class="prod-input" min="0"></div>
-                                    <div class="form-group"><label>PLATING</label><input type="number" id="upd_plating" class="prod-input" min="0"></div>
-                                    <div class="form-group"><label>FINAL INSP.</label><input type="number" id="upd_finalInsp" class="prod-input" min="0"></div>
-                                    <div class="form-group"><label>FG</label><input type="number" id="upd_fg" class="prod-input" min="0"></div>
-                                </div>
-                                <button onclick="savePpcDailyUpdate()" class="save-btn" style="background: #28a745; margin-top: 20px;">💾 Process & Save Update</button>
-                            </div>
+                        <div class="form-section-title" style="color:#28a745;">2. Log Details & Enter Daily Progress</div>
+                        <div class="form-grid" style="margin-bottom: 15px;">
+                            <div class="form-group"><label>LOG DATE *</label><input type="date" id="upd_date" class="prod-input" onchange="loadWODetailsForUpdate()" title="Log Date"></div>
+                            <div class="form-group"><label>4M STATUS</label><input type="text" id="upd_fourM" class="prod-input" placeholder="4M Status"></div>
+                        </div>
+                        <div class="form-grid" style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); background: #e8f5e9; padding: 15px; border-radius: 8px;">
+                            <div class="form-group"><label>FORGING</label><input type="number" id="upd_forging" class="prod-input" min="0"></div>
+                            <div class="form-group"><label>ROLLING</label><input type="number" id="upd_rolling" class="prod-input" min="0"></div>
+                            <div class="form-group"><label>SECONDARY</label><input type="number" id="upd_secondary" class="prod-input" min="0"></div>
+                            <div class="form-group"><label>HT</label><input type="number" id="upd_ht" class="prod-input" min="0"></div>
+                            <div class="form-group"><label>POLISHING</label><input type="number" id="upd_polishing" class="prod-input" min="0"></div>
+                            <div class="form-group"><label>PLATING</label><input type="number" id="upd_plating" class="prod-input" min="0"></div>
+                            <div class="form-group"><label>FINAL INSP.</label><input type="number" id="upd_finalInsp" class="prod-input" min="0"></div>
+                            <div class="form-group"><label>FG</label><input type="number" id="upd_fg" class="prod-input" min="0"></div>
+                        </div>
+                        <button onclick="savePpcDailyUpdate()" class="save-btn" style="background: #28a745; margin-top: 20px;">💾 Process & Save Update</button>
+
+                        <div class="form-section-title" style="color:#6c757d; margin-top: 30px;">3. Daily Saving History for Selected WO</div>
+                        <div class="table-wrapper" style="max-height: 250px; border: 1px solid #dee2e6; border-radius: 8px;">
+                            <table id="upd_historyTable" style="font-size: 12px; margin-top: 0;">
+                                <thead style="background-color: #6c757d; color: white;">
+                                    <tr>
+                                        <th>Date</th><th>4M</th><th>Forging</th><th>Rolling</th><th>Sec</th><th>HT</th><th>Polish</th><th>Plating</th><th>Final Insp</th><th>FG</th>
+                                    </tr>
+                                </thead>
+                                <tbody><tr><td colspan="10" style="text-align: center;">Select a WO to view history</td></tr></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            </div>
 
             <div class="card" id="qcCard" style="display: none; margin-bottom: 20px;">
                 <h2 style="color: #17a2b8; border-bottom: 2px solid #17a2b8; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
@@ -319,222 +369,236 @@
             </div>
 
             <div class="card" id="productionCard" style="display: none; margin-bottom: 20px;">
-                <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800;">🏭 Production Data Entry (Multi-Stage)</h2>
-                <div id="masterAnalyticsDashboard" style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; align-items: stretch; min-height: 140px;">
-                    <div style="flex: 0 0 320px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <div style="background: #343a40; color: white; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);">
-                            <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #adb5bd;">Overall OEE</div>
-                            <div id="oeeTotal" style="font-size: 26px; font-weight: bold; color: #ffc107; margin-top: 2px;">0%</div>
-                        </div>
-                        <div style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
-                            <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">Availability</div>
-                            <div id="oeeAvail" style="font-size: 18px; font-weight: bold; color: #007bff; margin-top: 2px;">0%</div>
-                            <div id="oeeDowntimeText" style="font-size: 10px; color: #dc3545;">0 hrs down</div>
-                        </div>
-                        <div style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
-                            <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">Performance</div>
-                            <div id="oeePerf" style="font-size: 18px; font-weight: bold; color: #17a2b8; margin-top: 2px;">0%</div>
-                            <div id="oeeSpeedText" style="font-size: 10px; color: #28a745;">0 / 0 Target</div>
-                        </div>
-                        <div style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
-                            <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">Quality</div>
-                            <div id="oeeQual" style="font-size: 18px; font-weight: bold; color: #28a745; margin-top: 2px;">0%</div>
-                            <div id="oeeRejText" style="font-size: 10px; color: #dc3545;">0 rejected</div>
-                        </div>
-                    </div>
-                    <div style="flex: 1; min-width: 300px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                        <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #495057; text-align: center; margin-bottom: 5px;">Today's Output by Machine</div>
-                        <div style="position: relative; flex-grow: 1; min-height: 120px;"><canvas id="machineChart"></canvas></div>
-                    </div>
-                    <div style="flex: 0 0 220px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                        <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #495057; text-align: center; margin-bottom: 5px;">Quality Ratio</div>
-                        <div style="position: relative; flex-grow: 1; min-height: 120px;"><canvas id="qualityChart"></canvas></div>
-                    </div>
-                </div>
-
-                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                        <select id="prodStage" class="prod-input" style="flex: 1; font-weight: bold; border: 2px solid #ff9800; font-size: 16px;" onchange="toggleStageFields()">
-                            <option value="FORGING">1. FORGING (Raw to WIP)</option>
-                            <option value="ROLLING">2. ROLLING (WIP to WIP)</option>
-                            <option value="HEAT_TREAT">3. HEAT TREATMENT (WIP to WIP)</option>
-                            <option value="POLISHING">4. POLISHING (WIP to Ready Stock)</option>
-                            <option value="SEC_OP">5. SECONDARY OPS (Optional)</option>
-                        </select>
-                        <input type="date" id="prodDate" class="prod-input" style="flex: 1;" title="Date">
+                <h2 style="color: #ff9800; border-bottom: 2px solid #ff9800;">🏭 Production Management</h2>
+                
+                <div class="card-with-sidebar">
+                    <div class="inner-sidebar">
+                        <button class="tab-btn active" id="tab-prod-entry" onclick="switchProdTab('entry')" style="background: #ff9800; color: white;">🏭 Data Entry</button>
+                        <button class="tab-btn" id="tab-prod-pending" onclick="switchProdTab('pending')">📋 Pending WOs</button>
+                        <button class="tab-btn" id="tab-prod-logs" onclick="switchProdTab('logs')">📜 Production Logs</button>
                     </div>
 
-                    <div class="form-section">
-                        <div class="form-section-title">1. Shift & Machine Details</div>
-                        <div class="form-grid-multi">
-                            <select id="prodShift" class="prod-input">
-                                <option value="">- Select Shift -</option>
-                                <option value="A">A Shift</option>
-                                <option value="B">B Shift</option>
-                                <option value="G">G Shift (General)</option>
-                                <option value="S2">S2 Shift</option>
-                            </select>
-                            <select id="prodMachine" class="prod-input" onchange="toggleOtherInput('prodMachine', 'prodMachineOther')">
-                                <option value="">- Select Machine -</option>
-                                <option value="CH5">CH5</option>
-                                <option value="TK250">TK250</option>
-                                <option value="64S">64S</option>
-                                <option value="84S">84S</option>
-                                <option value="6L4S">6L4S</option>
-                                <option value="164S">164S</option>
-                                <option value="254LL">254LL</option>
-                                <option value="Lathe">Lathe</option>
-                                <option value="OVEN-1">Oven-1</option>
-                                <option value="POLISHER-A">Polisher A</option>
-                                <option value="OTHER">Other...</option>
-                            </select>
-                            <input type="text" id="prodMachineOther" class="prod-input" placeholder="Enter Machine Name" style="display: none; border-color: #007bff;">
-                            <input type="text" id="prodOperator" class="prod-input" placeholder="Operator Name">
-                            <select id="prodOperation" class="prod-input">
-                                <option value="">- Select Process -</option>
-                                <option value="COLD FORGING" class="dyn-f">Cold Forging</option>
-                                <option value="THREAD ROLLING" class="dyn-fr">Thread Rolling</option>
-                                <option value="HEATING" class="dyn-s">Heating / Baking</option>
-                                <option value="POLISH" class="dyn-s">Polishing</option>
-                                <option value="TURNNING" class="dyn-s">Turning</option>
-                                <option value="DRILLING" class="dyn-s">Drilling</option>
-                            </select>
+                    <div class="content-area">
+                        
+                        <div id="prodEntrySection">
+                            <div id="masterAnalyticsDashboard" style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; align-items: stretch; min-height: 140px;">
+                                <div style="flex: 0 0 320px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <div style="background: #343a40; color: white; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);">
+                                        <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #adb5bd;">Overall OEE</div>
+                                        <div id="oeeTotal" style="font-size: 26px; font-weight: bold; color: #ffc107; margin-top: 2px;">0%</div>
+                                    </div>
+                                    <div style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                                        <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">Availability</div>
+                                        <div id="oeeAvail" style="font-size: 18px; font-weight: bold; color: #007bff; margin-top: 2px;">0%</div>
+                                        <div id="oeeDowntimeText" style="font-size: 10px; color: #dc3545;">0 hrs down</div>
+                                    </div>
+                                    <div style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                                        <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">Performance</div>
+                                        <div id="oeePerf" style="font-size: 18px; font-weight: bold; color: #17a2b8; margin-top: 2px;">0%</div>
+                                        <div id="oeeSpeedText" style="font-size: 10px; color: #28a745;">0 / 0 Target</div>
+                                    </div>
+                                    <div style="background: white; border: 1px solid #ced4da; padding: 10px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                                        <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #6c757d;">Quality</div>
+                                        <div id="oeeQual" style="font-size: 18px; font-weight: bold; color: #28a745; margin-top: 2px;">0%</div>
+                                        <div id="oeeRejText" style="font-size: 10px; color: #dc3545;">0 rejected</div>
+                                    </div>
+                                </div>
+                                <div style="flex: 1; min-width: 300px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                                    <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #495057; text-align: center; margin-bottom: 5px;">Today's Output by Machine</div>
+                                    <div style="position: relative; flex-grow: 1; min-height: 120px;"><canvas id="machineChart"></canvas></div>
+                                </div>
+                                <div style="flex: 0 0 220px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                                    <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #495057; text-align: center; margin-bottom: 5px;">Quality Ratio</div>
+                                    <div style="position: relative; flex-grow: 1; min-height: 120px;"><canvas id="qualityChart"></canvas></div>
+                                </div>
+                            </div>
+
+                            <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+                                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                                    <select id="prodStage" class="prod-input" style="flex: 1; font-weight: bold; border: 2px solid #ff9800; font-size: 16px;" onchange="toggleStageFields()">
+                                        <option value="FORGING">1. FORGING (Raw to WIP)</option>
+                                        <option value="ROLLING">2. ROLLING (WIP to WIP)</option>
+                                        <option value="HEAT_TREAT">3. HEAT TREATMENT (WIP to WIP)</option>
+                                        <option value="POLISHING">4. POLISHING (WIP to Ready Stock)</option>
+                                        <option value="SEC_OP">5. SECONDARY OPS (Optional)</option>
+                                    </select>
+                                    <input type="date" id="prodDate" class="prod-input" style="flex: 1;" title="Date">
+                                </div>
+
+                                <div class="form-section">
+                                    <div class="form-section-title">1. Shift & Machine Details</div>
+                                    <div class="form-grid-multi">
+                                        <select id="prodShift" class="prod-input">
+                                            <option value="">- Select Shift -</option><option value="A">A Shift</option><option value="B">B Shift</option><option value="G">G Shift (General)</option><option value="S2">S2 Shift</option>
+                                        </select>
+                                        <select id="prodMachine" class="prod-input" onchange="toggleOtherInput('prodMachine', 'prodMachineOther')">
+                                            <option value="">- Select Machine -</option><option value="CH5">CH5</option><option value="TK250">TK250</option><option value="64S">64S</option><option value="84S">84S</option><option value="6L4S">6L4S</option><option value="164S">164S</option><option value="254LL">254LL</option><option value="Lathe">Lathe</option><option value="OVEN-1">Oven-1</option><option value="POLISHER-A">Polisher A</option><option value="OTHER">Other...</option>
+                                        </select>
+                                        <input type="text" id="prodMachineOther" class="prod-input" placeholder="Enter Machine Name" style="display: none; border-color: #007bff;">
+                                        <input type="text" id="prodOperator" class="prod-input" placeholder="Operator Name">
+                                        <select id="prodOperation" class="prod-input">
+                                            <option value="">- Select Process -</option><option value="COLD FORGING" class="dyn-f">Cold Forging</option><option value="THREAD ROLLING" class="dyn-fr">Thread Rolling</option><option value="HEATING" class="dyn-s">Heating / Baking</option><option value="POLISH" class="dyn-s">Polishing</option><option value="TURNNING" class="dyn-s">Turning</option><option value="DRILLING" class="dyn-s">Drilling</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-section-title" style="margin-top: 15px;">2. Part Details</div>
+                                    <div class="form-grid-multi">
+                                        <select id="prodWO" class="prod-input" style="border-color: #007bff; font-weight: bold;" onchange="autoFillFromWO()">
+                                            <option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option>
+                                        </select>
+                                        <input type="text" id="prodWOOther" class="prod-input" placeholder="Enter WO Manually" style="display: none; border-color: #007bff;">
+                                        <input type="text" id="prodPartNo" class="prod-input" placeholder="Part No (Barcode)">
+                                        <select id="prodPartName" class="prod-input" onchange="toggleOtherInput('prodPartName', 'prodPartNameOther')">
+                                            <option value="">- Part Name -</option><option value="FLG">FLG</option><option value="HEX">HEX</option><option value="SOC">SOC</option><option value="OTHER">Other...</option>
+                                        </select>
+                                        <input type="text" id="prodPartNameOther" class="prod-input" placeholder="Enter Part Name" style="display: none; border-color: #007bff;">
+                                        <input type="text" id="prodSize" class="prod-input" placeholder="Size (e.g., M10)">
+                                        <input type="text" id="prodPitch" class="prod-input" placeholder="Pitch (e.g., 1.25)">
+                                        <input type="number" id="prodLength" class="prod-input" placeholder="Length (mm)">
+                                        <input type="text" id="prodAF" class="prod-input" placeholder="A/F">
+                                        <input type="text" id="prodGrade" class="prod-input" placeholder="Grade (e.g., 8.8, PLAIN)">
+                                    </div>
+                                </div>
+
+                                <div class="form-section" id="planningSection">
+                                    <div class="form-section-title">3. Material & Planning</div>
+                                    <div class="form-grid-multi">
+                                        <input type="text" id="prodRMCode" class="prod-input dyn-f" placeholder="* Exact Raw Material Code" style="border-color: #007bff; font-weight: bold;">
+                                        <input type="text" id="prodHeatNo" class="prod-input dyn-fr" placeholder="Heat No.">
+                                        <input type="number" id="prodRMKg" class="prod-input dyn-f" placeholder="RM Consumed (Kg)">
+                                        <input type="number" step="0.001" id="prodPieceWt" class="prod-input dyn-fr" placeholder="Piece Weight (KG)">
+                                        <input type="number" id="prodSchHrs" class="prod-input" placeholder="Schedule Hours">
+                                        <input type="number" id="prodJcHrs" class="prod-input dyn-fr" placeholder="Job Change Hours">
+                                        <input type="number" id="prodPlannedHrs" class="prod-input dyn-fr" placeholder="Prod Planned Hours">
+                                        <input type="number" id="prodSpeed" class="prod-input dyn-fr" placeholder="Speed (RPM)">
+                                        <input type="number" id="prodTarget" class="prod-input" placeholder="Shift Target Qty">
+                                    </div>
+                                </div>
+
+                                <div class="form-section" style="border-left-color: #28a745;">
+                                    <div class="form-section-title" style="color: #28a745;">4. Production Output</div>
+                                    <div class="form-grid-multi">
+                                        <input type="number" id="prodAccepted" class="prod-input" placeholder="✅ Accepted Qty (Nos)" style="border-color: #28a745; font-weight: bold;">
+                                        <input type="number" id="prodRejected" class="prod-input" placeholder="❌ Rejection Qty (PCS)" style="border-color: #dc3545;">
+                                        <input type="number" step="0.01" id="prodRejKg" class="prod-input dyn-fr" placeholder="Process/Set Rej (KGS)" style="border-color: #dc3545;">
+                                        <input type="text" id="prodRejReason" class="prod-input dyn-s" placeholder="Rejection Reason">
+                                        <input type="text" id="prodRemarks" class="prod-input" placeholder="Remarks / Notes">
+                                    </div>
+                                </div>
+
+                                <div class="downtime-grid dyn-fr">
+                                    <div style="grid-column: 1 / -1; font-size: 13px; font-weight: bold; color: #dc3545; margin-bottom: 5px;">5. DOWNTIME LOSSES (ENTER MINUTES)</div>
+                                    <div><label>Major J/C (1)</label><input type="number" id="l_MajorJC" class="prod-input"></div>
+                                    <div><label>Minor J/C (2)</label><input type="number" id="l_MinorJC" class="prod-input"></div>
+                                    <div><label>Tool Setting (3)</label><input type="number" id="l_Setting" class="prod-input"></div>
+                                    <div><label>M/C Clean</label><input type="number" id="l_McClean" class="prod-input"></div>
+                                    <div><label>Tool Rework (5)</label><input type="number" id="l_ToolRework" class="prod-input"></div>
+                                    <div><label>No Tool (6)</label><input type="number" id="l_NoTool" class="prod-input"></div>
+                                    <div><label>No Load</label><input type="number" id="l_NoLoad" class="prod-input"></div>
+                                    <div><label>No Operator (7)</label><input type="number" id="l_NoOperator" class="prod-input"></div>
+                                    <div><label>M/MNT (8)</label><input type="number" id="l_MMnt" class="prod-input"></div>
+                                    <div><label>E/MNT (9)</label><input type="number" id="l_EMnt" class="prod-input"></div>
+                                    <div><label>No Power (10)</label><input type="number" id="l_NoPower" class="prod-input"></div>
+                                    <div><label>No Air/Oil (11)</label><input type="number" id="l_NoAirOil" class="prod-input"></div>
+                                    <div><label>No RM (12)</label><input type="number" id="l_NoRm" class="prod-input"></div>
+                                    <div><label>RM Loading</label><input type="number" id="l_RmLoading" class="prod-input"></div>
+                                    <div><label>QA Approval</label><input type="number" id="l_QaApproval" class="prod-input"></div>
+                                    <div><label>Coil Change (13)</label><input type="number" id="l_CoilChange" class="prod-input dyn-f"></div>
+                                    <div><label>No Plan (14)</label><input type="number" id="l_NoPlan" class="prod-input"></div>
+                                    <div><label>NPD Team (9F)</label><input type="number" id="l_NpdTeam" class="prod-input"></div>
+                                    <div><label>Unknown</label><input type="number" id="l_Unknown" class="prod-input"></div>
+                                </div>
+
+                                <button onclick="submitProductionForm()" style="background: #ff9800; color: white; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border: none; border-radius: 8px; margin-top: 20px; cursor: pointer;">💾 Save Full Production Log</button>
+                            </div>
                         </div>
-                        <div class="form-section-title" style="margin-top: 15px;">2. Part Details</div>
-                        <div class="form-grid-multi">
-                            <select id="prodWO" class="prod-input" style="border-color: #007bff; font-weight: bold;" onchange="autoFillFromWO()">
-                                <option value="">- Select Active WO -</option>
-                                <option value="OTHER">Manual Entry...</option>
-                            </select>
-                            <input type="text" id="prodWOOther" class="prod-input" placeholder="Enter WO Manually" style="display: none; border-color: #007bff;">
-                            <input type="text" id="prodPartNo" class="prod-input" placeholder="Part No (Barcode)">
-                            <select id="prodPartName" class="prod-input" onchange="toggleOtherInput('prodPartName', 'prodPartNameOther')">
-                                <option value="">- Part Name -</option>
-                                <option value="FLG">FLG</option>
-                                <option value="HEX">HEX</option>
-                                <option value="SOC">SOC</option>
-                                <option value="OTHER">Other...</option>
-                            </select>
-                            <input type="text" id="prodPartNameOther" class="prod-input" placeholder="Enter Part Name" style="display: none; border-color: #007bff;">
-                            <input type="text" id="prodSize" class="prod-input" placeholder="Size (e.g., M10)">
-                            <input type="text" id="prodPitch" class="prod-input" placeholder="Pitch (e.g., 1.25)">
-                            <input type="number" id="prodLength" class="prod-input" placeholder="Length (mm)">
-                            <input type="text" id="prodAF" class="prod-input" placeholder="A/F">
-                            <input type="text" id="prodGrade" class="prod-input" placeholder="Grade (e.g., 8.8, PLAIN)">
+
+                        <div id="prodPendingSection" style="display: none;">
+                            <div class="table-wrapper" style="overflow-x: auto;">
+                                <table id="prodPendingTable" style="min-width: 1200px;">
+                                    <thead style="background-color: #17a2b8; color: white;">
+                                        <tr>
+                                            <th>Date Assigned</th>
+                                            <th>WO No</th>
+                                            <th>Part No</th>
+                                            <th>Type</th>
+                                            <th>Size</th>
+                                            <th>Pitch</th>
+                                            <th>Length</th>
+                                            <th>Gr</th>
+                                            <th>A/F</th>
+                                            <th>Produced</th>
+                                            <th style="background-color: #dc3545;">Pending</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div id="prodLogsSection" style="display: none;">
+                            <div class="tab-container">
+                                <button class="tab-btn active" id="tab-ALL" onclick="filterLogs('ALL')">All Logs</button>
+                                <button class="tab-btn" id="tab-FORGING" onclick="filterLogs('FORGING')">Forging</button>
+                                <button class="tab-btn" id="tab-ROLLING" onclick="filterLogs('ROLLING')">Rolling</button>
+                                <button class="tab-btn" id="tab-HEAT_TREAT" onclick="filterLogs('HEAT_TREAT')">Heat Treat</button>
+                                <button class="tab-btn" id="tab-POLISHING" onclick="filterLogs('POLISHING')">Polishing</button>
+                                <button class="tab-btn" id="tab-COMPLETED" onclick="filterLogs('COMPLETED')" style="margin-left: 20px; border-left: 2px solid #ccc; color: #28a745;">✅ Completed Logs</button>
+                            </div>
+
+                            <div class="search-container" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #6c757d; margin-bottom: 15px;">
+                                <span style="font-weight: bold; color: #555; font-size: 14px;">🔍 FILTER LOGS:</span>
+                                <input type="date" id="filterProdDate" class="prod-input" onchange="applyProductionFilters()" title="Filter by Date">
+                                <select id="filterProdShift" class="prod-input" onchange="applyProductionFilters()">
+                                    <option value="">-- All Shifts --</option>
+                                    <option value="A">A Shift</option>
+                                    <option value="B">B Shift</option>
+                                    <option value="G">G Shift</option>
+                                    <option value="S2">S2 Shift</option>
+                                </select>
+                                <input type="text" id="filterProdGlobal" class="prod-input" style="flex: 1; min-width: 250px;" placeholder="Search Operator, Machine, Part No, Remarks..." onkeyup="applyProductionFilters()">
+                                <button onclick="clearProductionFilters()" style="background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">Reset</button>
+                            </div>
+
+                            <div id="exportButtonsSection" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: -40px; margin-bottom: 10px;">
+                                <button onclick="generateDailyPDF()" style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📄 Download PDF</button>
+                                <button class="export-btn" onclick="exportTableToCSV('productionTable', 'Full_Production_Report.csv')">⬇️ Export Full Excel</button>
+                            </div>
+
+                            <div class="table-wrapper">
+                                <table id="productionTable">
+                                    <thead style="background-color: #6c757d; white-space: nowrap; color: white;">
+                                        <tr>
+                                            <th>Date</th><th>Shift</th><th>Stage</th><th>Machine</th><th>Operator</th><th>Process</th>
+                                            <th>WO No</th><th>Part No</th><th>Part Name</th>
+                                            <th style="background:#6f42c1; color:white;">Next Process</th>
+                                            <th style="background:#17a2b8; color:white;">PPC Status</th>
+                                            <th>Size</th><th>Pitch</th><th>Length</th><th>A/F</th><th>Grade</th><th>RM Code</th><th>Heat No</th>
+                                            <th>RM Consumed (Kg)</th><th>Piece Wt (Kg)</th><th>Sch Hrs</th><th>J/C Hrs</th><th>Planned Hrs</th><th>Speed (RPM)</th>
+                                            <th>Target Qty</th>
+                                            <th style="background:#28a745;">Acc Qty</th>
+                                            <th style="background:#dc3545;">Rej Qty</th>
+                                            <th>Rej Kg</th><th>Rej Reason</th><th>Major JC</th><th>Minor JC</th><th>Setting</th><th>M/C Clean</th>
+                                            <th>Tool Rework</th><th>No Tool</th><th>No Load</th><th>No Operator</th><th>M/MNT</th><th>E/MNT</th>
+                                            <th>No Power</th><th>No Air/Oil</th><th>No RM</th><th>RM Loading</th><th>QA Appr</th><th>Coil Chg</th>
+                                            <th>No Plan</th><th>NPD Team</th><th>Unknown Loss</th><th>Remarks</th><th>Logged By</th>
+                                            <th style="background:#17a2b8;">QC Status</th><th style="background:#17a2b8;">QC Remarks</th><th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr><td colspan="53" style="text-align: center;">Loading...</td></tr></tbody>
+                                    <tfoot style="background-color: #f8f9fa; font-weight: bold; position: sticky; bottom: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 2;">
+                                        <tr>
+                                            <td colspan="25" style="text-align: right; padding-right: 15px; color: #6c757d; font-size: 16px;">🔍 VISIBLE TOTALS:</td>
+                                            <td id="totalAccQty" style="color: green; background: #e8f5e9; font-size: 16px;">0</td>
+                                            <td id="totalRejQty" style="color: red; background: #ffebee; font-size: 16px;">0</td>
+                                            <td id="totalRejKg" style="font-size: 16px;">0</td>
+                                            <td colspan="25"></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="form-section" id="planningSection">
-                        <div class="form-section-title">3. Material & Planning</div>
-                        <div class="form-grid-multi">
-                            <input type="text" id="prodRMCode" class="prod-input dyn-f" placeholder="* Exact Raw Material Code" style="border-color: #007bff; font-weight: bold;">
-                            <input type="text" id="prodHeatNo" class="prod-input dyn-fr" placeholder="Heat No.">
-                            <input type="number" id="prodRMKg" class="prod-input dyn-f" placeholder="RM Consumed (Kg)">
-                            <input type="number" step="0.001" id="prodPieceWt" class="prod-input dyn-fr" placeholder="Piece Weight (KG)">
-                            <input type="number" id="prodSchHrs" class="prod-input" placeholder="Schedule Hours">
-                            <input type="number" id="prodJcHrs" class="prod-input dyn-fr" placeholder="Job Change Hours">
-                            <input type="number" id="prodPlannedHrs" class="prod-input dyn-fr" placeholder="Prod Planned Hours">
-                            <input type="number" id="prodSpeed" class="prod-input dyn-fr" placeholder="Speed (RPM)">
-                            <input type="number" id="prodTarget" class="prod-input" placeholder="Shift Target Qty">
-                        </div>
-                    </div>
-
-                    <div class="form-section" style="border-left-color: #28a745;">
-                        <div class="form-section-title" style="color: #28a745;">4. Production Output</div>
-                        <div class="form-grid-multi">
-                            <input type="number" id="prodAccepted" class="prod-input" placeholder="✅ Accepted Qty (Nos)" style="border-color: #28a745; font-weight: bold;">
-                            <input type="number" id="prodRejected" class="prod-input" placeholder="❌ Rejection Qty (PCS)" style="border-color: #dc3545;">
-                            <input type="number" step="0.01" id="prodRejKg" class="prod-input dyn-fr" placeholder="Process/Set Rej (KGS)" style="border-color: #dc3545;">
-                            <input type="text" id="prodRejReason" class="prod-input dyn-s" placeholder="Rejection Reason">
-                            <input type="text" id="prodRemarks" class="prod-input" placeholder="Remarks / Notes">
-                        </div>
-                    </div>
-
-                    <div class="downtime-grid dyn-fr">
-                        <div style="grid-column: 1 / -1; font-size: 13px; font-weight: bold; color: #dc3545; margin-bottom: 5px;">5. DOWNTIME LOSSES (ENTER MINUTES)</div>
-                        <div><label>Major J/C (1)</label><input type="number" id="l_MajorJC" class="prod-input"></div>
-                        <div><label>Minor J/C (2)</label><input type="number" id="l_MinorJC" class="prod-input"></div>
-                        <div><label>Tool Setting (3)</label><input type="number" id="l_Setting" class="prod-input"></div>
-                        <div><label>M/C Clean</label><input type="number" id="l_McClean" class="prod-input"></div>
-                        <div><label>Tool Rework (5)</label><input type="number" id="l_ToolRework" class="prod-input"></div>
-                        <div><label>No Tool (6)</label><input type="number" id="l_NoTool" class="prod-input"></div>
-                        <div><label>No Load</label><input type="number" id="l_NoLoad" class="prod-input"></div>
-                        <div><label>No Operator (7)</label><input type="number" id="l_NoOperator" class="prod-input"></div>
-                        <div><label>M/MNT (8)</label><input type="number" id="l_MMnt" class="prod-input"></div>
-                        <div><label>E/MNT (9)</label><input type="number" id="l_EMnt" class="prod-input"></div>
-                        <div><label>No Power (10)</label><input type="number" id="l_NoPower" class="prod-input"></div>
-                        <div><label>No Air/Oil (11)</label><input type="number" id="l_NoAirOil" class="prod-input"></div>
-                        <div><label>No RM (12)</label><input type="number" id="l_NoRm" class="prod-input"></div>
-                        <div><label>RM Loading</label><input type="number" id="l_RmLoading" class="prod-input"></div>
-                        <div><label>QA Approval</label><input type="number" id="l_QaApproval" class="prod-input"></div>
-                        <div><label>Coil Change (13)</label><input type="number" id="l_CoilChange" class="prod-input dyn-f"></div>
-                        <div><label>No Plan (14)</label><input type="number" id="l_NoPlan" class="prod-input"></div>
-                        <div><label>NPD Team (9F)</label><input type="number" id="l_NpdTeam" class="prod-input"></div>
-                        <div><label>Unknown</label><input type="number" id="l_Unknown" class="prod-input"></div>
-                    </div>
-
-                    <button onclick="submitProductionForm()" style="background: #ff9800; color: white; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border: none; border-radius: 8px; margin-top: 20px; cursor: pointer;">💾 Save Full Production Log</button>
-                </div>
-
-                <div class="tab-container">
-                    <button class="tab-btn active" id="tab-ALL" onclick="filterLogs('ALL')">All Logs</button>
-                    <button class="tab-btn" id="tab-FORGING" onclick="filterLogs('FORGING')">Forging</button>
-                    <button class="tab-btn" id="tab-ROLLING" onclick="filterLogs('ROLLING')">Rolling</button>
-                    <button class="tab-btn" id="tab-HEAT_TREAT" onclick="filterLogs('HEAT_TREAT')">Heat Treat</button>
-                    <button class="tab-btn" id="tab-POLISHING" onclick="filterLogs('POLISHING')">Polishing</button>
-                    <button class="tab-btn" id="tab-COMPLETED" onclick="filterLogs('COMPLETED')" style="margin-left: 20px; border-left: 2px solid #ccc; color: #28a745;">✅ Completed Logs</button>
-                </div>
-
-                <div class="search-container" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800; margin-bottom: 15px;">
-                    <span style="font-weight: bold; color: #555; font-size: 14px;">🔍 FILTER LOGS:</span>
-                    <input type="date" id="filterProdDate" class="prod-input" onchange="applyProductionFilters()" title="Filter by Date">
-                    <select id="filterProdShift" class="prod-input" onchange="applyProductionFilters()">
-                        <option value="">-- All Shifts --</option>
-                        <option value="A">A Shift</option>
-                        <option value="B">B Shift</option>
-                        <option value="G">G Shift</option>
-                        <option value="S2">S2 Shift</option>
-                    </select>
-                    <input type="text" id="filterProdGlobal" class="prod-input" style="flex: 1; min-width: 250px;" placeholder="Search Operator, Machine, Part No, Remarks..." onkeyup="applyProductionFilters()">
-                    <button onclick="clearProductionFilters()" style="background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">Reset</button>
-                </div>
-
-                <div id="exportButtonsSection" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: -40px; margin-bottom: 10px;">
-                    <button onclick="generateDailyPDF()" style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📄 Download PDF</button>
-                    <button class="export-btn" onclick="exportTableToCSV('productionTable', 'Full_Production_Report.csv')">⬇️ Export Full Excel</button>
-                </div>
-
-                <div class="table-wrapper">
-                    <table id="productionTable">
-                        <thead style="background-color: #ff9800; white-space: nowrap;">
-                            <tr>
-                                <th>Date</th><th>Shift</th><th>Stage</th><th>Machine</th><th>Operator</th><th>Process</th>
-                                <th>WO No</th><th>Part No</th><th>Part Name</th>
-                                <th style="background:#6f42c1; color:white;">Next Process</th>
-                                <th style="background:#17a2b8; color:white;">PPC Status</th>
-                                <th>Size</th><th>Pitch</th><th>Length</th><th>A/F</th><th>Grade</th><th>RM Code</th><th>Heat No</th>
-                                <th>RM Consumed (Kg)</th><th>Piece Wt (Kg)</th><th>Sch Hrs</th><th>J/C Hrs</th><th>Planned Hrs</th><th>Speed (RPM)</th>
-                                <th>Target Qty</th>
-                                <th style="background:#28a745;">Acc Qty</th>
-                                <th style="background:#dc3545;">Rej Qty</th>
-                                <th>Rej Kg</th><th>Rej Reason</th><th>Major JC</th><th>Minor JC</th><th>Setting</th><th>M/C Clean</th>
-                                <th>Tool Rework</th><th>No Tool</th><th>No Load</th><th>No Operator</th><th>M/MNT</th><th>E/MNT</th>
-                                <th>No Power</th><th>No Air/Oil</th><th>No RM</th><th>RM Loading</th><th>QA Appr</th><th>Coil Chg</th>
-                                <th>No Plan</th><th>NPD Team</th><th>Unknown Loss</th><th>Remarks</th><th>Logged By</th>
-                                <th style="background:#17a2b8;">QC Status</th><th style="background:#17a2b8;">QC Remarks</th><th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody><tr><td colspan="53" style="text-align: center;">Loading...</td></tr></tbody>
-                        <tfoot style="background-color: #f8f9fa; font-weight: bold; position: sticky; bottom: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 2;">
-                            <tr>
-                                <td colspan="25" style="text-align: right; padding-right: 15px; color: #ff9800; font-size: 16px;">🔍 VISIBLE TOTALS:</td>
-                                <td id="totalAccQty" style="color: green; background: #e8f5e9; font-size: 16px;">0</td>
-                                <td id="totalRejQty" style="color: red; background: #ffebee; font-size: 16px;">0</td>
-                                <td id="totalRejKg" style="font-size: 16px;">0</td>
-                                <td colspan="25"></td>
-                            </tr>
-                        </tfoot>
-                    </table>
                 </div>
             </div>
 
@@ -2014,6 +2078,49 @@
                         </tr>`;
                     });
                 }
+
+                // Production Pending Table (No Target Qty / Part Name)
+                const prodPendingTbody = document.querySelector('#prodPendingTable tbody');
+                if (prodPendingTbody) {
+                    prodPendingTbody.innerHTML = '';
+                    activeWorkOrders.forEach(wo => {
+                        const produced = wo.producedQty || 0;
+                        const pending = wo.targetQty - produced;
+                        if (pending > 0) {
+                            const dateCreated = wo.createdAt ? new Date(wo.createdAt).toLocaleDateString() : '-';
+                            prodPendingTbody.innerHTML += `<tr>
+                                <td>${dateCreated}</td>
+                                <td><strong>${wo.woNumber}</strong></td>
+                                <td>${wo.partNo || '-'}</td>
+                                <td>${wo.type || '-'}</td>
+                                <td>${wo.size || '-'}</td>
+                                <td>${wo.pitch || '-'}</td>
+                                <td>${wo.length || '-'}</td>
+                                <td>${wo.gr || '-'}</td>
+                                <td>${wo.af || '-'}</td>
+                                <td style="color: #28a745; font-weight: bold;">${produced}</td>
+                                <td style="color: red; font-weight: bold;">${pending}</td>
+                                <td><button onclick="autoFillFromPending('${wo.woNumber}')" style="background:#17a2b8; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Log Production</button></td>
+                            </tr>`;
+                        }
+                    });
+                }
+
+                if (currentUser && currentUser.role === 'PRODUCTION') {
+                    let newOrdersAlert = "🚨 PENDING WORK ORDERS FROM PPC:\n\n";
+                    let needsAlert = false;
+                    activeWorkOrders.forEach(wo => {
+                        const pending = wo.targetQty - (wo.producedQty || 0);
+                        if (pending > 0) { 
+                            newOrdersAlert += `• ${wo.woNumber} | Part: ${wo.partNo} | Pending: ${pending}\n`;
+                            needsAlert = true;
+                        }
+                    });
+                    if (needsAlert && !window.prodWoAlertShown) {
+                        customAlert(newOrdersAlert.replace(/\n/g, '<br>'), "Production Required");
+                        window.prodWoAlertShown = true;
+                    }
+                }
             } catch (e) {}
         }
 
@@ -2380,12 +2487,55 @@
             } catch(e) { }
         }
 
+
+        function switchProdTab(tab) {
+            ['entry', 'pending', 'logs'].forEach(t => {
+                const section = document.getElementById('prod' + t.charAt(0).toUpperCase() + t.slice(1) + 'Section');
+                const btn = document.getElementById('tab-prod-' + t);
+                if (section) section.style.display = (tab === t) ? 'block' : 'none';
+                if (btn) {
+                    btn.classList.remove('active');
+                    btn.style.background = '#eee';
+                    btn.style.color = '#555';
+                }
+            });
+
+            const activeBtn = document.getElementById('tab-prod-' + tab);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.style.color = 'white';
+                if(tab === 'entry') activeBtn.style.background = '#ff9800';
+                if(tab === 'pending') activeBtn.style.background = '#17a2b8';
+                if(tab === 'logs') activeBtn.style.background = '#6c757d';
+            }
+
+            if (tab === 'pending') {
+                loadActiveWorkOrders(); // Refresh pending list when opened
+            }
+        }
+
+        function autoFillFromPending(woNumber) {
+            switchProdTab('entry');
+            const woSelect = document.getElementById('prodWO');
+            if (woSelect) {
+                // Ensure the WO option exists in the dropdown
+                let exists = Array.from(woSelect.options).some(opt => opt.value === woNumber);
+                if (!exists) {
+                    woSelect.innerHTML += `<option value="${woNumber}">${woNumber}</option>`;
+                }
+                woSelect.value = woNumber;
+                autoFillFromWO();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         async function loadActiveWorkOrders() {
             try {
                 const res = await fetch(`${API_URL}/work-orders/active`);
                 if (!res.ok) return;
                 activeWorkOrders = await res.json();
                 
+                // 1. Populate PPC Dropdown
                 const updDrop = document.getElementById('upd_woSelect');
                 if (updDrop) {
                     const prev = updDrop.value; updDrop.innerHTML = '<option value="">-- Select Work Order --</option>';
@@ -2393,12 +2543,14 @@
                     updDrop.value = prev;
                 }
 
+                // 2. Populate Production Dropdown
                 const prodDrop = document.getElementById('prodWO');
                 if (prodDrop) {
                     prodDrop.innerHTML = '<option value="">- Select Active WO -</option><option value="OTHER">Manual Entry...</option>';
                     activeWorkOrders.forEach(wo => { prodDrop.innerHTML += `<option value="${wo.woNumber}">${wo.woNumber} (${wo.partNo}) - Pending: ${wo.targetQty - wo.producedQty}</option>`; });
                 }
 
+                // 3. Populate PPC Active Table (All Columns)
                 const activeTbody = document.querySelector('#ppcActiveTable tbody');
                 if (activeTbody) {
                     activeTbody.innerHTML = '';
@@ -2430,18 +2582,72 @@
                         </tr>`;
                     });
                 }
+
+                // 4. Populate Production Pending Table (Date Wise)
+                const prodPendingTbody = document.querySelector('#prodPendingTable tbody');
+                if (prodPendingTbody) {
+                    prodPendingTbody.innerHTML = '';
+                    // Sort active orders by date created (oldest first, or newest first depending on DB)
+                    activeWorkOrders.forEach(wo => {
+                        const produced = wo.producedQty || 0;
+                        const pending = wo.targetQty - produced;
+                        if (pending > 0) {
+                            const dateCreated = wo.createdAt ? new Date(wo.createdAt).toLocaleDateString() : '-';
+                            prodPendingTbody.innerHTML += `<tr>
+                                <td>${dateCreated}</td>
+                                <td><strong>${wo.woNumber}</strong></td>
+                                <td>${wo.partNo || '-'}</td>
+                                <td>${wo.targetQty}</td>
+                                <td style="color: #28a745; font-weight: bold;">${produced}</td>
+                                <td style="color: red; font-weight: bold;">${pending}</td>
+                                <td><button onclick="autoFillFromPending('${wo.woNumber}')" style="background:#17a2b8; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Log Production</button></td>
+                            </tr>`;
+                        }
+                    });
+                }
+
+                // 5. Popup logic
+                if (currentUser && currentUser.role === 'PRODUCTION') {
+                    let newOrdersAlert = "🚨 PENDING WORK ORDERS FROM PPC:\n\n";
+                    let needsAlert = false;
+                    activeWorkOrders.forEach(wo => {
+                        const pending = wo.targetQty - (wo.producedQty || 0);
+                        if (pending > 0) { 
+                            newOrdersAlert += `• ${wo.woNumber} | Part: ${wo.partNo} | Pending: ${pending}\n`;
+                            needsAlert = true;
+                        }
+                    });
+                    if (needsAlert && !window.prodWoAlertShown) {
+                        customAlert(newOrdersAlert.replace(/\n/g, '<br>'), "Production Required");
+                        window.prodWoAlertShown = true;
+                    }
+                }
             } catch (e) {}
         }
 
         function loadWODetailsForUpdate() {
             const selectedWo = document.getElementById('upd_woSelect').value;
             const date = document.getElementById('upd_date').value;
-            if (!selectedWo) return;
+            const detailsGrid = document.getElementById('upd_woDetailsGrid');
+            const historyTbody = document.querySelector('#upd_historyTable tbody');
+            
+            if (!selectedWo) {
+                if(detailsGrid) detailsGrid.style.display = 'none';
+                if(historyTbody) historyTbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">Select a WO to view history</td></tr>';
+                return;
+            }
 
             const wo = activeWorkOrders.find(w => w.woNumber === selectedWo);
             if (wo) {
-                document.getElementById('upd_partNo').value = wo.partNo || '';
-                document.getElementById('upd_planQty').value = wo.targetQty || '';
+                if(detailsGrid) detailsGrid.style.display = 'grid'; 
+                
+                ['partNo', 'partName', 'type', 'size', 'pitch', 'length', 'gr', 'af', 'targetQty', 'actualQty', 'rmDetails', 'chWt', 'rmKg'].forEach(key => {
+                    const el = document.getElementById('upd_' + key);
+                    if (el) el.value = wo[key] || '';
+                });
+                
+                const planEl = document.getElementById('upd_planQtyWO');
+                if (planEl) planEl.value = wo.planQty || '';
 
                 const hist = (wo.history || []).find(h => h.DATE === date);
                 if (hist) {
@@ -2457,8 +2663,34 @@
                 } else {
                     ['upd_fourM', 'upd_forging', 'upd_rolling', 'upd_secondary', 'upd_ht', 'upd_polishing', 'upd_plating', 'upd_finalInsp', 'upd_fg'].forEach(id => {
                         const el = document.getElementById(id);
-                        if (el.type === 'number') el.value = 0; else el.value = '';
+                        if (el) {
+                            if (el.type === 'number') el.value = 0; else el.value = '';
+                        }
                     });
+                }
+
+                // Populate History Table
+                if(historyTbody) {
+                    historyTbody.innerHTML = '';
+                    if (!wo.history || wo.history.length === 0) {
+                        historyTbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">No daily updates logged yet.</td></tr>';
+                    } else {
+                        // Display oldest to newest
+                        wo.history.forEach(h => {
+                            historyTbody.innerHTML += `<tr>
+                                <td><strong>${h.DATE}</strong></td>
+                                <td>${h.FOUR_M || '-'}</td>
+                                <td>${h.FORGING || 0}</td>
+                                <td>${h.ROLLING || 0}</td>
+                                <td>${h.SECONDARY || 0}</td>
+                                <td>${h.HT || 0}</td>
+                                <td>${h.POLISHING || 0}</td>
+                                <td>${h.PLATING || 0}</td>
+                                <td>${h.FINAL_INSPECTION || 0}</td>
+                                <td><strong style="color:#28a745;">${h.FG || 0}</strong></td>
+                            </tr>`;
+                        });
+                    }
                 }
             }
         }
@@ -2484,7 +2716,15 @@
         // --- MASTER REPORTS ADMIN LOGIC ---
         function switchReportTab(tab) {
             ['ppc', 'qc', 'sales'].forEach(t => {
-                document.getElementById('rep' + t.toUpperCase() + 'Section').style.display = (tab === t) ? 'block' : 'none';
+                // Match the exact HTML IDs (handle the lowercase 'ales' for sales)
+                let sectionId = t === 'sales' ? 'repSalesSection' : 'rep' + t.toUpperCase() + 'Section';
+                let section = document.getElementById(sectionId);
+                
+                // Only change style if the section actually exists
+                if (section) {
+                    section.style.display = (tab === t) ? 'block' : 'none';
+                }
+                
                 const btn = document.getElementById('tab-rep-' + t);
                 if (btn) {
                     btn.classList.remove('active');
@@ -2525,28 +2765,33 @@
                             tbody.innerHTML += `<tr class="${isNew ? 'unread-row' : ''}">
                                 <td><span class="badge" style="${isNew ? 'background: red;' : ''}">${log.DATE}</span> ${isNew ? '🔥 NEW' : ''}</td>
                                 <td><strong>${wo.woNumber}</strong></td>
-                                <td>${wo.partNo}</td>
-                                <td>${wo.targetQty}</td>
-                                <td>${log.FORGING || 0}</td>
-                                <td>${log.ROLLING || 0}</td>
-                                <td>${log.HT || 0}</td>
-                                <td>${log.POLISHING || 0}</td>
-                                <td><strong style="color:#28a745;">${log.FG || 0}</strong></td>
+                                <td>${wo.partNo || '-'}</td>
+                                <td>${wo.type || '-'}</td>
+                                <td>${wo.size || '-'}</td>
+                                <td>${wo.pitch || '-'}</td>
+                                <td>${wo.length || '-'}</td>
+                                <td>${wo.gr || '-'}</td>
+                                <td>${wo.af || '-'}</td>
+                                <td>${wo.planQty || 0}</td>
+                                <td>${wo.actualQty || 0}</td>
+                                <td style="font-weight: bold;">${log.FORGING || 0}</td>
+                                <td style="font-weight: bold;">${log.ROLLING || 0}</td>
+                                <td style="font-weight: bold;">${log.HT || 0}</td>
+                                <td style="font-weight: bold;">${log.POLISHING || 0}</td>
+                                <td><strong style="color:#28a745; font-size: 16px;">${log.FG || 0}</strong></td>
                                 <td>${log.FOUR_M || '-'}</td>
                             </tr>`;
                         });
                     }
                 });
 
-                // Clear the notifications if there were unread items
                 if (hasUnread && currentUser.role === 'ADMIN') {
                     setTimeout(async () => {
                         await fetch(`${API_URL}/work-orders/mark-read`, { method: 'PUT' });
-                        fetchUnreadUpdatesCount(); // Clear the badge
+                        fetchUnreadUpdatesCount(); 
                         showToast("Notifications marked as read.");
-                    }, 3000); // Give them 3 seconds to see the red rows before marking read
+                    }, 3000); 
                 }
-
             } catch (e) {}
         }
 
