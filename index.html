@@ -415,8 +415,13 @@
         </div>
     </div>
 
+    
+    </div>
+
     <div id="mainDashboard">
-           <div class="card" id="reportsCard" style="display: none; margin-bottom: 20px;">
+        <div class="dashboard-container">
+
+            <div class="card" id="reportsCard" style="display: none; margin-bottom: 20px;">
                 <h2 style="color: #dc3545; border-bottom: 2px solid #dc3545;">📑 Master Update Reports</h2>
                 <div class="tab-container" style="margin-bottom: 15px;">
                     <button class="tab-btn active" id="tab-rep-ppc" onclick="switchReportTab('ppc')" style="background: #e83e8c; color: white;">PPC Updates</button>
@@ -468,76 +473,9 @@
                 </div>
             </div>
 
-            <div class="card inventory-section" id="invCard" style="display: none;">
-
-            <div id="ppcUpdateSection" style="display: none;">
-                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                    <div class="form-section-title" style="color:#007bff;">1. Select Active Order</div>
-                    <div class="form-grid" style="margin-bottom: 15px;">
-                        <select id="upd_woSelect" class="prod-input" onchange="loadWODetailsForUpdate()">
-                            <option value="">-- Select Work Order --</option>
-                        </select>
-                        <input type="text" id="upd_partNo" class="prod-input" readonly placeholder="Part No">
-                        <input type="text" id="upd_planQty" class="prod-input" readonly placeholder="Target Qty">
-                        <input type="date" id="upd_date" class="prod-input" onchange="loadWODetailsForUpdate()"
-                            title="Log Date">
-                        <input type="text" id="upd_fourM" class="prod-input" placeholder="4M Status">
-                    </div>
-                    <div class="form-section-title" style="color:#28a745;">2. Enter Daily Progress</div>
-                    <div class="form-grid"
-                        style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); background: #e8f5e9; padding: 15px; border-radius: 8px;">
-                        <div class="form-group"><label>FORGING</label><input type="number" id="upd_forging"
-                                class="prod-input" min="0"></div>
-                        <div class="form-group"><label>ROLLING</label><input type="number" id="upd_rolling"
-                                class="prod-input" min="0"></div>
-                        <div class="form-group"><label>SECONDARY</label><input type="number" id="upd_secondary"
-                                class="prod-input" min="0"></div>
-                        <div class="form-group"><label>HT</label><input type="number" id="upd_ht" class="prod-input"
-                                min="0"></div>
-                        <div class="form-group"><label>POLISHING</label><input type="number" id="upd_polishing"
-                                class="prod-input" min="0"></div>
-                        <div class="form-group"><label>PLATING</label><input type="number" id="upd_plating"
-                                class="prod-input" min="0"></div>
-                        <div class="form-group"><label>FINAL INSP.</label><input type="number" id="upd_finalInsp"
-                                class="prod-input" min="0"></div>
-                        <div class="form-group"><label>FG</label><input type="number" id="upd_fg" class="prod-input"
-                                min="0"></div>
-                    </div>
-                    <button onclick="savePpcDailyUpdate()" class="save-btn"
-                        style="background: #28a745; margin-top: 20px;">💾 Save Daily Production Update</button>
-                </div>
-            </div>
-
-            <div id="ppcHistorySection" class="admin-actions" style="display: none;">
-                <div class="table-wrapper">
-                    <table id="ppcHistoryTable">
-                        <thead style="background-color: #6c757d; color: white;">
-                            <tr>
-                                <th>LOG DATE</th>
-                                <th>WO NO</th>
-                                <th>PART NO</th>
-                                <th>TARGET QTY</th>
-                                <th>FORGING</th>
-                                <th>ROLLING</th>
-                                <th>HT</th>
-                                <th>POLISHING</th>
-                                <th>FG</th>
-                                <th>4M</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    </div>
-
-    <div id="mainDashboard">
-        <div class="dashboard-container">
-
             <div class="card" id="qcCard" style="display: none; margin-bottom: 20px;">
+
+   
                 <h2
                     style="color: #17a2b8; border-bottom: 2px solid #17a2b8; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                     <span>🔬 Quality Control Dashboard</span>

@@ -934,6 +934,30 @@ app.put('/api/work-orders/:woNumber/daily', async (req, res) => {
         res.json({ success: true, message: "Daily log updated!" });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
+// ==========================================
+// NEW: TOOL ROOM & QA SYNC ENDPOINTS
+// ==========================================
+app.get('/api/sync', async (req, res) => {
+    try {
+        let doc = await ErpState.findOne({ identifier: "production_state" });
+        if (!doc) {
+            doc = await ErpState.create({ identifier: "production_state", state: {} });
+        }
+        res.json(doc);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/sync', async (req, res) => {
+    try {
+        const updatedDoc = await ErpState.findOneAndUpdate(
+            { identifier: "production_state" },
+            { state: req.body },
+            { upsert: true, returnDocument: 'after' }
+        );
+        res.json({ success: true, message: "Successfully synced to MongoDB" });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 
 // ==========================================
 // FRONTEND ROUTES
