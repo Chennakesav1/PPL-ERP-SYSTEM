@@ -924,7 +924,8 @@ app.put('/api/work-orders/:woNumber/daily', async (req, res) => {
         const wo = await WorkOrder.findOne({ woNumber: req.params.woNumber });
         if (!wo) return res.status(404).json({ error: "Work order not found" });
 
-        const updateData = req.body;
+        // Add the new update, marked as unread for the admin
+        const updateData = { ...req.body, readByAdmin: false }; 
         const existingIndex = wo.history.findIndex(h => h.DATE === updateData.DATE);
         
         if (existingIndex >= 0) wo.history[existingIndex] = updateData;
@@ -932,6 +933,28 @@ app.put('/api/work-orders/:woNumber/daily', async (req, res) => {
 
         await wo.save();
         res.json({ success: true, message: "Daily log updated!" });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// NEW: Get unread count for Admin Badge
+app.get('/api/work-orders/unread-count', async (req, res) => {
+    try {
+        const wos = await WorkOrder.find({ "history.readByAdmin": false });
+        let count = 0;
+        wos.forEach(wo => count += wo.history.filter(h => !h.readByAdmin).length);
+        res.json({ count });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// NEW: Mark all updates as read when Admin opens the tab
+app.put('/api/work-orders/mark-read', async (req, res) => {
+    try {
+        const wos = await WorkOrder.find({ "history.readByAdmin": false });
+        for (let wo of wos) {
+            wo.history.forEach(h => h.readByAdmin = true);
+            await wo.save();
+        }
+        res.json({ success: true });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 // ==========================================

@@ -51,7 +51,8 @@ const updateSchema = new mongoose.Schema({
     ROLLING: { type: Number, default: 0 }, SECONDARY: { type: Number, default: 0 },
     HT: { type: Number, default: 0 }, POLISHING: { type: Number, default: 0 },
     PLATING: { type: Number, default: 0 }, FINAL_INSPECTION: { type: Number, default: 0 },
-    FG: { type: Number, default: 0 }
+    FG: { type: Number, default: 0 },
+    readByAdmin: { type: Boolean, default: false } // <--- ADD THIS LINE
 });
 
 const workOrderSchema = new mongoose.Schema({
