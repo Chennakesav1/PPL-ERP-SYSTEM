@@ -1038,6 +1038,74 @@
 
 <body>
 
+
+    <div id="returnAlertModal"
+        style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center;">
+        <div
+            style="background-color: white; padding: 30px; border-radius: 10px; width: 100%; max-width: 500px; border-top: 6px solid #dc3545; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="color: #dc3545; margin: 0;">🚨 Tool Return Request</h2>
+                <span onclick="document.getElementById('returnAlertModal').style.display='none'"
+                    style="cursor: pointer; font-size: 28px; font-weight: bold; color: #888; line-height: 1;"
+                    title="Close & Save to Queue">&times;</span>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                <p><strong>Tool Code:</strong> <span id="alert_toolCode" style="color:#007bff; font-size:18px;"></span>
+                </p>
+                <p><strong>Machine:</strong> <span id="alert_machine"></span></p>
+                <p><strong>Operator:</strong> <span id="alert_operator"></span></p>
+                <p><strong>Pieces Produced:</strong> <span id="alert_pieces"></span></p>
+                <p><strong>Qty Returned:</strong> <span id="alert_qty"></span></p>
+                <p><strong>FMEA Reason:</strong> <span id="alert_reason"
+                        style="color: #dc3545; font-weight:bold;"></span></p>
+                <p><strong>Remarks:</strong> <span id="alert_remarks"></span></p>
+                <input type="hidden" id="alert_toolId">
+                <input type="hidden" id="alert_exchangeFlag">
+            </div>
+
+            <div
+                style="margin-bottom: 15px; background: #fffdf0; padding: 10px; border: 1px solid #ffeba1; border-radius: 6px;">
+                <label style="font-weight:bold; color: #856404;">Route Tool To *</label>
+                <select id="alert_destination_select"
+                    style="width: 100%; padding: 10px; margin-top: 5px; border: 2px solid #ff9800; border-radius: 4px; font-weight: bold; font-size: 15px;">
+                    <option value="STOCK">📦 Return to Master Stock (Spares)</option>
+                    <option value="GARBAGE">🗑️ Move to Garbage Stock (Scrap)</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight:bold;">Approved By (Tool Room Person Name) *</label>
+                <input type="text" id="alert_approvedBy"
+                    style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"
+                    placeholder="Enter your name">
+            </div>
+
+            <div id="exchangeSection"
+                style="display: none; background: #e8f5e9; padding: 15px; border-left: 4px solid #28a745; margin-bottom: 15px;">
+                <h4 style="margin: 0 0 10px 0; color: #28a745;">📦 Production Requested Replacement</h4>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+                    <div>
+                        <label style="font-weight:bold; font-size: 12px;">Replacement Code *</label>
+                        <input type="text" id="alert_replacementCode"
+                            style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #28a745; border-radius: 4px; box-sizing: border-box;"
+                            placeholder="Scan new tool">
+                    </div>
+                    <div>
+                        <label style="font-weight:bold; font-size: 12px;">Issue Qty *</label>
+                        <input type="number" id="alert_replacementQty"
+                            style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #28a745; border-radius: 4px; box-sizing: border-box;"
+                            value="1" min="1">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="approveReturn()"
+                style="background: #28a745; color: white; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">✅
+                Approve Return & Update Stock</button>
+        </div>
+    </div>
+
     <div id="loginScreen" class="login-overlay">
         <div class="login-box">
             <h1>PRECIFAST</h1>
@@ -1280,12 +1348,14 @@
             <div class="sub-nav">
                 <button type="button" class="sub-nav-btn active" onclick="switchSubTab('issue-area', this)">🔍 Smart
                     Issue</button>
-                <button type="button" class="sub-nav-btn" onclick="switchSubTab('return-area', this)">📥 Log Return /
-                    Exchange</button>
+
                 <button type="button" class="sub-nav-btn" onclick="switchSubTab('issue-hist-area', this)">📤 Direct
                     Issue Log</button>
                 <button type="button" class="sub-nav-btn" onclick="switchSubTab('ret-hist-area', this)">🕒 Exchange
                     History</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('pending-returns-area', this)">⏳ Pending
+                    Returns <span id="pendingReturnBadge" class="badge b-red"
+                        style="display:none; margin-left: 5px;">0</span></button>
             </div>
 
             <div id="issue-area" class="sub-tab-content active">
@@ -1356,16 +1426,31 @@
                             </div>
                         </div>
                     </div>
-                    <hr style="margin: 25px 0;">
-                    <div class="grid-3">
-                        <div class="form-group"><label>Operator Name</label><input type="text" id="issueOperator"></div>
-                        <div class="form-group"><label>Quantity to Issue</label><input type="number" id="issueQty"
-                                value="1" min="1"></div>
-                        <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
-                            <button type="button" class="btn btn-warning" onclick="fillLastIssue()">🔄 Prev</button>
-                            <button class="btn btn-success" style="flex: 1;" onclick="executeIssue()">Execute
-                                Issue</button>
-                        </div>
+                    
+                </div>
+            </div>
+
+            <div id="pending-returns-area" class="sub-tab-content">
+                <div class="card" style="padding: 0; border: 1px solid var(--warning);">
+                    <div class="section-header"
+                        style="padding: 15px; background: #fffdf0; border-bottom: 1px solid #ffeba1; margin:0; color: #856404;">
+                        ⏳ Pending Return/Exchange Requests from Production
+                    </div>
+                    <div class="table-responsive">
+                        <table id="pendingReturnsTable">
+                            <thead style="background: var(--warning); color: #000;">
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Tool Code</th>
+                                    <th>Machine</th>
+                                    <th>Operator</th>
+                                    <th>FMEA Reason</th>
+                                    <th>Type</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingReturnsBody"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1605,6 +1690,7 @@
                                     <th>In Stock</th>
                                     <th>Status</th>
                                     <th>Action</th>
+                                    <th style="color: var(--success);">Issue to Prod</th>
                                 </tr>
                             </thead>
                             <tbody id="assemblyTableBody"></tbody>
@@ -1625,6 +1711,7 @@
                                     <th>Total Tools Deducted</th>
                                     <th>Status</th>
                                     <th>Action</th>
+                                    <th style="color: var(--success);">Issue to Prod</th>
                                 </tr>
                             </thead>
                             <tbody id="assemblyHistoryBody"></tbody>
@@ -1681,6 +1768,8 @@
                     Live Inventory</button>
                 <button type="button" class="sub-nav-btn" onclick="switchSubTab('master-stock-revised', this)">🔄 Tool
                     Schedule Changed Stock</button>
+                <button type="button" class="sub-nav-btn" onclick="switchSubTab('master-stock-garbage', this)">🗑️
+                    Garbage Stock</button>
             </div>
 
             <div id="master-stock-main" class="sub-tab-content active">
@@ -1756,6 +1845,32 @@
                                 </tr>
                             </thead>
                             <tbody id="revisedStockBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="master-stock-garbage" class="sub-tab-content">
+                <div class="card" style="padding: 0; overflow: hidden; border: 1px solid var(--danger);">
+                    <div class="section-header"
+                        style="padding: 15px; background: #ffebeb; border-bottom: 1px solid #f5c6cb; margin:0; color: var(--danger);">
+                        🗑️ Garbage / Scrapped Stock
+                    </div>
+                    <div class="table-responsive" style="max-height: 75vh;">
+                        <table id="garbageStockTable" class="mega-table">
+                            <thead>
+                                <tr>
+                                    <th>Tool Code</th>
+                                    <th>M/C Name</th>
+                                    <th>Part Size</th>
+                                    <th>Part Name</th>
+                                    <th>Description</th>
+                                    <th style="background: #dc3545; color: white;">Scrap Date</th>
+                                    <th style="background: #dc3545; color: white;">Scrap Reason</th>
+                                    <th style="background: #dc3545; color: white;">Scrapped By</th>
+                                    <th>Qty Scrapped</th>
+                                </tr>
+                            </thead>
+                            <tbody id="garbageInventoryBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -2413,6 +2528,38 @@
         </div>
     </div>
 
+
+    <div id="issueMachineModalOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="color: var(--success); border-bottom: 2px solid var(--success);">➡️ Issue to Production</h3>
+            <div class="form-group">
+                <label>Select Machine *</label>
+                <select id="issueMachineSelect"
+                    onchange="if(this.value==='OTHER') document.getElementById('issueMachineOther').style.display='block'; else document.getElementById('issueMachineOther').style.display='none';">
+                    <option value="">-- Select Machine --</option>
+                    <option value="64S">64S</option>
+                    <option value="84S">84S</option>
+                    <option value="6L4S">6L4S</option>
+                    <option value="164S">164S</option>
+                    <option value="254LL">254LL</option>
+                    <option value="Lathe">Lathe</option>
+                    <option value="OTHER">Other...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="issueMachineOther" placeholder="Enter Custom Machine Name"
+                    style="display:none; margin-top: 10px;">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" onclick="closeIssueMachineModal()">Cancel</button>
+                <button type="button" class="btn btn-success" id="confirmIssueBtn">Confirm & Issue</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <script>
         const API_URL = 'http://localhost:5000/api';
 
@@ -2435,6 +2582,9 @@
         let pendingRevision = null;
         let assemblyHistory = [];
         let auditTrail = [];
+        let masterIssuedTools = [];      // <-- CRITICAL FOR ISSUE TO MACHINE
+        let pendingReturnRequests = [];  // <-- CRITICAL FOR PENDING RETURNS
+        let garbageStock = [];
 
         // Default Fallback QA Specs (In case DB is empty)
         let qaSpecs = {
@@ -2476,7 +2626,7 @@
         };
 
         function getNow() { let d = new Date(); return d.toLocaleDateString() + " " + d.toLocaleTimeString(); }
-        function getDailyIndentNumber() { const d = new Date(); const mn = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]; return `TR-${mn[d.getMonth()]}-${String(d.getDate()).padStart(2, '0')}`; }
+       function getDailyIndentNumber() { const d = new Date(); const mn = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]; return `TR-${mn[d.getMonth()]}-${String(d.getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 1000)}`; }
         function filterGenericTable(tableId, query) { let input = query.toUpperCase(); let tr = document.getElementById(tableId).getElementsByTagName("tr"); for (let i = 1; i < tr.length; i++) tr[i].style.display = (tr[i].textContent || tr[i].innerText).toUpperCase().indexOf(input) > -1 ? "" : "none"; }
 
         function showModal({ title = "Alert", message = "", type = "alert", showInput = false, isPassword = false }) {
@@ -2554,8 +2704,12 @@
                         revisedStockHistory = data.state.revisedStockHistory || [];
                         assemblyHistory = data.state.assemblyHistory || [];
                         auditTrail = data.state.auditTrail || [];
+                        garbageStock = data.state.garbageStock || [];
 
-                        // NEW: Pull QA Specs from DB
+                        // New Arrays
+                        masterIssuedTools = data.state.masterIssuedTools || [];
+                        pendingReturnRequests = data.state.pendingReturnRequests || [];
+
                         if (data.state.qaSpecs && Object.keys(data.state.qaSpecs).length > 0) {
                             qaSpecs = data.state.qaSpecs;
                         }
@@ -2568,14 +2722,17 @@
                 statusEl.innerText = "🔴 Server Offline (Using Defaults)";
                 statusEl.className = "error";
             }
-            populateBomDropdown();
-            updateQADropdown();
-            updateTemplateDropdown(); // New builder dropdown
-            renderAllTables();
-            updateDashboards();
-            renderECNs();
-            renderQAQueue();
-            renderToolRoomECNQueue();
+
+            // Render everything safely
+            try { populateBomDropdown(); } catch (e) { console.error("Bom Dropdown Error:", e); }
+            try { updateQADropdown(); } catch (e) { console.error("QA Dropdown Error:", e); }
+            try { updateTemplateDropdown(); } catch (e) { console.error("Template Dropdown Error:", e); }
+            try { renderAllTables(); } catch (e) { console.error("Table Render Error:", e); }
+            try { updateDashboards(); } catch (e) { console.error("Dashboard Update Error:", e); }
+            try { renderECNs(); } catch (e) { console.error("ECN Render Error:", e); }
+            try { renderQAQueue(); } catch (e) { console.error("QA Queue Error:", e); }
+            try { renderToolRoomECNQueue(); } catch (e) { console.error("TR ECN Error:", e); }
+            try { if (typeof renderPendingReturns === 'function') renderPendingReturns(); } catch (e) { console.error("Pending Returns Error:", e); }
         }
 
         async function saveAllData() {
@@ -2587,7 +2744,7 @@
                         masterInventory, returnHistory, conversionHistory, qaHistory,
                         consumablesHistory, indentHistory, analyticsHistory,
                         invAdjustmentHistory, documentRepo, lastIssueMemory, toolSchedules, dwmHistory, ecnList, issueHistory, revisedStockHistory,
-                        qaSpecs, auditTrail, assemblyHistory// ADD THIS TO THE LIST // <-- NEW: Saves templates to DB
+                        qaSpecs, auditTrail, assemblyHistory, masterIssuedTools, pendingReturnRequests, garbageStock
                     })
                 });
                 populateBomDropdown();
@@ -2640,6 +2797,26 @@
         </tr>`;
             }).join('');
 
+
+            // Render Garbage Stock
+            const garbageBody = document.getElementById('garbageInventoryBody');
+            if (garbageBody) {
+                garbageBody.innerHTML = garbageStock.map(item => {
+                    let safePartNames = Array.isArray(item.partNames) ? item.partNames.join(', ') : (item.partNames || '-');
+                    return `<tr>
+                        <td><strong>${item.code || '-'}</strong></td>
+                        <td><span class="badge b-dark">${item.machine || '-'}</span></td>
+                        <td><span class="badge b-purple">${item.partSize || '-'}</span></td>
+                        <td style="color:var(--accent); font-weight:bold;">${safePartNames}</td>
+                        <td>${item.desc || '-'}</td>
+                        <td><strong>${item.scrapDate || '-'}</strong></td>
+                        <td style="color:var(--danger); font-weight:bold;">${item.scrapReason || '-'}</td>
+                        <td><span style="font-size:12px; color:#666;">👤 ${item.scrappedBy || '-'}</span></td>
+                        <td><strong class="badge b-red" style="font-size:16px;">${item.stock || 1}</strong></td>
+                    </tr>`;
+                }).join('');
+            }
+
             const revBody = document.getElementById('revisedStockBody');
             if (revBody) {
                 revBody.innerHTML = revisedStockHistory.map(r => `<tr>
@@ -2684,34 +2861,57 @@
                 let statusBadge = '';
                 let actionBtn = '';
 
-                // Step 4: Finished & QC Approved
-                if (i.status === 'QC APPROVED' || i.status === 'Fulfilled') {
-                    statusBadge = '<span class="badge b-green">QC APPROVED (In Stock)</span>';
-                    actionBtn = `<small style="color:var(--success); font-weight:bold;">In Stock: ${i.receivedDate || ''}</small>`;
+                // State 5: Physically in Stock
+                if (i.status === 'Fulfilled') {
+                    statusBadge = '<span class="badge b-green">IN STOCK</span>';
+                    actionBtn = `<small style="color:var(--success); font-weight:bold;">Rcvd: ${i.toolRoomReceivedDate || ''}</small>`;
                 }
-                // Step 3: Received, Waiting on QC
-                else if (i.status === 'RECEIVED (Pending QA)') {
-                    statusBadge = '<span class="badge b-purple">PENDING QA</span>';
-                    actionBtn = `<small style="color:#6b21a8; font-weight:bold;">Awaiting QA Inspection</small>`;
+                // State 4: QA Approved, waiting for Tool Room to physically receive
+                else if (i.status === 'QC APPROVED') {
+                    statusBadge = '<span class="badge b-blue">QC APPROVED</span>';
+                    actionBtn = `<button class="btn btn-success btn-tiny" style="padding: 6px 12px; font-size:12px;" onclick="receiveToolRoomIndent('${i.id}')">📥 Receive to Stock</button>`;
                 }
-                // Step 2: PO Raised, Waiting on Deliver
+                // State 4x: QA Rejected
+                else if (i.status === 'QC REJECTED') {
+                    statusBadge = '<span class="badge b-red">QC REJECTED</span>';
+                    actionBtn = `<small style="color:var(--danger); font-weight:bold;">Rejected by QA</small>`;
+                }
+                // State 3: Arrived, sitting in QA queue
+                else if (i.status === 'RECEIVED (Pending QA)' || i.status === 'PENDING QA') {
+                    statusBadge = '<span class="badge b-purple">SENT TO QA</span>';
+                    actionBtn = `<small style="color:#6b21a8; font-weight:bold;">Awaiting Inspection</small>`;
+                }
+                // State 2: Purchase generated the PO
                 else if (i.status === 'PO RAISED') {
-                    statusBadge = '<span class="badge b-blue">PO RAISED</span>';
-                    // FIXED: Removed the 'Receive Goods' button. Only the Purchase Dept can receive!
-                    actionBtn = `<span style="font-size:11px; color:#666;">Waiting on Purchase Dept to Receive</span>`;
+                    statusBadge = '<span class="badge b-dark">PO CREATED</span>';
+                    actionBtn = `<span style="font-size:11px; color:#666;">Waiting on Delivery</span>`;
                 }
-                // Step 1: Active Request
+                // State 1: Active Indent
                 else {
-                    statusBadge = '<span class="badge b-warning">ACTIVE (Awaiting PO)</span>';
-                    actionBtn = `<span style="font-size:11px; color:#666;">Waiting on Purchase</span>`;
+                    statusBadge = '<span class="badge b-warning">SENT TO PO</span>';
+                    actionBtn = `<span style="font-size:11px; color:#666;">Pending PO Creation</span>`;
                 }
 
+                // Fetch linked documents if any
+                let linkedDocs = documentRepo.filter(d => d.part === i.code);
+                let docsHtml = linkedDocs.length > 0
+                    ? linkedDocs.map(d => `<a href="#" style="text-decoration:none; color:#007bff;" onclick="viewDoc('${d.dataUrl}')">📄 ${d.type}</a>`).join('<br>')
+                    : '<span style="color:#999; font-size:11px;">None</span>';
+
+                // Fixed table structure to match exactly 11 headers
                 return `<tr>
-        <td>${i.date}</td><td><strong>${i.no}</strong></td><td>${i.machine}</td><td>${i.partSize}</td>
-        <td><strong style="color:var(--accent);">${i.code}</strong></td><td>${i.qty}</td>
-        <td>${i.priority === 'URGENT' ? '<span style="color:red; font-weight:bold;">URGENT</span>' : 'Normal'}</td>
-        <td>${statusBadge}</td><td>${actionBtn}</td>
-    </tr>`;
+                    <td>${i.date}</td>
+                    <td><strong>${i.no}</strong></td>
+                    <td>${i.machine || '-'}</td>
+                    <td>${i.partSize || '-'}</td>
+                    <td><strong style="color:var(--accent);">${i.code}</strong></td>
+                    <td style="white-space:normal; min-width:120px;">${i.desc || '-'}</td>
+                    <td><strong>${i.qty}</strong></td>
+                    <td>${i.priority === 'URGENT' ? '<span style="color:red; font-weight:bold;">URGENT</span>' : 'Normal'}</td>
+                    <td>${docsHtml}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn}</td>
+                </tr>`;
             }).join('');
 
             // Render the Audit Trail
@@ -2895,6 +3095,104 @@
             updateDashboards();
 
             await customAlert(`✅ Successfully scrapped ${qty} units of ${code}. Stock updated and life counter reset.`);
+        }
+
+
+
+        // ==========================================
+        // QUICK ADJUST & DELETE LOGIC (MASTER STOCK)
+        // ==========================================
+
+        async function quickAdjust(code) {
+            if (currentUserRole !== 'admin' && currentUserRole !== 'toolroom') {
+                return await customAlert("Access Denied. Only Admin or Tool Room can adjust stock.", "Security");
+            }
+            
+            let item = masterInventory.find(t => t.code === code);
+            if (!item) return await customAlert("Tool not found!");
+
+            // 1. Prompt for new stock
+            let newStockStr = await customPrompt(`Current Total Stock for ${code} is ${item.stock}.\n\nEnter new Total Stock:`, "Quick Adjust Stock");
+            if (newStockStr === null || newStockStr.trim() === "") return; 
+            
+            let newStock = parseInt(newStockStr);
+            if (isNaN(newStock) || newStock < 0) return await customAlert("⚠️ Invalid stock value. Must be 0 or higher.");
+
+            let diff = newStock - item.stock;
+            if (diff === 0) return; // No change made
+
+            // 2. Prompt for a reason
+            let reason = await customPrompt(`Reason for changing stock from ${item.stock} to ${newStock}:`, "Adjustment Reason");
+            if (reason === null) return; // Cancelled
+            if (!reason.trim()) reason = "Manual Quick Adjustment";
+
+            // 3. Calculate new stock distribution
+            if (diff > 0) {
+                // If adding stock, put the extra into Spare Stock
+                item.spareStock += diff;
+            } else {
+                // If removing stock, deduct from Running Stock first, then Spare
+                let absDiff = Math.abs(diff);
+                if (item.rngStock >= absDiff) {
+                    item.rngStock -= absDiff;
+                } else {
+                    let rem = absDiff - item.rngStock;
+                    item.rngStock = 0;
+                    item.spareStock = Math.max(0, item.spareStock - rem);
+                }
+            }
+            item.stock = item.rngStock + item.spareStock;
+
+            let op = currentUserRole ? currentUserRole.toUpperCase() : 'SYSTEM';
+
+            // 4. Log the adjustment in the history tab
+            invAdjustmentHistory.unshift({
+                date: getNow(), 
+                action: '<span class="badge b-blue">QUICK ADJUST</span>', 
+                code: code, 
+                qty: diff > 0 ? `+${diff}` : diff, 
+                operator: op, 
+                reason: reason
+            });
+
+            // 5. Log to security audit trail
+            if (typeof logAudit === 'function') {
+                logAudit("QUICK ADJUST", `${op} adjusted [${code}] stock from ${item.stock - diff} to ${item.stock}. Reason: ${reason}`);
+            }
+
+            // 6. Save & Refresh
+            saveAllData();
+            renderAllTables();
+            updateDashboards();
+            await customAlert(`✅ Stock for ${code} successfully updated to ${item.stock}.`);
+        }
+
+        async function deleteProduct(code) {
+            // Usually, only Admins should be allowed to completely delete a master record
+            if (currentUserRole !== 'admin') {
+                return await customAlert("Access Denied. Only Admins can delete master tools.", "Security");
+            }
+            
+            let conf = await customConfirm(`🚨 WARNING: Are you sure you want to permanently delete [${code}] from the Master Inventory?\n\nThis action cannot be undone.`, "Confirm Deletion");
+            if (!conf) return;
+
+            let idx = masterInventory.findIndex(t => t.code === code);
+            if (idx > -1) {
+                masterInventory.splice(idx, 1);
+                
+                let op = currentUserRole ? currentUserRole.toUpperCase() : 'SYSTEM';
+                
+                // Log to security audit trail
+                if (typeof logAudit === 'function') {
+                    logAudit("DELETE TOOL", `${op} completely deleted tool [${code}] from Master Inventory.`);
+                }
+                
+                // Save & Refresh
+                saveAllData();
+                renderAllTables();
+                updateDashboards();
+                await customAlert(`🗑️ Tool [${code}] has been permanently deleted.`);
+            }
         }
 
         function parseCSVLine(text) {
@@ -3836,7 +4134,7 @@
         }
 
 
-        
+
 
         // Final Step: QA Inspects and pushes to Master Stock
         async function approveInwardQA(id) {
@@ -4141,38 +4439,54 @@
             }
         }
 
-        function generateIndent(e) {
+       async function generateIndent(e) {
             e.preventDefault();
-            let newInd = {
-                id: Date.now(),
-                status: 'ACTIVE',
-                date: getNow(),
-                no: document.getElementById('indNo').value,
-                machine: document.getElementById('indMachine').value,
-                partSize: document.getElementById('indPartSize').value,
-                code: document.getElementById('indCode').value,
-                desc: document.getElementById('indDesc').value,
-                qty: document.getElementById('indQty').value,
-                priority: document.getElementById('indPriority').value
-            };
+            const btn = e.target.querySelector('button[type="submit"]');
+            const ogText = btn.innerHTML;
+            btn.innerHTML = "⏳ Generating...";
+            btn.disabled = true;
 
-            indentHistory.unshift(newInd);
+            try {
+                let newInd = {
+                    id: Date.now(),
+                    status: 'ACTIVE',
+                    date: getNow(),
+                    no: document.getElementById('indNo').value,
+                    machine: document.getElementById('indMachine').value,
+                    partSize: document.getElementById('indPartSize').value,
+                    code: document.getElementById('indCode').value,
+                    desc: document.getElementById('indDesc').value,
+                    qty: document.getElementById('indQty').value,
+                    priority: document.getElementById('indPriority').value
+                };
 
-            if (typeof logAudit === 'function') {
-                logAudit("CREATED INDENT", `Generated Indent ${newInd.no} for ${newInd.qty}x ${newInd.code}`);
+                indentHistory.unshift(newInd);
+
+                if (typeof logAudit === 'function') {
+                    logAudit("CREATED INDENT", `Generated Indent ${newInd.no} for ${newInd.qty}x ${newInd.code}`);
+                }
+
+                // Wait for MongoDB to finish saving before notifying Production
+                await saveAllData(); 
+                renderAllTables();
+
+                // Clear form
+                e.target.reset();
+                document.getElementById('indNo').value = getDailyIndentNumber();
+                document.getElementById('indDocsDisplay').innerHTML = '<span style="color:#999; font-size:12px;">Type a Tool Code to check for linked documents.</span>';
+                updateDashboards();
+
+                // NEW: Send the exact data directly to index.html so it doesn't have to download the DB!
+                window.parent.postMessage({ type: 'NEW_INDENT_CREATED', payload: newInd }, '*');
+
+                customAlert(`✅ Indent ${newInd.no} has been successfully sent to the Purchasing Queue!`, "Request Submitted");
+            } catch(err) {
+                console.error(err);
+                customAlert("❌ Failed to generate indent due to server error.", "Error");
+            } finally {
+                btn.innerHTML = ogText;
+                btn.disabled = false;
             }
-
-            saveAllData();
-            renderAllTables();
-
-            // Clear form
-            e.target.reset();
-            document.getElementById('indNo').value = getDailyIndentNumber();
-            document.getElementById('indDocsDisplay').innerHTML = '<span style="color:#999; font-size:12px;">Type a Tool Code to check for linked documents.</span>';
-            updateDashboards();
-
-            // Trigger Notifications
-            customAlert(`✅ Indent ${newInd.no} has been successfully sent to the Purchasing Queue!`, "Request Submitted");
         }
         function exportTableToCSV(tid, fn) { let t = document.getElementById(tid); let r = t.querySelectorAll("tr"); let d = []; for (let i = 0; i < r.length; i++) { let c = r[i].querySelectorAll("td, th"); let rd = []; for (let j = 0; j < c.length - 1; j++) rd.push('"' + c[j].innerText.replace(/"/g, '""') + '"'); d.push(rd.join(",")); } let b = new Blob([d.join("\n")], { type: "text/csv" }); let l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = fn; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
 
@@ -4376,7 +4690,13 @@
                     if (isShort) canAssembleAll = false;
 
                     let statusBadge = isShort ? `<span class="badge b-red">SHORTAGE</span>` : `<span class="badge b-green">READY</span>`;
-                    let actionBtn = isShort ? `<button class="btn btn-warning" style="padding:4px 8px; font-size:11px;" onclick="sendToIndentFromAssembly('${t.code}', ${reqQty - stock})">🛒 Indent</button>` : '-';
+                    let actionBtn = isShort ? `<button class="btn btn-warning btn-tiny" style="padding:4px 8px; font-size:11px;" onclick="sendToIndentFromAssembly('${t.code}', ${reqQty - stock})">🛒 Indent</button>` : '-';
+
+                    // UPDATED: Issue Arrow Button with Shortage Check
+                    let issueBtn = isShort
+                        ? `<button class="btn btn-outline btn-tiny" style="padding: 4px 8px; font-size:12px; border-radius: 50%; opacity: 0.5; cursor: not-allowed; border-color: #999; color: #999;" onclick="customAlert('⚠️ Shortage detected! Please click the Indent button to request more stock.', 'Cannot Issue Tool')">➡️</button>`
+                        : `<button class="btn btn-success btn-tiny" style="padding: 4px 8px; font-size:12px; border-radius: 50%;" title="Issue Directly" onclick="openIssueMachineModal('single', {code: '${t.code}', qty: ${reqQty}})">➡️</button>`;
+
                     let rowStyle = isShort ? 'background: #fff0f0;' : '';
 
                     html += `<tr style="${rowStyle}">
@@ -4388,6 +4708,7 @@
                         <td style="text-align:center; color:${isShort ? 'red' : 'green'};"><strong>${stock}</strong></td>
                         <td>${statusBadge}</td>
                         <td>${actionBtn}</td>
+                        <td>${issueBtn}</td>
                     </tr>`;
                 });
             }
@@ -4400,12 +4721,40 @@
                 actionZone.innerHTML = `<span style="color: var(--danger); font-weight: bold;">⚠️ Cannot Assemble - Resolve Shortages First</span>`;
             }
 
-            // Update History Table
-            document.getElementById('assemblyHistoryBody').innerHTML = assemblyHistory.map(a => `<tr>
-                <td>${a.date}</td><td><strong>${a.title}</strong></td><td>${a.operator}</td><td><span class="badge b-blue">${a.toolsDeducted} Tools</span></td>
-            </tr>`).join('');
-
+            renderAssemblyHistory(); // Refresh history view
             card.style.display = 'block';
+        }
+
+        function renderAssemblyHistory() {
+            const tbody = document.getElementById('assemblyHistoryBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = assemblyHistory.map(a => {
+                let isDisassembled = a.status === 'Disassembled';
+
+                let statusBadge = isDisassembled
+                    ? '<span class="badge b-yellow">DISASSEMBLED</span>'
+                    : '<span class="badge b-green">ASSEMBLED</span>';
+
+                let actionBtn = isDisassembled
+                    ? `<small style="color:#666;">By ${a.disassembleOp} on<br>${a.disassembleDate}</small>`
+                    : `<button class="btn btn-danger" style="padding: 4px 8px; font-size:12px;" onclick="disassembleItem(${a.id})">↩️ Disassemble & Return Stock</button>`;
+
+                // NEW: Issue Whole Assembly to Machine
+                let issueBadge = a.issuedToMachine
+                    ? `<span class="badge b-purple">At ${a.issuedToMachine}</span>`
+                    : (isDisassembled ? '-' : `<button class="btn btn-success btn-tiny" style="padding: 4px 8px; font-size:12px;" onclick="openIssueMachineModal('assembly', {id: ${a.id}})">➡️ Issue BOM</button>`);
+
+                return `<tr>
+                    <td>${a.date}</td>
+                    <td><strong>${a.title}</strong></td>
+                    <td>${a.operator}</td>
+                    <td><span class="badge b-blue">${a.toolsDeducted} Tools</span></td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn}</td>
+                    <td>${issueBadge}</td>
+                </tr>`;
+            }).join('');
         }
 
         async function executeAssembly(scheduleId) {
@@ -4509,31 +4858,7 @@
             await customAlert(`✅ Successfully Disassembled! All tools have been returned to Master Stock.`);
         }
 
-        function renderAssemblyHistory() {
-            const tbody = document.getElementById('assemblyHistoryBody');
-            if (!tbody) return;
 
-            tbody.innerHTML = assemblyHistory.map(a => {
-                let isDisassembled = a.status === 'Disassembled';
-
-                let statusBadge = isDisassembled
-                    ? '<span class="badge b-yellow">DISASSEMBLED</span>'
-                    : '<span class="badge b-green">ASSEMBLED</span>';
-
-                let actionBtn = isDisassembled
-                    ? `<small style="color:#666;">By ${a.disassembleOp} on<br>${a.disassembleDate}</small>`
-                    : `<button class="btn btn-danger" style="padding: 4px 8px; font-size:12px;" onclick="disassembleItem(${a.id})">↩️ Disassemble & Return Stock</button>`;
-
-                return `<tr>
-                    <td>${a.date}</td>
-                    <td><strong>${a.title}</strong></td>
-                    <td>${a.operator}</td>
-                    <td><span class="badge b-blue">${a.toolsDeducted} Tools</span></td>
-                    <td>${statusBadge}</td>
-                    <td>${actionBtn}</td>
-                </tr>`;
-            }).join('');
-        }
 
         function sendToIndentFromAssembly(toolCode, missingQty) {
             switchTab('indents'); // Go to indent tab
@@ -4672,6 +4997,419 @@
             }
         });
 
+
+
+        // Listen for Alert from Production
+        window.addEventListener('message', (e) => {
+            if (e.data.type === 'TOOL_RETURN_ALERT') {
+                let newReq = {
+                    id: e.data.payload.id,
+                    code: e.data.payload.code,
+                    machine: e.data.payload.machine,
+                    operator: e.data.payload.operator,
+                    pieces: e.data.payload.pieces,
+                    qty: e.data.payload.qty,
+                    reason: e.data.payload.reason,
+                    remarks: e.data.payload.remarks,
+                    exchange: e.data.payload.exchange,
+                    timestamp: getNow()
+                };
+
+                // Prevent duplicates if production sends it twice
+                if (!pendingReturnRequests.find(r => r.id === newReq.id)) {
+                    pendingReturnRequests.push(newReq);
+                    if (typeof saveAllData === 'function') saveAllData();
+                    renderPendingReturns();
+                }
+
+                // Open the modal immediately for attention, but they can 'X' it out now
+                openReturnModal(newReq.id);
+            }
+        });
+
+
+
+        async function approveReturn() {
+            // 1. Add "Processing..." state to button
+            const btn = document.querySelector('#returnAlertModal button[onclick="approveReturn()"]');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = "⏳ Processing...";
+            btn.disabled = true;
+
+            try {
+                const approver = document.getElementById('alert_approvedBy').value.trim();
+                const isExchange = document.getElementById('alert_exchangeFlag').value === 'YES';
+                const repCode = document.getElementById('alert_replacementCode') ? document.getElementById('alert_replacementCode').value.trim() : '';
+                
+                // Fixed variables
+                const repQty = document.getElementById('alert_replacementQty') ? (parseInt(document.getElementById('alert_replacementQty').value) || 1) : 1;
+                const oldCode = document.getElementById('alert_toolCode').innerText;
+                const operator = document.getElementById('alert_operator').innerText;
+                const pieces = parseInt(document.getElementById('alert_pieces').innerText) || 0;
+                const retQty = parseInt(document.getElementById('alert_qty').innerText) || 1;
+                const reason = document.getElementById('alert_reason').innerText;
+                const toolId = document.getElementById('alert_toolId').value;
+                const machine = document.getElementById('alert_machine').innerText;
+                
+                const destination = document.getElementById('alert_destination_select').value;
+
+                // Validation checks
+                if(!approver) {
+                    btn.innerHTML = originalBtnText; btn.disabled = false;
+                    return customAlert("⚠️ Please enter the Approver's Name!");
+                }
+                if(isExchange && !repCode) {
+                    btn.innerHTML = originalBtnText; btn.disabled = false;
+                    return customAlert("⚠️ Please enter the replacement tool code!");
+                }
+                if(isExchange && repQty < 1) {
+                    btn.innerHTML = originalBtnText; btn.disabled = false;
+                    return customAlert("⚠️ Replacement quantity must be at least 1!");
+                }
+
+                // 2. Process Returned Tool (Old Code)
+                let retItem = masterInventory.find(t => t.code === oldCode);
+                if (retItem) {
+                    retItem.actualLife = (retItem.actualLife || 0) + pieces;
+                    
+                    if (destination === 'GARBAGE') {
+                        let garbageItem = JSON.parse(JSON.stringify(retItem));
+                        garbageItem.stock = retQty;
+                        garbageItem.scrapDate = getNow();
+                        garbageItem.scrappedBy = approver;
+                        garbageItem.scrapReason = reason;
+                        if(!window.garbageStock) window.garbageStock = [];
+                        window.garbageStock.unshift(garbageItem);
+                    } else {
+                        retItem.spareStock += retQty;
+                        retItem.stock = retItem.rngStock + retItem.spareStock;
+                    }
+                }
+
+                // 3. Process Replacement Tool (New Code) & MINUS STOCK
+                let issueStr = "None";
+                if (isExchange) {
+                    let repItem = masterInventory.find(t => t.code === repCode);
+                    if (!repItem) {
+                        btn.innerHTML = originalBtnText; btn.disabled = false;
+                        return customAlert(`⚠️ Replacement Tool Code ${repCode} not found in Master Inventory!`);
+                    }
+                    if (repItem.stock < repQty) {
+                        btn.innerHTML = originalBtnText; btn.disabled = false;
+                        return customAlert(`⚠️ Insufficient stock for ${repCode}! Only ${repItem.stock} available.`);
+                    }
+
+                    // Deduct from Running Stock first, then Spare
+                    if (repItem.rngStock >= repQty) {
+                        repItem.rngStock -= repQty;
+                    } else {
+                        let rem = repQty - repItem.rngStock;
+                        repItem.rngStock = 0;
+                        repItem.spareStock -= rem;
+                    }
+                    repItem.stock = repItem.rngStock + repItem.spareStock;
+                    issueStr = `${repQty}x ${repCode} (By: ${approver})`;
+
+                    // Log to Direct Issue History (Tool Room)
+                    issueHistory.unshift({
+                        date: getNow(), code: repCode, desc: repItem.desc || '-', machine: machine, qty: repQty, operator: operator
+                    });
+
+                    // Create the tool record for Production Dashboard
+                    let newIssuedTool = {
+                        id: 'T-' + Date.now(), code: repCode, machine: machine, issueDate: getNow(), issuedBy: approver, status: 'AT MACHINE'
+                    };
+                    masterIssuedTools.unshift(newIssuedTool);
+
+                    // Tell Production Dashboard to add it
+                    window.parent.postMessage({ type: 'TOOLS_ISSUED_TO_PROD', payload: [newIssuedTool] }, '*');
+
+                    // Global Adjustment log
+                    invAdjustmentHistory.unshift({
+                        date: getNow(), action: '<span class="badge b-primary">ISSUED TO PROD</span>', code: repCode, qty: repQty, operator: approver, reason: `Exchange for returned ${oldCode}`
+                    });
+                }
+
+                // 4. Update Return History Tab
+                let actionBadge = isExchange ? '<span class="badge b-purple">EXCHANGE</span>' : '<span class="badge b-yellow">RETURNED</span>';
+                returnHistory.unshift({
+                    date: getNow(),
+                    action: actionBadge,
+                    retCode: oldCode,
+                    operator: operator,
+                    piecesAdded: pieces,
+                    reason: reason,
+                    issued: issueStr
+                });
+
+                // Remove from the pending queue
+                pendingReturnRequests = pendingReturnRequests.filter(r => r.id !== toolId);
+
+                // Save and re-render the tables
+                if (typeof saveAllData === 'function') saveAllData();
+                if (typeof renderAllTables === 'function') renderAllTables();
+                if (typeof renderPendingReturns === 'function') renderPendingReturns();
+                if (typeof updateDashboards === 'function') updateDashboards();
+
+                // 5. Construct clear success message & Close
+                let destText = destination === 'GARBAGE' ? "🗑️ Garbage Stock" : "📦 Master Spare Stock";
+                let msg = `✅ Return Approved!\n\nThe old tool [${oldCode}] has been safely moved to ${destText}.`;
+                
+                if (isExchange) {
+                    msg += `\n\n📦 Replacement [${repCode}] has been successfully issued to Production. Master Stock deducted by ${repQty}.`;
+                }
+
+                // Tell production to mark as CLEARED
+                window.parent.postMessage({
+                    type: 'TOOL_RETURN_APPROVED',
+                    payload: {
+                        id: toolId,
+                        approvedBy: approver,
+                        replacementCode: isExchange ? repCode : null
+                    }
+                }, '*');
+
+                document.getElementById('returnAlertModal').style.display = 'none';
+                await customAlert(msg, "Transaction Complete");
+
+            } catch (err) {
+                console.error("Error approving return:", err);
+                customAlert("❌ An error occurred while processing the return. Check the console.", "Error");
+            } finally {
+                // Always restore the button text just in case
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        }
+
+
+
+        
+        // ==========================================
+        // PENDING RETURNS QUEUE LOGIC
+        // ==========================================
+        function renderPendingReturns() {
+            const tbody = document.getElementById('pendingReturnsBody');
+            const badge = document.getElementById('pendingReturnBadge');
+            if (!tbody) return;
+
+            if (pendingReturnRequests.length > 0) {
+                if (badge) { badge.innerText = pendingReturnRequests.length; badge.style.display = 'inline-block'; }
+                tbody.innerHTML = pendingReturnRequests.map(r => `
+                    <tr>
+                        <td>${r.timestamp}</td>
+                        <td><strong style="color:var(--primary);">${r.code}</strong></td>
+                        <td>${r.machine}</td>
+                        <td>${r.operator}</td>
+                        <td><span style="color:var(--danger); font-weight:bold;">${r.reason}</span></td>
+                        <td>${r.exchange === 'YES' ? '<span class="badge b-purple">EXCHANGE</span>' : '<span class="badge b-yellow">RETURN</span>'}</td>
+                        <td><button class="btn btn-primary btn-tiny" style="padding:6px 12px; font-size: 12px;" onclick="openReturnModal('${r.id}')">Review & Approve</button></td>
+                    </tr>
+                `).join('');
+            } else {
+                if (badge) badge.style.display = 'none';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#666;">🎉 No pending return requests!</td></tr>';
+            }
+        }
+
+        function openReturnModal(id) {
+            let req = pendingReturnRequests.find(r => r.id === id);
+            if (!req) return;
+
+            document.getElementById('alert_toolId').value = req.id;
+            document.getElementById('alert_toolCode').innerText = req.code;
+            document.getElementById('alert_machine').innerText = req.machine;
+
+            if (document.getElementById('alert_operator')) document.getElementById('alert_operator').innerText = req.operator;
+            if (document.getElementById('alert_pieces')) document.getElementById('alert_pieces').innerText = req.pieces;
+            if (document.getElementById('alert_qty')) document.getElementById('alert_qty').innerText = req.qty;
+
+            document.getElementById('alert_reason').innerText = req.reason;
+            if (document.getElementById('alert_destination_select')) document.getElementById('alert_destination_select').value = 'STOCK';
+            document.getElementById('alert_remarks').innerText = req.remarks || 'None';
+            document.getElementById('alert_exchangeFlag').value = req.exchange;
+
+            if (req.exchange === 'YES') {
+                document.getElementById('exchangeSection').style.display = 'block';
+                document.getElementById('alert_replacementCode').value = req.code; // Suggest same tool code
+                document.getElementById('alert_replacementQty').value = req.qty || 1; // Default to returned qty
+            } else {
+                document.getElementById('exchangeSection').style.display = 'none';
+            }
+
+            document.getElementById('returnAlertModal').style.display = 'flex';
+        }
+
+
+
+
+        // ==========================================
+        // MACHINE ISSUE LOGIC (SINGLE TOOL & FULL ASSEMBLY)
+        // ==========================================
+        let pendingIssueData = null;
+
+        function openIssueMachineModal(type, data) {
+            pendingIssueData = { type, ...data };
+            document.getElementById('issueMachineSelect').value = '';
+            document.getElementById('issueMachineOther').style.display = 'none';
+            document.getElementById('issueMachineOther').value = '';
+            document.getElementById('issueMachineModalOverlay').classList.add('active');
+
+            document.getElementById('confirmIssueBtn').onclick = processMachineIssue;
+        }
+
+        function closeIssueMachineModal() {
+            document.getElementById('issueMachineModalOverlay').classList.remove('active');
+            pendingIssueData = null;
+        }
+
+        async function processMachineIssue() {
+            let machine = document.getElementById('issueMachineSelect').value;
+            if (machine === 'OTHER') machine = document.getElementById('issueMachineOther').value.trim();
+            if (!machine) return customAlert("⚠️ Please select or enter a machine name.");
+
+            let op = currentUserRole ? currentUserRole.toUpperCase() : 'SYSTEM';
+
+            // 1. ISSUING A SINGLE TOOL DIRECTLY FROM THE CHECK TABLE
+            if (pendingIssueData.type === 'single') {
+                let toolCode = pendingIssueData.code;
+                let qty = pendingIssueData.qty;
+
+                let invItem = masterInventory.find(t => t.code === toolCode);
+                if (!invItem) return customAlert(`⚠️ Tool ${toolCode} not found.`);
+                if (invItem.stock < qty) return customAlert(`⚠️ Insufficient stock for ${toolCode}! Cannot Issue.`);
+
+                // Deduct stock (Priority to Running Stock)
+                if (invItem.rngStock >= qty) {
+                    invItem.rngStock -= qty;
+                } else {
+                    let rem = qty - invItem.rngStock;
+                    invItem.rngStock = 0;
+                    invItem.spareStock -= rem;
+                }
+                invItem.stock = invItem.rngStock + invItem.spareStock;
+
+                // Log to Direct Issue History (Tool Room)
+                issueHistory.unshift({
+                    date: getNow(), code: toolCode, desc: invItem.desc || '-', machine: machine, qty: qty, operator: op
+                });
+
+                // Create the tool record
+                let newIssuedTool = {
+                    id: 'T-' + Date.now(), code: toolCode, machine: machine, issueDate: getNow(), issuedBy: op, status: 'AT MACHINE'
+                };
+
+                masterIssuedTools.unshift(newIssuedTool);
+
+                // Log to Global History
+                invAdjustmentHistory.unshift({
+                    date: getNow(), action: '<span class="badge b-primary">ISSUED TO PROD</span>', code: toolCode, qty: qty, operator: op, reason: `Issued directly to ${machine}`
+                });
+
+                // Tell the main dashboard (index.html) to add this to Production
+                window.parent.postMessage({ type: 'TOOLS_ISSUED_TO_PROD', payload: [newIssuedTool] }, '*');
+
+                closeIssueMachineModal();
+                saveAllData();
+                renderAllTables();
+                renderAssemblyCheck();
+                await customAlert(`✅ Issued ${qty}x ${toolCode} to ${machine}. Stock deducted and sent to Production Dashboard.`);
+            }
+
+            // 2. ISSUING A FULLY ASSEMBLED BOM FROM HISTORY
+            else if (pendingIssueData.type === 'assembly') {
+                let assemblyId = pendingIssueData.id;
+                let record = assemblyHistory.find(a => a.id === assemblyId);
+                if (!record) return;
+
+                if (record.issuedToMachine) return customAlert("⚠️ This assembly has already been issued.");
+
+                let newlyIssued = [];
+
+                // For each tool in assembly, issue it to Production
+                if (record.deductedItems && record.deductedItems.length > 0) {
+                    record.deductedItems.forEach(item => {
+                        let invItem = masterInventory.find(inv => inv.code === item.code);
+                        let desc = invItem ? invItem.desc : '-';
+
+                        // Log to Direct Issue History
+                        issueHistory.unshift({
+                            date: getNow(), code: item.code, desc: desc, machine: machine, qty: item.qty, operator: op
+                        });
+
+                        // Create the tool record
+                        let newTool = {
+                            id: 'T-' + Date.now() + Math.floor(Math.random() * 1000),
+                            code: item.code,
+                            machine: machine,
+                            issueDate: getNow(),
+                            issuedBy: op,
+                            status: 'AT MACHINE'
+                        };
+
+                        masterIssuedTools.unshift(newTool);
+                        newlyIssued.push(newTool);
+                    });
+                }
+
+                // Tag the Assembly History record as issued so the button disappears
+                record.issuedToMachine = machine;
+                record.issueDate = getNow();
+
+                // Tell the main dashboard (index.html) to add these to Production
+                window.parent.postMessage({ type: 'TOOLS_ISSUED_TO_PROD', payload: newlyIssued }, '*');
+
+                closeIssueMachineModal();
+                saveAllData();
+                renderAllTables();
+                renderAssemblyHistory();
+                await customAlert(`✅ Full Assembly successfully issued to ${machine}! Tools sent to Production Dashboard.`);
+            }
+        }
+
+
+
+        async function receiveToolRoomIndent(id) {
+            let ind = indentHistory.find(i => i.id === id);
+            if (!ind) return;
+
+            let conf = await customConfirm(`Are you physically receiving ${ind.qty}x [${ind.code}] into the Tool Room?\n\nThis will add it to the Master Spare Stock.`, "Confirm Physical Receipt");
+            if (!conf) return;
+
+            let op = currentUserRole ? currentUserRole.toUpperCase() : 'SYSTEM';
+
+            // 1. Add to Master Inventory (Spare Stock)
+            let invItem = masterInventory.find(t => t.code === ind.code);
+            if (invItem) {
+                invItem.spareStock += parseInt(ind.qty) || 0;
+                invItem.stock = invItem.rngStock + invItem.spareStock;
+            } else {
+                masterInventory.push({
+                    code: ind.code, desc: ind.desc, machine: ind.machine, partSize: ind.partSize,
+                    rngStock: 0, spareStock: parseInt(ind.qty) || 0, stock: parseInt(ind.qty) || 0, min: 5, actualLife: 0, assumedLife: 50000
+                });
+            }
+
+            // 2. Update Indent Status
+            ind.status = 'Fulfilled';
+            ind.toolRoomReceivedDate = getNow();
+
+            // 3. Log the adjustment globally
+            invAdjustmentHistory.unshift({
+                date: getNow(), action: '<span class="badge b-green">TOOL ROOM RECEIPT</span>', code: ind.code, qty: ind.qty, operator: op, reason: `Physical Receipt of Indent #${ind.no} after QA approval`
+            });
+
+            if (typeof logAudit === 'function') {
+                logAudit("TOOL ROOM RECEIPT", `${op} physically received ${ind.qty} units of [${ind.code}] into Master Stock.`);
+            }
+
+            // 4. Save and Refresh
+            saveAllData();
+            renderAllTables();
+            updateDashboards();
+            
+            await customAlert(`✅ Tool [${ind.code}] has been physically received and successfully added to Master Spare Stock!`, "Stock Updated");
+        }
     </script>
 </body>
 

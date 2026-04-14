@@ -353,7 +353,7 @@ app.post('/api/marketing/send-offers', async (req, res) => {
 // ==========================================
 app.post('/api/marketing/send-single', async (req, res) => {
 
-    
+
     try {
         const { customerId, promoType, messageText, mediaBase64, filename } = req.body;
 
@@ -635,7 +635,7 @@ app.put('/api/qc/approve/:id', async (req, res) => {
                     product.productionReadied = (product.productionReadied || 0) + finalAccQty;
                     product.wipStock = Math.max((product.wipStock || 0) - (finalAccQty + finalRejQty), 0);
                     await new Transaction({ barcode: product.barcode, type: 'QC_APPROVAL', quantity: finalAccQty, resultingStock: product.currentStock, user: req.body.qcBy || 'QC Inspector' }).save();
-                    
+
                     // --- NEW: WORK ORDER AUTO-CLOSURE LOGIC ---
                     if (batch.workOrderNo && batch.workOrderNo !== 'OTHER') {
                         let wo = await WorkOrder.findOne({ woNumber: batch.workOrderNo });
@@ -763,10 +763,10 @@ app.put('/api/inventory/reconcile/:id', async (req, res) => {
         product.fgCheck = readied; // Update FG check to latest
         product.productionReadied = 0; // Reset readied to 0
         product.lastUpdated = new Date();
-        
+
         await product.save();
         await new Transaction({ barcode: product.barcode, type: 'ADJUSTMENT', quantity: diff, resultingStock: product.currentStock, user: req.body.username || 'System' }).save();
-        
+
         res.json({ success: true, message: "Stock Reconciled!" });
     } catch (error) { res.status(500).json({ message: error.message }); }
 });
@@ -831,20 +831,11 @@ app.post('/api/raw-materials/receive', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.get('/api/purchase-orders', async (req, res) => {
-    try { 
-        const pos = await PurchaseOrder.find().sort({ orderDate: -1, _id: -1 });
-        res.json(pos);
-    } catch (err) { 
-        console.error("GET /api/purchase-orders ERROR:", err);
-        res.status(500).json({ error: err.message }); 
-    }
-});
 
 app.post('/api/purchase-orders', async (req, res) => {
     try {
         const { poNumber, supplierName, materialCode, grade, scope, expectedKg, costPerKg, username, type, expectedDeliveryDate } = req.body;
-        
+
         // Create a safe payload, only including fields that actually exist
         const newPO = new PurchaseOrder({
             poNumber: poNumber || `PO-${Date.now()}`,
@@ -866,9 +857,9 @@ app.post('/api/purchase-orders', async (req, res) => {
 
         await newPO.save();
         res.json({ success: true, message: "PO Created Successfully!" });
-    } catch (err) { 
+    } catch (err) {
         console.error("POST /api/purchase-orders ERROR:", err);
-        res.status(500).json({ error: err.message }); 
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -899,16 +890,16 @@ app.put('/api/purchase-orders/:id/status', async (req, res) => {
     try {
         const { status, username } = req.body;
         const po = await PurchaseOrder.findById(req.params.id);
-        
+
         if (!po) return res.status(404).json({ error: "PO not found" });
-        
+
         po.status = status;
         if (status === 'RECEIVED') po.receivedDate = new Date();
-        
+
         await po.save();
         res.json({ success: true, message: "PO Status Updated" });
-    } catch (err) { 
-        res.status(500).json({ error: err.message }); 
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 // ==========================================
@@ -935,9 +926,9 @@ app.put('/api/work-orders/:woNumber/daily', async (req, res) => {
         if (!wo) return res.status(404).json({ error: "Work order not found" });
 
         // Add the new update, marked as unread for the admin
-        const updateData = { ...req.body, readByAdmin: false }; 
+        const updateData = { ...req.body, readByAdmin: false };
         const existingIndex = wo.history.findIndex(h => h.DATE === updateData.DATE);
-        
+
         if (existingIndex >= 0) wo.history[existingIndex] = updateData;
         else wo.history.push(updateData);
 
@@ -1006,44 +997,56 @@ app.get('/toolroom.html', (req, res) => {
 
 
 // ==========================================
-        // PPC / WORK ORDER & REPORTS MODULE
-        // ==========================================
-        let allWoHistory = [];
+// PPC / WORK ORDER & REPORTS MODULE
+// ==========================================
+let allWoHistory = [];
 
-        function switchPPCTab(tab) {
-            // Hide all PPC sections
-            document.getElementById('ppcCreateSection').style.display = tab === 'create' ? 'block' : 'none';
-            document.getElementById('ppcActiveSection').style.display = tab === 'active' ? 'block' : 'none';
-            document.getElementById('ppcUpdateSection').style.display = tab === 'update' ? 'block' : 'none';
+function switchPPCTab(tab) {
+    // Hide all PPC sections
+    document.getElementById('ppcCreateSection').style.display = tab === 'create' ? 'block' : 'none';
+    document.getElementById('ppcActiveSection').style.display = tab === 'active' ? 'block' : 'none';
+    document.getElementById('ppcUpdateSection').style.display = tab === 'update' ? 'block' : 'none';
 
-            // Reset all PPC tab button styles
-            ['create', 'active', 'update'].forEach(t => {
-                const btn = document.getElementById('tab-ppc-' + t);
-                if (btn) {
-                    btn.classList.remove('active');
-                    btn.style.background = '#eee';
-                    btn.style.color = '#555';
-                }
-            });
-
-            // Style the active button
-            const activeBtn = document.getElementById('tab-ppc-' + tab);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-                activeBtn.style.color = 'white';
-                if(tab === 'create') activeBtn.style.background = '#e83e8c';
-                if(tab === 'active') activeBtn.style.background = '#28a745';
-                if(tab === 'update') activeBtn.style.background = '#17a2b8';
-            }
-
-            // If switching to update or active tab, refresh the data
-            if (tab === 'update' || tab === 'active') {
-                document.getElementById('upd_date').value = new Date().toISOString().split('T')[0];
-                if (typeof loadActiveWorkOrders === 'function') {
-                    loadActiveWorkOrders(); 
-                }
-            }
+    // Reset all PPC tab button styles
+    ['create', 'active', 'update'].forEach(t => {
+        const btn = document.getElementById('tab-ppc-' + t);
+        if (btn) {
+            btn.classList.remove('active');
+            btn.style.background = '#eee';
+            btn.style.color = '#555';
         }
+    });
+
+    // Style the active button
+    const activeBtn = document.getElementById('tab-ppc-' + tab);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.style.color = 'white';
+        if (tab === 'create') activeBtn.style.background = '#e83e8c';
+        if (tab === 'active') activeBtn.style.background = '#28a745';
+        if (tab === 'update') activeBtn.style.background = '#17a2b8';
+    }
+
+    // If switching to update or active tab, refresh the data
+    if (tab === 'update' || tab === 'active') {
+        document.getElementById('upd_date').value = new Date().toISOString().split('T')[0];
+        if (typeof loadActiveWorkOrders === 'function') {
+            loadActiveWorkOrders();
+        }
+    }
+}
+
+
+app.get('/api/purchase-orders', async (req, res) => {
+    try {
+        // Removed 'orderDate' from the sort to prevent crashes on older database records
+        const pos = await PurchaseOrder.find().sort({ _id: -1 });
+        res.json(pos);
+    } catch (err) {
+        console.error("GET /api/purchase-orders ERROR:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
 // ==========================================
 // SERVER LISTEN
 // ==========================================
