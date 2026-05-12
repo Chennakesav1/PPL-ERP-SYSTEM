@@ -16,7 +16,9 @@
     "exceljs": "^4.4.0",
     "express": "^5.2.1",
     "mongoose": "^9.4.1",
+    "multer": "^2.1.1",
     "nodemailer": "^8.0.4",
-    "pdfkit": "^0.18.0"
+    "pdfkit": "^0.18.0",
+    "xlsx": "^0.18.5"
   }
 }

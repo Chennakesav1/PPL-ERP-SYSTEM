@@ -1,11 +1,25 @@
 const mongoose = require('mongoose');
 
-// --- YOUR EXISTING SCHEMAS ---
 const productSchema = new mongoose.Schema({
     barcode: { type: String, required: true, unique: true },
-    productCode: String, sector: String, type: String, grade: String, af: Number, length: Number, weightPerPc: Number,
-    currentStock: { type: Number, default: 0 }, wipStock: { type: Number, default: 0 }, reservedStock: { type: Number, default: 0 }, 
-    productionReadied: { type: Number, default: 0 }, fgCheck: { type: Number, default: 0 }, lastUpdated: { type: Date, default: Date.now }
+    productCode: String, 
+    sector: String, 
+    type: String, 
+    grade: String, 
+    af: Number, 
+    length: Number, 
+    weightPerPc: Number,
+    // --- NEW COLUMNS ADDED HERE ---
+    perBoxQty: { type: Number, default: 0 },
+    noOfBoxes: { type: Number, default: 0 },
+    totalWeight: { type: Number, default: 0 },
+    // ------------------------------
+    currentStock: { type: Number, default: 0 }, 
+    wipStock: { type: Number, default: 0 }, 
+    reservedStock: { type: Number, default: 0 }, 
+    productionReadied: { type: Number, default: 0 }, 
+    fgCheck: { type: Number, default: 0 }, 
+    lastUpdated: { type: Date, default: Date.now }
 });
 
 const transactionSchema = new mongoose.Schema({
@@ -104,7 +118,26 @@ const ErpStateSchema = new mongoose.Schema({
 
 const ErpState = mongoose.model('ErpState', ErpStateSchema);
 
-// --- EXPORTS ---
+// --- 2. MARKETING SCHEMAS ---
+const DealerSchema = new mongoose.Schema({ sheetCategory: String, status: { type: String, default: 'ACTIVE' }, isNameRed: { type: Boolean, default: false }, data: mongoose.Schema.Types.Mixed }, { strict: false, timestamps: true });
+const TargetSchema = new mongoose.Schema({ dealerName: String, territory: String, creditDays: Number, discount: String, total: Number, remarks: String }, { timestamps: true });
+const SaleSchema = new mongoose.Schema({ date: String, customerName: String, partCode: String, description: String, wtPerPc: Number, quantity: Number, totalWeight: Number, value: Number, realization: Number }, { timestamps: true });
+const ProductionSchema = new mongoose.Schema({ month: String, partCode: String, description: String, plannedQty: Number, actualQty: Number, pendingQty: Number, status: String }, { timestamps: true });
+const FreightSchema = new mongoose.Schema({ date: String, customer: String, partDetails: String, qty: Number, weight: Number, actualCost: Number, normalCost: Number, diff: Number, primaryDept: String }, { timestamps: true });
+const OrderSchema = new mongoose.Schema({ date: String, segment: { type: String, default: 'General' }, monthName: String, bookingNumber: String, bookingDate: String, customerName: String, partCode: String, description: String, orderQty: Number, dispatchQty: Number, balanceQty: Number, unitPrice: Number, despWt: Number, realn: Number }, { timestamps: true });
+
+const stockRequestSchema = new mongoose.Schema({
+    barcode: { type: String, required: true },
+    productCode: String,
+    type: { type: String, enum: ['INWARD', 'DISPATCH'] },
+    quantity: Number,
+    user: String,
+    status: { type: String, enum: ['PENDING', 'APPROVED', 'REJECTED'], default: 'PENDING' },
+    date: { type: Date, default: Date.now }
+});
+const StockRequest = mongoose.model('StockRequest', stockRequestSchema);
+
 module.exports = { 
-    Product, Transaction, RawMaterial, PurchaseOrder, ProductionBatch, WorkOrder, Customer, SalesOrder,ErpState
+    Product, Transaction, RawMaterial, PurchaseOrder, ProductionBatch, WorkOrder, Customer, SalesOrder, ErpState, StockRequest,
+    Dealer: mongoose.model('Dealer', DealerSchema), Target: mongoose.model('Target', TargetSchema), Sale: mongoose.model('Sale', SaleSchema), Production: mongoose.model('Production', ProductionSchema), Freight: mongoose.model('Freight', FreightSchema), Order: mongoose.model('Order', OrderSchema)
 };

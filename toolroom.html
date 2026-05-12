@@ -1390,44 +1390,51 @@
                 </div>
                 <div class="card" id="scanResult" style="display: none; border-left: 5px solid var(--success);">
                     <h3 class="section-header">✅ Selected Tool Details</h3>
-                    <div class="grid-2"
-                        style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <div class="grid-2" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
                         <div>
-                            <p><strong>Tool Code:</strong> <span id="resCode" class="badge b-yellow"
-                                    style="font-size: 16px;">--</span></p>
-                            <p><strong>Machine & Size:</strong> <span id="resMachine" class="badge b-dark">--</span> |
-                                <span id="resPartSize" class="badge b-purple">--</span>
-                            </p>
-                            <p><strong>Applicable Parts:</strong> <span id="resPartNames"
-                                    style="color:var(--accent); font-weight:bold;">--</span></p>
-                            <p><strong>Spec:</strong> Pitch <span id="resPitch" style="font-weight:bold;">--</span> |
-                                Wire Dia <span id="resWireDia" style="font-weight:bold;">--</span> | STN <span
-                                    id="resStn" style="font-weight:bold;">--</span></p>
+                            <p><strong>Tool Code:</strong> <span id="resCode" class="badge b-yellow" style="font-size: 16px;">--</span></p>
+                            <p><strong>Machine & Size:</strong> <span id="resMachine" class="badge b-dark">--</span> | <span id="resPartSize" class="badge b-purple">--</span></p>
+                            <p><strong>Applicable Parts:</strong> <span id="resPartNames" style="color:var(--accent); font-weight:bold;">--</span></p>
+                            <p><strong>Spec:</strong> Pitch <span id="resPitch" style="font-weight:bold;">--</span> | Wire Dia <span id="resWireDia" style="font-weight:bold;">--</span> | STN <span id="resStn" style="font-weight:bold;">--</span></p>
                             <p><strong>Description:</strong> <span id="resDesc">--</span></p>
                             <p><strong>Tool Life:</strong> <span id="resLifeStr" style="font-weight:bold;">--</span></p>
                         </div>
                         <div style="text-align: right; border-left: 1px solid #cbd5e1; padding-left: 20px;">
                             <h4 style="margin:0 0 15px 0;">Stock Availability</h4>
                             <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span><strong>Running Stock</strong><br><small id="resRngLoc"
-                                        style="color:var(--primary); font-weight:bold;">--</small></span><span
-                                    class="badge b-green" style="font-size:18px;" id="resRngStock">0</span>
+                                <span><strong>Running Stock</strong><br><small id="resRngLoc" style="color:var(--primary); font-weight:bold;">--</small></span><span class="badge b-green" style="font-size:18px;" id="resRngStock">0</span>
                             </div>
                             <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span><strong>Spare Stock</strong><br><small id="resSpareLoc"
-                                        style="color:var(--primary); font-weight:bold;">--</small></span><span
-                                    class="badge b-blue" style="font-size:18px;" id="resSpareStock">0</span>
+                                <span><strong>Spare Stock</strong><br><small id="resSpareLoc" style="color:var(--primary); font-weight:bold;">--</small></span><span class="badge b-blue" style="font-size:18px;" id="resSpareStock">0</span>
                             </div>
-                            <div
-                                style="display:flex; justify-content: space-between; border-top: 2px dashed #cbd5e1; padding-top:10px;">
-                                <span>Total:</span><span
-                                    style="font-size: 24px; font-weight: 800; color: var(--success);"
-                                    id="resStock">0</span>
+                            <div style="display:flex; justify-content: space-between; border-top: 2px dashed #cbd5e1; padding-top:10px;">
+                                <span>Total:</span><span style="font-size: 24px; font-weight: 800; color: var(--success);" id="resStock">0</span>
                             </div>
                         </div>
                     </div>
                     
+                    <div id="resDocsArea" style="margin-top: 20px; padding: 15px; background: #e0f0ff; border-radius: 8px; border: 1px solid #b8daff;">
+                        <h4 style="margin:0 0 10px 0; color: #0056b3;">📁 Linked Documents & Drawings</h4>
+                        <div id="resDocsList" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            </div>
+                    </div>
+
+                    <div style="margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px;">
+                        <h4 style="color: var(--primary); margin-top: 0;">📤 Issue Tool to Production</h4>
+                        <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                            <div class="form-group" style="flex: 1; min-width: 200px; margin: 0;">
+                                <label>Operator Name *</label>
+                                <input type="text" id="issueOperator" class="prod-input" placeholder="Enter Operator Name">
+                            </div>
+                            <div class="form-group" style="width: 120px; margin: 0;">
+                                <label>Quantity *</label>
+                                <input type="number" id="issueQty" class="prod-input" value="1" min="1">
+                            </div>
+                            <button class="btn btn-success" style="padding: 12px 25px; margin-bottom: 0;" onclick="executeIssue()">➡️ Issue Tool</button>
+                        </div>
+                    </div>
                 </div>
+               
             </div>
 
             <div id="pending-returns-area" class="sub-tab-content">
@@ -2561,7 +2568,7 @@
 
 
     <script>
-        const API_URL = 'http://localhost:5000/api';
+        const API_URL = 'http://localhost:3000/api';
 
         // Data Arrays
         let masterInventory = [];
@@ -2781,7 +2788,7 @@
                 let docHTML = linkedDocs.map(d => `<button class="btn-tiny" onclick="viewDoc('${d.dataUrl}')">${d.type === 'Product Drawing' ? 'PD' : (d.type === 'Tool Drawing' ? 'TD' : 'CP')}</button>`).join('');
 
                 return `<tr>
-            <td><strong class="tool-hover" title="Parts: ${(item.partNames || []).join(', ')}">${item.code}</strong></td>
+            <td><strong class="tool-hover" style="color: #007bff; cursor: pointer; text-decoration: underline;" title="Click to instantly Issue or View Details" onclick="jumpToSmartIssue('${item.code}')">${item.code}</strong></td>
             <td><span class="badge b-dark">${item.machine || '-'}</span></td><td><span class="badge b-purple">${item.partSize || '-'}</span></td>
             <td>${item.pitch || '-'}</td><td>${item.wireDia || '-'}</td><td style="color:var(--accent); font-weight:bold;">${(item.partNames || []).join(', ')}</td>
             <td>${item.stn || '-'}</td><td>${item.family || '-'}</td><td style="white-space:normal; min-width:150px;">${item.desc || '-'}</td>
@@ -2844,7 +2851,7 @@
             });
             document.getElementById('pendingAdminBody').innerHTML = adminHtml || '<tr><td colspan="6" style="text-align:center; padding:20px; color:#666;">No items pending Admin approval.</td></tr>';
 
-            document.getElementById('conversionHistoryBody').innerHTML = conversionHistory.map(c => `<tr><td>${c.date}</td><td><span class="badge ${c.status === 'Pending QA' ? 'b-yellow' : (c.status === 'Pending Admin' ? 'b-blue' : 'b-green')}">${c.status}</span></td><td><strong>${c.src}</strong></td><td><strong>${c.tgt}</strong></td><td>${c.qty || 1}</td><td>${c.desc}</td><td>${c.op}</td></tr>`).join('');
+            document.getElementById('conversionHistoryBody').innerHTML = conversionHistory.map(c => `<tr><td>${c.date}</td><td><span class="badge ${c.status === 'Pending QA' ? 'b-yellow' : (c.status === 'Pending Admin' ? 'b-blue' : 'b-green')}">${c.status}</span></td><td><strong class="tool-hover" style="color: #007bff; cursor: pointer; text-decoration: underline;" title="Click to view Source Tool" onclick="jumpToSmartIssue('${c.src}')">${c.src}</strong></td><td><strong class="tool-hover" style="color: #007bff; cursor: pointer; text-decoration: underline;" title="Click to view Target Tool" onclick="jumpToSmartIssue('${c.tgt}')">${c.tgt}</strong></td><td>${c.qty || 1}</td><td>${c.desc}</td><td>${c.op}</td></tr>`).join('');
 
             // --- NEW: Updated QA History (View Details Button) ---
             document.getElementById('qaHistoryBody').innerHTML = qaHistory.filter(q => q.status !== 'Pending Admin').map(q => {
@@ -2926,7 +2933,7 @@
             }
 
             document.getElementById('analyticsHistoryBody').innerHTML = analyticsHistory.map(a => `<tr><td>${a.date}</td><td>${a.machine}</td><td>${a.desc}</td><td>${a.impact}</td><td>${a.action}</td></tr>`).join('');
-            document.getElementById('docTableBody').innerHTML = documentRepo.map((d, i) => `<tr><td>${d.date}</td><td><strong>${d.part}</strong></td><td><span class="badge b-blue">${d.type}</span></td><td>${d.filename}</td><td><button class="btn btn-outline" style="padding: 4px 8px; font-size:11px;" onclick="viewDoc('${d.dataUrl}')">👁️ View</button> <button class="btn btn-danger" style="padding: 4px 8px; font-size:11px;" onclick="deleteDoc(${i})">🗑️</button></td></tr>`).join('');
+            document.getElementById('docTableBody').innerHTML = documentRepo.map((d, i) => `<tr><td>${d.date}</td><td><strong class="tool-hover" style="color: #007bff; cursor: pointer; text-decoration: underline;" title="Click to instantly view Tool Details" onclick="jumpToSmartIssue('${d.part}')">${d.part}</strong></td><td><span class="badge b-blue">${d.type}</span></td><td>${d.filename}</td><td><button class="btn btn-outline" style="padding: 4px 8px; font-size:11px;" onclick="viewDoc('${d.dataUrl}')">👁️ View</button> <button class="btn btn-danger" style="padding: 4px 8px; font-size:11px;" onclick="deleteDoc(${i})">🗑️</button></td></tr>`).join('');
 
             const dwmBody = document.getElementById('dwmTableBody');
             if (dwmBody) {
@@ -3739,7 +3746,10 @@
                     }
                     cbHtml += `</div>`;
 
-                    let codeHtml = `<input type="text" class="bom-edit-input" value="${t.code || ''}" onchange="updateBOMToolCode('${scheduleId}', '${station}', '${t.id}', this.value)">`;
+                    let codeHtml = `<div style="display:flex; align-items:center; gap:5px;">
+                        <input type="text" class="bom-edit-input" value="${t.code || ''}" onchange="updateBOMToolCode('${scheduleId}', '${station}', '${t.id}', this.value)">
+                        <span style="cursor:pointer; font-size:16px;" title="View Details in Smart Issue" onclick="jumpToSmartIssue('${t.code}')">🔍</span>
+                    </div>`;
 
                     html += `<tr>
                         <td>${codeHtml}</td>
@@ -3899,25 +3909,59 @@
         function loadToolForIssue(c) {
             let i = masterInventory.find(t => t.code === c);
             if (i) {
-                document.getElementById('resCode').innerText = i.code || '--';
-                document.getElementById('resMachine').innerText = i.machine || '--';
-                document.getElementById('resPartSize').innerText = i.partSize || '--';
-                if (document.getElementById('resPitch')) document.getElementById('resPitch').innerText = i.pitch || '--';
-                if (document.getElementById('resWireDia')) document.getElementById('resWireDia').innerText = i.wireDia || '--';
-                if (document.getElementById('resStn')) document.getElementById('resStn').innerText = i.stn || '--';
-                document.getElementById('resPartNames').innerText = (i.partNames || []).join(', ') || '--';
-                document.getElementById('resDesc').innerText = i.desc || '--';
-                if (document.getElementById('resLifeStr')) {
+                // 🛑 FIXED: Using querySelectorAll to bypass HTML duplicates!
+                document.querySelectorAll('#resCode').forEach(el => el.innerText = i.code || '--');
+                document.querySelectorAll('#resMachine').forEach(el => el.innerText = i.machine || '--');
+                document.querySelectorAll('#resPartSize').forEach(el => el.innerText = i.partSize || '--');
+                document.querySelectorAll('#resPitch').forEach(el => el.innerText = i.pitch || '--');
+                document.querySelectorAll('#resWireDia').forEach(el => el.innerText = i.wireDia || '--');
+                document.querySelectorAll('#resStn').forEach(el => el.innerText = i.stn || '--');
+                document.querySelectorAll('#resPartNames').forEach(el => el.innerText = (i.partNames || []).join(', ') || '--');
+                document.querySelectorAll('#resDesc').forEach(el => el.innerText = i.desc || '--');
+                
+                document.querySelectorAll('#resLifeStr').forEach(el => {
                     let actLife = i.actualLife || 0; let assmLife = i.assumedLife || 0;
-                    document.getElementById('resLifeStr').innerText = assmLife > 0 ? `Produced ${actLife} / ${assmLife} Max` : "Not Tracked";
-                }
-                document.getElementById('resRngLoc').innerText = i.rngLoc || '--';
-                document.getElementById('resRngStock').innerText = i.rngStock || 0;
-                document.getElementById('resSpareLoc').innerText = i.spareLoc || '--';
-                document.getElementById('resSpareStock').innerText = i.spareStock || 0;
-                document.getElementById('resStock').innerText = i.stock || 0;
-                document.getElementById('multiResultsArea').style.display = 'none';
-                document.getElementById('scanResult').style.display = 'block';
+                    el.innerText = assmLife > 0 ? `Produced ${actLife} / ${assmLife} Max` : "Not Tracked";
+                });
+                
+                document.querySelectorAll('#resRngLoc').forEach(el => el.innerText = i.rngLoc || '--');
+                document.querySelectorAll('#resRngStock').forEach(el => el.innerText = i.rngStock || 0);
+                document.querySelectorAll('#resSpareLoc').forEach(el => el.innerText = i.spareLoc || '--');
+                document.querySelectorAll('#resSpareStock').forEach(el => el.innerText = i.spareStock || 0);
+                document.querySelectorAll('#resStock').forEach(el => el.innerText = i.stock || 0);
+
+                // 🚀 SUPER FUZZY MATCH LOGIC
+                let linkedDocs = documentRepo.filter(d => {
+                    if (!d || !d.part) return false;
+                    let docPart = String(d.part).toUpperCase().trim();
+                    let toolCode = String(i.code).toUpperCase().trim();
+                    let toolSize = String(i.partSize || '').toUpperCase().trim();
+                    
+                    // Matches if they contain each other (e.g. handles "/00" revisions automatically)
+                    return docPart.includes(toolCode) || toolCode.includes(docPart) || 
+                           (toolSize !== '' && (docPart.includes(toolSize) || toolSize.includes(docPart)));
+                });
+
+                // 🚀 UPDATE DOCUMENTS ACROSS ALL DUPLICATES
+                document.querySelectorAll('#resDocsList').forEach(docsList => {
+                    if (linkedDocs.length === 0) {
+                        docsList.innerHTML = '<span style="color:#666; font-size:13px; font-style:italic;">No documents uploaded for this tool.</span>';
+                    } else {
+                        docsList.innerHTML = linkedDocs.map(d => {
+                            let badgeColor = '#6f42c1'; 
+                            if (d.type.includes('Product')) badgeColor = '#17a2b8'; 
+                            else if (d.type.includes('Control')) badgeColor = '#fd7e14'; 
+                            else if (d.type.includes('FMEA')) badgeColor = '#dc3545'; 
+                            
+                            return `<a href="#" onclick="viewDoc('${d.dataUrl}'); return false;" style="text-decoration:none; background:${badgeColor}; color:white; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.1); display:inline-block; margin-bottom:5px;">📄 ${d.type} (${d.filename})</a>`;
+                        }).join('');
+                    }
+                });
+
+                if(typeof fillLastIssue === 'function') fillLastIssue();
+
+                document.querySelectorAll('#multiResultsArea').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('#scanResult').forEach(el => el.style.display = 'block');
             }
         }
 
@@ -4415,12 +4459,40 @@
         }
 
         async function handleDocUpload(e) {
-            e.preventDefault(); const p = document.getElementById('upPart').value; const t = document.getElementById('upType').value; const f = document.getElementById('upFile');
-            if (f.files.length === 0) return; const file = f.files[0]; const reader = new FileReader();
+            e.preventDefault(); 
+            const p = document.getElementById('upPart').value.trim(); 
+            const t = document.getElementById('upType').value; 
+            const f = document.getElementById('upFile');
+            
+            if (f.files.length === 0) return; 
+            
+            const file = f.files[0]; 
+            const reader = new FileReader();
+            
             reader.onload = async function (event) {
-                documentRepo.unshift({ date: getNow(), part: p, type: t, filename: file.name, dataUrl: event.target.result });
-                saveAllData(); renderAllTables(); e.target.reset(); await customAlert(`Document Uploaded and Linked.`);
-            }; reader.readAsDataURL(file);
+                // 1. Save the document to the repository
+                documentRepo.unshift({ 
+                    date: getNow(), 
+                    part: p, 
+                    type: t, 
+                    filename: file.name, 
+                    dataUrl: event.target.result 
+                });
+                
+                saveAllData(); 
+                renderAllTables(); 
+                e.target.reset(); 
+                
+                // 🚀 NEW: Auto-refresh the Selected Tool Details panel if it's currently showing this part!
+                const currentShowingTool = document.getElementById('resCode');
+                if (currentShowingTool && currentShowingTool.innerText === p && document.getElementById('scanResult').style.display === 'block') {
+                    loadToolForIssue(p); // This re-runs the function we upgraded earlier to refresh the colored badges!
+                }
+                
+                await customAlert(`Document Uploaded and Linked successfully to ${p}.`);
+            }; 
+            
+            reader.readAsDataURL(file);
         }
         async function deleteDoc(i) { if (currentUserRole !== 'admin' && currentUserRole !== 'qa') return; let c = await customConfirm("Delete doc?", "Delete"); if (c) { documentRepo.splice(i, 1); saveAllData(); renderAllTables(); } }
 
@@ -4701,7 +4773,7 @@
 
                     html += `<tr style="${rowStyle}">
                         <td><strong>${station}</strong></td>
-                        <td style="color:var(--accent); font-weight:bold;">${t.code}</td>
+                        <td><strong class="tool-hover" style="color: #007bff; cursor: pointer; text-decoration: underline;" title="Click to instantly view Tool Details" onclick="jumpToSmartIssue('${t.code}')">${t.code}</strong></td>
                         <td>${desc}</td>
                         <td>${loc}</td>
                         <td style="text-align:center;"><strong>${reqQty}</strong></td>
@@ -5409,6 +5481,32 @@
             updateDashboards();
             
             await customAlert(`✅ Tool [${ind.code}] has been physically received and successfully added to Master Spare Stock!`, "Stock Updated");
+        }
+
+        // ==========================================
+        // SMART JUMP FROM MASTER STOCK TO ISSUE TAB
+        // ==========================================
+        function jumpToSmartIssue(toolCode) {
+            // 1. Switch to the parent "Tool Issuance & Return" Tab
+            switchTab('issue-scan');
+            
+            // 2. Ensure the "Smart Issue" sub-tab is active
+            const btn = document.querySelector('.sub-nav-btn[onclick*="issue-area"]');
+            if (btn) switchSubTab('issue-area', btn);
+
+            // 3. Pre-fill the search box with the exact tool code
+            const searchInput = document.getElementById('scannerInput');
+            if (searchInput) {
+                searchInput.value = toolCode;
+            }
+
+            // 4. Instantly execute the search and auto-load the details view
+            loadToolForIssue(toolCode);
+            
+            // 5. Scroll smoothly to the top of the details panel
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            showToast("🔍 Instantly loaded tool details.");
         }
     </script>
 </body>
