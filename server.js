@@ -42,10 +42,7 @@ app.get('/', (req, res) => {
 // ==========================================
 // DATABASE CONNECTION
 // ==========================================
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://chennakesavarao89_db_user:chenna12345@cluster0.uddsn2m.mongodb.net/?appName=Cluster0';
-mongoose.connect(MONGO_URI)
-    .then(() => console.log('✅ Precifast Unified ERP (Warehouse + Marketing) Connected!'))
-    .catch(err => console.log('❌ Database Connection Error:', err));
+
 
 // ==========================================
 // 🚨 CRASH FIX: IMPORT & OVERRIDE MODELS 🚨
