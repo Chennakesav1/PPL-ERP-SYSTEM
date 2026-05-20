@@ -13,7 +13,7 @@ const fs = require('fs');
 if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 
 const app = express();
-
+const { Employee } = require('./models'); // Ensure this is imported
 // ==========================================
 // CORS Configuration & Middlewares
 // ==========================================
@@ -23,8 +23,8 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept']
 }));
 
-app.use(express.json({ limit: '100mb' }));
-app.use(express.urlencoded({ limit: '100mb', extended: true }));
+app.use(express.json({ limit: '500mb' }));
+app.use(express.urlencoded({ limit: '500mb', extended: true }));
 
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
@@ -42,13 +42,16 @@ app.get('/', (req, res) => {
 // ==========================================
 // DATABASE CONNECTION
 // ==========================================
-
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://chennakesavarao89_db_user:chenna12345@cluster0.uddsn2m.mongodb.net/?appName=Cluster0';
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('✅ Precifast Unified ERP (Warehouse + Marketing) Connected!'))
+    .catch(err => console.log('❌ Database Connection Error:', err));
 
 // ==========================================
 // 🚨 CRASH FIX: IMPORT & OVERRIDE MODELS 🚨
 // ==========================================
 const models = require('./models');
-const { Product, Transaction, RawMaterial, PurchaseOrder, ProductionBatch, Customer, SalesOrder, ErpState, StockRequest } = models;
+const { Product, Transaction, RawMaterial, PurchaseOrder, ProductionBatch, Customer, ErpState, StockRequest } = models;
 
 if (mongoose.models.Dealer) delete mongoose.models.Dealer;
 if (mongoose.models.Target) delete mongoose.models.Target;
@@ -56,6 +59,21 @@ if (mongoose.models.Sale) delete mongoose.models.Sale;
 if (mongoose.models.Production) delete mongoose.models.Production;
 if (mongoose.models.Freight) delete mongoose.models.Freight;
 if (mongoose.models.Order) delete mongoose.models.Order;
+if (mongoose.models.SalesOrder) delete mongoose.models.SalesOrder;
+const SalesOrder = mongoose.model('SalesOrder', new mongoose.Schema({
+    orderNo: String,
+    customerId: String,
+    customerName: String,
+    items: Array,
+    subtotal: Number,
+    gstAmount: Number,
+    grandTotal: Number,
+    status: String,
+    createdBy: String,
+    paymentStatus: { type: String, default: 'PENDING' },
+    trackingLink: String,
+    orderDate: { type: Date, default: Date.now }
+}, { strict: false, timestamps: true }));
 if (mongoose.models.WorkOrder) delete mongoose.models.WorkOrder;
 
 const WorkOrder = mongoose.model('WorkOrder', new mongoose.Schema({
@@ -75,12 +93,73 @@ const Order = mongoose.model('Order', new mongoose.Schema({
     date: String, segment: { type: String, default: 'General' }, monthName: String, bookingNumber: String, bookingDate: String, customerName: String, partCode: String, description: String, 
     type: String, size: String, af: String, pitch: String, length: String, grade: String, wtPerPc: Number, plannedSaleQty: Number, orderQty: Number, dispatchQty: Number, balanceQty: Number, 
     unitPrice: Number, schValue: Number, dispatchValue: Number, pendingDispatchValue: Number, compliance: Number, orderWt: Number, despWt: Number, realn: Number,
-    despMonth: String, despDelay: String, remarks: String, pmt: String, paidAmount: { type: Number, default: 0 }
+    despMonth: String, despDelay: String, remarks: String, pmt: String, paidAmount: { type: Number, default: 0 },
+    
+    // 🚀 NEW: Added Pick List Tracking to the Server Schema!
+    pickListNo: { type: String, default: null },
+    pickListStatus: { type: String, default: null }
 }, { strict: false, timestamps: true }));
 
 const Visit = mongoose.models.Visit || mongoose.model('Visit', new mongoose.Schema({ visitDate: String, dealerName: String, phone: String, email: String, address: String, mapLink: String, purpose: String, status: { type: String, default: 'Scheduled' }, createdBy: String }, { timestamps: true }));
 const Expense = mongoose.models.Expense || mongoose.model('Expense', new mongoose.Schema({ date: String, marketer: String, category: String, amount: Number, status: { type: String, default: 'Pending' }, remarks: String }, { timestamps: true }));
 const AuditLog = mongoose.models.AuditLog || mongoose.model('AuditLog', new mongoose.Schema({ user: String, action: String, details: String, timestamp: { type: Date, default: Date.now } }));
+const ProductDrawing = mongoose.models.ProductDrawing || mongoose.model('ProductDrawing', new mongoose.Schema({
+    id: String,
+    date: String,
+    description: String,
+    category: String,
+    filename: String,
+    dataUrl: String,
+    uploadedBy: String
+}));
+
+
+// Employee Routes
+app.get('/api/employees', async (req, res) => {
+    try {
+        const employees = await Employee.find();
+        res.json(employees);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/employees', async (req, res) => {
+    console.log("Receiving Request:", req.body); // Check your terminal!
+    try {
+        const newEmployee = new Employee(req.body);
+        await newEmployee.save();
+        res.json({ success: true, message: "Employee registered!" });
+    } catch (err) {
+        console.error("Database Save Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/employees/:empId/resign', async (req, res) => {
+    try {
+        const { empId } = req.params;
+        // Pull the new fields from the frontend request
+        const { status, resignationDate, resignationReason } = req.body; 
+
+        const updatedEmployee = await Employee.findOneAndUpdate(
+            { empId: empId },
+            { 
+                $set: { 
+                    status: status, 
+                    resignationDate: resignationDate, 
+                    resignationReason: resignationReason 
+                } 
+            },
+            { new: true }
+        );
+
+        if (!updatedEmployee) {
+            return res.status(404).json({ success: false, message: 'Employee not found' });
+        }
+        res.json({ success: true, data: updatedEmployee });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+});
 
 async function logAudit(user, action, details) { 
     try { await new AuditLog({ user: user || 'System', action, details }).save(); } catch(e){} 
@@ -149,6 +228,15 @@ const calcOrderFields = (o) => {
     o.realn = o.wtPerPc > 0 ? o.unitPrice / (o.wtPerPc / 1000) : 0;
     o.orderWt = ((o.orderQty || 0) * (o.wtPerPc || 0)) / 1000; 
     o.despWt = ((o.dispatchQty || 0) * (o.wtPerPc || 0)) / 1000;
+    
+    // 🚀 NEW: Auto-generate the Month Name if it's missing!
+    if (o.date && (!o.monthName || o.monthName.trim() === '')) {
+        const d = new Date(o.date);
+        if (!isNaN(d)) {
+            const ms = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            o.monthName = `${ms[d.getMonth()]}-${String(d.getFullYear()).slice(-2)}`;
+        }
+    }
     return o;
 };
 
@@ -228,7 +316,11 @@ const UNIFIED_USERS = {
     "marketer": { pass: "market", role: "MARKETER", name: "Field Marketer" },
     "seller": { pass: "sell123", role: "SALES", name: "Sales Exec" },
     "fgchecker": { pass: "fg123", role: "FG_CHECKER", name: "FG Stock Checker" },
-    "worker1": { pass: "work123", role: "PRODUCTION", name: "Floor Worker" }
+    "worker1": { pass: "work123", role: "PRODUCTION", name: "Floor Worker" },
+    "hr": { pass: "hr123", role: "HR" },
+    
+    // 🚀 NEW: Added the Store Login to the Server!
+    "store": { pass: "store", role: "STORE", name: "Store Manager" }
 };
 
 app.post('/api/login', (req, res) => {
@@ -390,14 +482,22 @@ app.get('/api/work-orders/active', async (req, res) => {
 });
 
 // ⚡ NEW: Endpoint to Approve or Reject Sales WO Requests
+// ⚡ NEW: Endpoint to Approve or Reject Sales WO Requests (UPDATED FOR QTY & RM)
 app.put('/api/work-orders/:woNumber/status', async (req, res) => {
     try {
         const wo = await WorkOrder.findOne({ woNumber: req.params.woNumber });
         if (!wo) return res.status(404).json({ error: "Work order not found" });
-        wo.status = req.body.status;
         
-        // 👉 THIS LINE IS REQUIRED TO SAVE THE REJECTION REASON:
+        // Update Status
+        wo.status = req.body.status;
         if (req.body.remarks) wo.remarks = req.body.remarks; 
+        
+        // Save the new Quantities and Material Data from the UI
+        if (req.body.planQty !== undefined) wo.planQty = req.body.planQty;
+        if (req.body.actualQty !== undefined) wo.actualQty = req.body.actualQty;
+        if (req.body.rmDetails !== undefined) wo.rmDetails = req.body.rmDetails;
+        if (req.body.chWt !== undefined) wo.chWt = req.body.chWt;
+        if (req.body.rmKg !== undefined) wo.rmKg = req.body.rmKg;
         
         await wo.save();
         res.json({ success: true, message: "Work Order status updated" });
@@ -660,13 +760,40 @@ app.post('/api/orders/:id/pay', async (req, res) => {
     } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-app.put('/api/orders/:id', async (req, res) => { let o = await Order.findById(req.params.id); Object.assign(o, req.body); calcOrderFields(o); await o.save(); res.json({ message: 'Updated' }); });
+app.put('/api/orders/:id', async (req, res) => { 
+    try {
+        let o = await Order.findById(req.params.id); 
+        if (!o) return res.status(404).json({ error: 'Order not found' });
+        
+        // 🚀 FORCE MONGODB TO SAVE THE PICK LIST DATA!
+        for (const key in req.body) {
+            o.set(key, req.body[key]);
+        }
+        
+        calcOrderFields(o); 
+        await o.save(); 
+        res.json({ message: 'Updated' }); 
+    } catch(e) {
+        res.status(500).json({ error: e.message });
+    }
+});
 app.post('/api/orders/:id/dispatch', async (req, res) => {
     try {
         let o = await Order.findById(req.params.id); if (!o) return res.status(404).json({ error: 'Order not found' });
         let qtyToday = parseFloat(req.body.qtyToday) || 0; if (qtyToday <= 0) return res.status(400).json({ error: 'Invalid qty' });
-        o.dispatchQty = (o.dispatchQty || 0) + qtyToday; calcOrderFields(o); await o.save();
-        let sale = new Sale({ date: req.body.date || new Date().toISOString().substring(0,10), customerName: o.customerName, partCode: o.partCode, description: o.description, wtPerPc: o.wtPerPc, quantity: qtyToday, totalWeight: (qtyToday * o.wtPerPc) / 1000, value: qtyToday * o.unitPrice, realization: o.realn });
+        
+        o.dispatchQty = (o.dispatchQty || 0) + qtyToday; 
+        
+        // 🚀 NEW: Auto-calculate and save the "Despatch Month" (e.g. May-24)
+        let dDate = req.body.date || new Date().toISOString().substring(0,10);
+        const d = new Date(dDate);
+        if (!isNaN(d)) {
+            const ms = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            o.despMonth = `${ms[d.getMonth()]}-${String(d.getFullYear()).slice(-2)}`;
+        }
+
+        calcOrderFields(o); await o.save();
+        let sale = new Sale({ date: dDate, customerName: o.customerName, partCode: o.partCode, description: o.description, wtPerPc: o.wtPerPc, quantity: qtyToday, totalWeight: (qtyToday * o.wtPerPc) / 1000, value: qtyToday * o.unitPrice, realization: o.realn });
         await sale.save(); 
         logAudit(req.body.user, 'LOG DISPATCH', `${qtyToday} pcs of ${o.partCode}`);
         res.json({ message: 'Daily Dispatch Logged & Synced!' });
@@ -1258,6 +1385,24 @@ app.post('/api/upload/magic', multer({ dest: require('os').tmpdir() }).single('f
         console.error("FATAL IMPORT ERROR:", err); 
         res.status(500).json({ error: err.message }); 
     }
+});
+
+// ==========================================
+// ENGINEERING DRAWINGS API
+// ==========================================
+app.get('/api/drawings', async (req, res) => {
+    try { res.json(await ProductDrawing.find().sort({_id: -1})); } 
+    catch (e) { res.status(500).json({error: e.message}); }
+});
+
+app.post('/api/drawings', async (req, res) => {
+    try { await new ProductDrawing(req.body).save(); res.json({success:true}); } 
+    catch (e) { res.status(500).json({error: e.message}); }
+});
+
+app.delete('/api/drawings/:id', async (req, res) => {
+    try { await ProductDrawing.findByIdAndDelete(req.params.id); res.json({success:true}); } 
+    catch (e) { res.status(500).json({error: e.message}); }
 });
 
 // Force IPv4 binding by passing '0.0.0.0' to prevent IPv6 localhost mismatch errors

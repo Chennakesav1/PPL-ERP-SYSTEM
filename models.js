@@ -126,6 +126,39 @@ const ProductionSchema = new mongoose.Schema({ month: String, partCode: String, 
 const FreightSchema = new mongoose.Schema({ date: String, customer: String, partDetails: String, qty: Number, weight: Number, actualCost: Number, normalCost: Number, diff: Number, primaryDept: String }, { timestamps: true });
 const OrderSchema = new mongoose.Schema({ date: String, segment: { type: String, default: 'General' }, monthName: String, bookingNumber: String, bookingDate: String, customerName: String, partCode: String, description: String, orderQty: Number, dispatchQty: Number, balanceQty: Number, unitPrice: Number, despWt: Number, realn: Number }, { timestamps: true });
 
+
+
+const employeeSchema = new mongoose.Schema({
+    empId: { type: String, required: true, unique: true },
+    name: String,
+    role: String,
+    dept: String,
+    desig: String,
+    doj: String,
+    dob: String,
+    qual: String,
+    contact: String,
+    emergContact: String,
+    address: String,
+    bankAcc: String,
+    uan: String,
+    esic: String,
+    prevExp: Number,
+    persMail: String,
+    pplMail: String,
+    photo: String,
+    status: { type: String, default: 'Active' },
+    
+    // --- ADDED RESIGNATION FIELDS ---
+    resignationDate: { type: String, default: '-' },
+    resignationReason: { type: String, default: '-' }
+}, { timestamps: true });
+
+const Employee = mongoose.model('Employee', employeeSchema);
+
+
+
+
 const stockRequestSchema = new mongoose.Schema({
     barcode: { type: String, required: true },
     productCode: String,
@@ -138,6 +171,6 @@ const stockRequestSchema = new mongoose.Schema({
 const StockRequest = mongoose.model('StockRequest', stockRequestSchema);
 
 module.exports = { 
-    Product, Transaction, RawMaterial, PurchaseOrder, ProductionBatch, WorkOrder, Customer, SalesOrder, ErpState, StockRequest,
+    Product, Transaction, RawMaterial, PurchaseOrder, ProductionBatch, WorkOrder, Customer, SalesOrder, ErpState, StockRequest,Employee,
     Dealer: mongoose.model('Dealer', DealerSchema), Target: mongoose.model('Target', TargetSchema), Sale: mongoose.model('Sale', SaleSchema), Production: mongoose.model('Production', ProductionSchema), Freight: mongoose.model('Freight', FreightSchema), Order: mongoose.model('Order', OrderSchema)
 };

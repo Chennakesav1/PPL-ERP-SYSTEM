@@ -114,7 +114,7 @@
                 <button type="submit" class="btn-primary" style="background:var(--sales-blue); font-size:1.1rem; padding:16px;">Login to Portal</button>
             </form>
             <div style="margin-top:15px; font-size:0.8rem; color:#64748b; text-align:center;">
-                <b>Admin:</b> admin / admin<br><b>Marketer:</b> marketer / market
+                <b>Admin:</b> admin / admin<br><b>Marketer:</b> marketer / market<br><b>Store:</b> store / store
             </div>
         </div>
     </div>
@@ -186,8 +186,11 @@
         <button class="nav-btn" onclick="window.switchTab('ManualAdd', 'system')">✍️ Manual Entry</button>
         <button class="nav-btn admin-only" id="BulkImportNav" onclick="window.switchTab('BulkImport', 'system')">📁 System Import</button>
         <button class="nav-btn admin-only" onclick="window.switchTab('AuditDashboard', 'audit')">🕵️‍♂️ Security Logs</button>
+        <div class="nav-section store-only" style="display:none;" id="storeNavSection">Store Operations</div>
+        <button class="nav-btn store-only" id="nav-store" style="display:none;" onclick="window.switchTab('StoreDashboard', 'store')">📦 Store Command Center</button>
         
-        <button class="nav-btn" style="margin-top:20px; border:1px solid #475569; color:#94a3b8;" onclick="window.logout()">🚪 Logout</button>
+        
+        <button class="nav-btn store-only" style="margin-top:20px; border:1px solid #475569; color:#94a3b8;" onclick="window.logout()">🚪 Logout</button>
     </aside>
 
     <main class="main-content">
@@ -299,7 +302,10 @@
                 <h3 style="margin:0 0 15px 0; color:#1e293b; font-weight:900;">360° Performance Analytics</h3>
                 <div class="analytics-grid" id="profPerformanceGrid"></div>
                 <div id="profExtendedAnalytics" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; margin-bottom: 20px;"></div>
-                <h3 style="margin:20px 0 15px 0; color:#1e293b; font-weight:900;">Dealer CRM Data</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 15px;">
+                    <h3 style="margin:0; color:#1e293b; font-weight:900;">Dealer CRM Data</h3>
+                    <button type="button" onclick="window.addCustomFieldToProfile()" class="btn-primary" style="width: auto; background: #0ea5e9; padding: 8px 15px; font-size: 0.9rem; border-radius: 6px;">➕ Add Extra Data</button>
+                </div>
                 <div class="glass-card" style="padding:1.5rem;">
                     <form id="dealerProfileForm">
                         <div class="form-grid" id="dealerProfileFields"></div>
@@ -389,6 +395,7 @@
             </div>
             <div class="sub-tabs-container">
                 <button class="sub-tab-btn active order-sub" onclick="window.switchInnerOrderTab('overview')">📈 Overview & Charts</button>
+                <button class="sub-tab-btn order-sub" onclick="window.switchInnerOrderTab('open'); window.renderOpenOrdersTab();">📥 Open Orders (FIFO)</button>
                 <button class="sub-tab-btn order-sub" onclick="window.switchInnerOrderTab('transactions')">🗃️ Orders & Payments Log</button>
             </div>
             
@@ -409,6 +416,57 @@
                     <div class="chart-box" style="height:300px;"><h3>Top 10 Customers (Volume)</h3><canvas id="topCustVolChart"></canvas></div>
                 </div>
                 <div class="chart-box" style="margin-bottom:20px; flex-shrink: 0; height:250px;"><h3>Order vs Despatch Timeline</h3><canvas id="orderTimelineChart"></canvas></div>
+            </div>
+
+            <div id="order-open" class="inner-tab">
+                <div class="glass-card" style="margin-bottom: 20px; padding: 1.5rem; background: #f0fdf4; border-color: #86efac; max-width: 100%;">
+                    <h3 style="margin: 0 0 15px 0; color: #166534; font-size: 1.3rem; display: flex; align-items: center; gap: 10px;">📦 FIFO Dispatch Entry Engine</h3>
+                    <p style="color:#15803d; font-size: 0.9rem; margin-top: 0;">Enter your dispatch quantity. The system will automatically fulfill the oldest open orders first (First-In, First-Out).</p>
+                    
+                    <div class="form-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="form-group">
+                            <label style="color:#166534;">Filter Customer (Optional)</label>
+                            <input type="text" id="fifoCustomer" list="fifoCustomerList" placeholder="-- Type to search customer --" onchange="window.updateFifoPartDropdown()" style="border-color:#86efac; width: 100%; padding: 12px; border-radius: 6px; box-sizing: border-box; outline: none;">
+                            <datalist id="fifoCustomerList"></datalist>
+                        </div>
+                        <div class="form-group">
+                            <label style="color:#166534;">Search Part Code</label>
+                            <input type="text" id="fifoPart" list="fifoPartList" placeholder="-- Type to search part code --" onchange="window.updateFifoPendingQty()" style="border-color:#10b981; font-weight:bold; width: 100%; padding: 12px; border-radius: 6px; box-sizing: border-box; outline: none;">
+                            <datalist id="fifoPartList"></datalist>
+                        </div>
+                        <div class="form-group">
+                            <label style="color:#166534;">Total Pending Qty Available</label>
+                            <input type="text" id="fifoPendingQty" readonly style="background: #e2e8f0; color: #dc2626; font-weight: 900; font-size:1.1rem; border-color:#cbd5e1;" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label style="color:#166534;">Dispatch Date</label>
+                            <input type="date" id="fifoDate" required style="border-color:#86efac;">
+                        </div>
+                        <div class="form-group">
+                            <label style="color:#166534;">Dispatch Qty (To Send)</label>
+                            <input type="number" id="fifoDispatchQty" placeholder="Enter Qty..." style="border-color:#10b981; font-weight:900; color:#047857;" required>
+                        </div>
+                        <div class="form-group" style="display:flex; align-items:flex-end;">
+                            <button id="fifoSubmitBtn" class="btn-primary" style="background: #10b981; font-size: 1.1rem;" onclick="window.executeFifoDispatch()">🚀 Execute FIFO Dispatch</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+                    <h3 style="margin:0; color:var(--order-purple);">Live Open Order Book</h3>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-primary" style="background:#eab308; color:#422006; width:auto; font-size:0.9rem; padding:8px 15px;" onclick="window.generatePickListFromSelected()">📋 Send Selected to Store (Pick List)</button>
+                        <input type="text" id="openOrderSearch" placeholder="Search Open Orders..." onkeyup="window.filterOpenOrders()" style="padding: 8px 15px; width: 250px; border-radius: 8px; border: 2px solid var(--border); font-weight: 600;">
+                    </div>
+                </div>
+                <div class="table-container" style="overflow-x: auto;">
+                    <table id="openOrderTable">
+                        <thead id="openOrderTableHead" style="background:var(--order-purple); color:white;">
+                            <tr><th style="width: 30px;">✔</th><th>Bk Date</th><th>Bk No</th><th>Customer</th><th>Part Code</th><th>Description</th><th>Ord Qty</th><th style="color:#10b981;">Desp Qty</th><th style="color:#fca5a5;">Bal Qty (Pending)</th><th>Rate</th></tr>
+                        </thead>
+                        <tbody id="openOrderTableBody"></tbody>
+                    </table>
+                </div>
             </div>
             
             <div id="order-transactions" class="inner-tab">
@@ -520,6 +578,10 @@
                     <div class="form-group full"><label>Booking Number <span style="color:var(--active-green); font-size:0.75rem;">(Auto-Generated)</span></label><input type="text" id="oBookingNo" readonly style="background:#f1f5f9; font-size:1.2rem; font-weight:900; color:#1e40af;"></div>
                     
                     <div class="form-group full" style="margin-top:15px; border-top:2px solid var(--border); padding-top:15px;"><h3 style="margin:0; color:var(--sales-blue);">2. Add Items to Booking</h3></div>
+                    <div class="form-group full" style="display:flex; gap:10px;">
+                        <button type="button" class="btn-primary" style="background: #10b981; flex: 1;" onclick="window.addOrderItem()">➕ Add Single Item</button>
+                        <button type="button" class="btn-primary" style="background: #0ea5e9; flex: 1; box-shadow: 0 4px 6px rgba(14, 165, 233, 0.3);" onclick="window.openBulkOrderModal()">📦 Open Bulk Add Menu</button>
+                    </div>
                     <div class="form-group full"><label>Part Code <span style="color:var(--order-purple); font-size:0.75rem;">(Auto-fills details)</span></label><input type="text" id="oPartCode" oninput="window.globalAutoFill(this.value)"></div>
                     <div class="form-group third"><label>Type</label><input type="text" id="oType" oninput="window.buildOrderDesc()"></div>
                     <div class="form-group third"><label>Size</label><input type="text" id="oSize" oninput="window.buildOrderDesc()"></div>
@@ -641,6 +703,203 @@
                 <tfoot><tr><td colspan="4" style="text-align:right; padding:10px; font-weight:bold; border:1px solid #cbd5e1;">Grand Total:</td><td style="padding:10px; font-weight:bold; color:#b91c1c; border:1px solid #cbd5e1;" id="invTotal"></td></tr></tfoot>
             </table>
             <p style="margin-top:50px; text-align:center; color:#64748b; font-size:0.8rem;">Computer Generated Document - Signature not required.</p>
+        </div>
+
+
+        
+
+
+        <div id="customFieldModal" class="modal"
+            style="display: none; position: fixed; z-index: 100000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.7); align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+            <div class="modal-content"
+                style="background: linear-gradient(145deg, #ffffff, #f8fafc); padding: 30px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); text-align: left; position: relative; border: 1px solid #e2e8f0;">
+                <span class="close-btn" onclick="document.getElementById('customFieldModal').style.display='none'"
+                    style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #94a3b8; transition: 0.2s;">×</span>
+        
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    <div
+                        style="background: #e0f2fe; padding: 10px; border-radius: 10px; color: #0ea5e9; font-size: 20px; box-shadow: 0 4px 6px rgba(14, 165, 233, 0.1);">
+                        ➕</div>
+                    <h3 style="color: #0f172a; margin: 0; font-size: 20px; font-weight: 900;">Add Extra Data</h3>
+                </div>
+        
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label
+                        style="font-size: 12px; color: #64748b; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; display: block;">Field
+                        Name</label>
+                    <input type="text" id="customFieldNameInput" class="prod-input full-width"
+                        placeholder="e.g. GSTIN, Bank Details..."
+                        style="border: 2px solid #cbd5e1; font-weight: bold; font-size: 15px; padding: 12px; border-radius: 8px; width: 100%; box-sizing: border-box; transition: 0.3s; background: white; outline: none;"
+                        onfocus="this.style.borderColor='#0ea5e9'" onblur="this.style.borderColor='#cbd5e1'">
+                </div>
+        
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label
+                        style="font-size: 12px; color: #64748b; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; display: block;">Visibility
+                        Scope</label>
+                    <select id="customFieldScope" class="prod-input full-width"
+                        style="border: 2px solid #cbd5e1; font-weight: bold; font-size: 14px; padding: 12px; border-radius: 8px; width: 100%; box-sizing: border-box; background: white; cursor: pointer; outline: none;"
+                        onfocus="this.style.borderColor='#0ea5e9'" onblur="this.style.borderColor='#cbd5e1'">
+                        <option value="local" id="scopeLocalOption">👤 Only this Dealer</option>
+                        <option value="global">🌎 All Dealers (Global Database)</option>
+                    </select>
+                </div>
+        
+                <button class="btn-primary"
+                    style="background: linear-gradient(135deg, #0ea5e9, #2563eb); width: 100%; font-size: 15px; padding: 14px; border-radius: 8px; box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3); border: none; cursor: pointer; color: white; font-weight: bold; transition: 0.2s;"
+                    onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'"
+                    onclick="confirmAddCustomField()">✨ Add Field</button>
+            </div>
+        </div>
+
+
+        <div id="bulkOrderModal" class="modal" style="display: none; position: fixed; z-index: 100000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.8); align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="modal-content" style="background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 900px; height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); position: relative;">
+            <span class="close-btn" onclick="document.getElementById('bulkOrderModal').style.display='none'" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #64748b; transition: 0.2s;">×</span>
+            
+            <h2 style="color: #0ea5e9; margin-top: 0; display: flex; align-items: center; gap: 10px;">📦 Bulk Add Items</h2>
+            <p style="color: #64748b; margin-top: 0; font-size: 0.9rem;">Search for parts, enter the quantities you want, and add them all to your cart at once.</p>
+            
+            <input type="text" id="bulkPartSearch" class="prod-input" placeholder="🔍 Search Part Code or Description..." onkeyup="filterBulkParts()" style="margin-bottom: 15px; border: 2px solid #cbd5e1; padding: 12px; border-radius: 8px; font-size: 1rem; outline: none;" onfocus="this.style.borderColor='#0ea5e9'" onblur="this.style.borderColor='#cbd5e1'">
+            
+            <div style="overflow-y: auto; flex: 1; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 15px; background: #f8fafc;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead style="background: #e2e8f0; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <tr>
+                            <th style="padding: 12px; border-bottom: 2px solid #cbd5e1; color: #334155;">Part Code</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #cbd5e1; color: #334155;">Description</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #cbd5e1; color: #0f766e; text-align: center;">Live Stock</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #cbd5e1; width: 120px; color: #334155;">Rate (₹)</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #cbd5e1; width: 140px; color: #059669; font-weight: 900;">Order Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bulkPartsTableBody">
+                        </tbody>
+                </table>
+            </div>
+            
+            <button type="button" class="btn-primary" id="processBulkBtn" style="background: linear-gradient(135deg, #0ea5e9, #2563eb); font-size: 1.1rem; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(14,165,233,0.3);" onclick="processBulkAdd()">✅ Add Selected Items to Cart</button>
+        </div>
+    </div>
+
+
+    <div id="StoreDashboard" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem; flex-shrink: 0;">
+                <h2 class="header-title" style="margin:0;">Store Operations & Packing</h2>
+            </div>
+            
+            <div class="sub-tabs-container">
+                <button class="sub-tab-btn active store-sub" onclick="window.switchInnerStoreTab('pending')" style="color:#dc2626;">📦 Pending Pick Lists</button>
+                <button class="sub-tab-btn store-sub" onclick="window.switchInnerStoreTab('history')" style="color:#d97706;">🚚 Dispatch History</button>
+                <button class="sub-tab-btn store-sub" onclick="window.switchInnerStoreTab('inventory')" style="color:#0f766e;">🏭 Live FG Inventory</button>
+            </div>
+
+            <div id="store-pending" class="inner-tab active">
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                    <button class="btn-primary" style="width: auto; background: var(--active-green); padding: 8px 15px; font-size: 0.9rem;" onclick="window.fetchStorePickLists(true)">🔄 Force Sync Live Orders</button>
+                </div>
+                <div class="table-container">
+                    <table id="storePickTable">
+                        <thead style="background: #1e293b; color: white;">
+                            <tr><th>Pick List No</th><th>Issued Date</th><th>Customer Focus</th><th>Total Items</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="storePickBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="store-history" class="inner-tab">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+                    <h3 style="margin:0; color:#d97706;">Recently Packed Orders</h3>
+                    <input type="text" id="storeHistorySearch" placeholder="Search PickList No, Customer, Part..." onkeyup="window.filterStoreHistory()" style="padding: 8px 15px; width: 300px; border-radius: 8px; border: 2px solid var(--border); font-weight: 600;">
+                </div>
+                <div class="table-container" style="overflow-x: auto;">
+                    <table id="storeHistoryTable">
+                        <thead style="background: #eab308; color: #422006;">
+                            <tr><th>Pack Date</th><th>Pick List No</th><th>Customer Name</th><th>Part Code</th><th>Description</th><th>Dispatched Qty</th></tr>
+                        </thead>
+                        <tbody id="storeHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="store-inventory" class="inner-tab">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+                    <h3 style="margin:0; color:#0f766e;">Finished Goods Live Stock</h3>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-primary" style="background:#0f766e; width:auto; padding:8px 15px; font-size:0.9rem;" onclick="window.syncStoreInventory(true)">🔄 Refresh Stock</button>
+                        <input type="text" id="storeInvSearch" placeholder="Search Product Code..." onkeyup="window.filterStoreInventory()" style="padding: 8px 15px; width: 250px; border-radius: 8px; border: 2px solid var(--border); font-weight: 600;">
+                    </div>
+                </div>
+                <div class="table-container" style="overflow-x: auto;">
+                    <div class="table-container" style="overflow-x: auto;">
+                    <table id="storeInventoryTable" style="white-space: nowrap; font-size: 0.85rem;">
+                        <thead style="background: #0f766e; color: white; text-align: center;">
+                            <tr>
+                                <th style="padding: 12px 10px;">No.</th>
+                                <th style="padding: 12px 10px; text-align: left;">Product Code</th>
+                                <th style="padding: 12px 10px;">Sector</th>
+                                <th style="padding: 12px 10px;">Type</th>
+                                <th style="padding: 12px 10px;">Grade</th>
+                                <th style="padding: 12px 10px;">Length</th>
+                                <th style="padding: 12px 10px;">A/F</th>
+                                <th style="padding: 12px 10px;">Wt/Pc</th>
+                                <th style="padding: 12px 10px;">Per Box Qty</th>
+                                <th style="padding: 12px 10px;">No. of Boxes</th>
+                                <th style="padding: 12px 10px;">Total Wt (Kg)</th>
+                                <th style="padding: 12px 10px;">WIP (Floor)</th>
+                                <th style="padding: 12px 10px;">Prod. Readied</th>
+                                <th style="padding: 12px 10px;">Current Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="storeInventoryBody"></tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div id="pickListModal" class="modal" style="display: none; position: fixed; z-index: 100000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+            <div class="modal-content" style="background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 1100px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); position: relative;">
+                <span class="close-btn" onclick="document.getElementById('pickListModal').style.display='none'" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer;">×</span>
+                
+                <div style="text-align:center; border-bottom: 2px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; flex-shrink: 0;">
+                    <h2 style="margin:0; color:#1e40af; font-weight:900; letter-spacing: 1px;">PRECIFAST PRIVATE LIMITED</h2>
+                    <h3 style="margin:5px 0 0 0; color:#475569;">DIGITAL PICK LIST (STORE DEPT)</h3>
+                </div>
+                
+                <div style="display:flex; justify-content:space-between; margin-bottom: 20px; font-weight:800; color:#334155; flex-shrink: 0;">
+                    <div>Issued Date: <span id="plModalDate" style="color:var(--sales-blue);"></span></div>
+                    <div>PICKLIST NO: <span id="plModalNo" style="color:#dc2626; font-size:1.2rem;"></span></div>
+                </div>
+
+                <div style="overflow-y: auto; flex: 1; border: 1px solid var(--border); border-radius: 8px;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                        <thead style="background: #f1f5f9; position: sticky; top: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <tr>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border);">S.NO</th>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border);">CUSTOMER NAME</th>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border);">PPL CODE</th>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border);">TYPE</th>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border);">SIZE</th>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border);">PITCH</th>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border);">LEN</th>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border);">GRADE</th>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border); color:#10b981;">PACK QTY</th>
+                                <th style="padding:10px; border-bottom: 2px solid var(--border); color:#dc2626;">LIVE STOCK</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plModalBody"></tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 20px; display:flex; justify-content:flex-end; flex-shrink: 0;">
+                    <button class="btn-primary" id="plDispatchBtn" style="width: auto; background: #10b981; font-size: 1.1rem; padding: 15px 30px;" onclick="window.dispatchActivePickList()">📦 Confirm Packed & Dispatch to Accounts</button>
+                </div>
+            </div>
         </div>
 
     </main>
